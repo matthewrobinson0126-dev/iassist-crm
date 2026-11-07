@@ -1,0 +1,3936 @@
+{
+ "source": "iassist.net.za (Shopify, public price data)",
+ "updated": "2026-11-07",
+ "items": [
+  {
+   "device": "PS4 Pro",
+   "item": "1TB HARDRIVE",
+   "price": 1800.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "DRIVE IC",
+   "price": 1500.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "DRIVE REPAIR",
+   "price": 1200.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "HDMI IC",
+   "price": 1800.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "HDMI PORT",
+   "price": 1400.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "LASER",
+   "price": 1600.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "POWER IC’S",
+   "price": 2000.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "POWERSUPPLY PS4 PRO",
+   "price": 2800.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "SERVICE PS4 PRO",
+   "price": 1000.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS4 Pro",
+   "item": "SOUTHBRIDGE",
+   "price": 2800.0,
+   "handle": "ps4-pro-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "DRIVE REPAIR",
+   "price": 1200.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "HDMI IC",
+   "price": 2500.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "HDMI Port",
+   "price": 1800.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "POWER IC",
+   "price": 2600.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "Powersupply",
+   "price": 2500.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "SERVICE WITH LIQUID METAL",
+   "price": 1500.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Digital Edition",
+   "item": "SOUTHBRIDGE",
+   "price": 3500.0,
+   "handle": "ps5-digital-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "DRIVE REPAIR Replacement",
+   "price": 1200.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "HDMI IC Replacement",
+   "price": 2500.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "HDMI Port Replacement",
+   "price": 1800.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "LASER Replacement",
+   "price": 1850.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "POWER IC Replacement",
+   "price": 2600.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "Powersupply Replacement",
+   "price": 2450.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "SERVICE WITH LIQUID METAL",
+   "price": 1500.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "PS5 Disc Edition",
+   "item": "SOUTHBRIDGE Replacement",
+   "price": 3500.0,
+   "handle": "ps5-disc-edition-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "1TB HARDRIVE",
+   "price": 1800.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "DRIVE IC",
+   "price": 1500.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "DRIVE REPAIR",
+   "price": 1000.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "HDMI PORT",
+   "price": 1200.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "LASER",
+   "price": 1500.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "POWER IC’S",
+   "price": 2200.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "POWERSUPPLY",
+   "price": 1800.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "SERVICE",
+   "price": 1200.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 1ST Gen",
+   "item": "SOUTHBRIDGE",
+   "price": 2800.0,
+   "handle": "ps4-1st-gen-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "1TB HARDRIVE",
+   "price": 1800.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "DRIVE IC",
+   "price": 1200.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "DRIVE REPAIR",
+   "price": 1000.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "HDMI IC PS4 SLIM",
+   "price": 1500.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "HDMI PORT",
+   "price": 1200.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "LASER",
+   "price": 1500.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "POWER IC’S",
+   "price": 2200.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "POWERSUPPLY",
+   "price": 1800.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "SERVICE",
+   "price": 1200.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Ps4 Slim",
+   "item": "SOUTHBRIDGE",
+   "price": 2800.0,
+   "handle": "ps4-slim-repairs"
+  },
+  {
+   "device": "Xbox Series S",
+   "item": "Board-Level / No-Power Repair",
+   "price": 1800.0,
+   "handle": "xbox-series-s-repairs"
+  },
+  {
+   "device": "Xbox Series S",
+   "item": "Full Service (Clean + Thermal Paste)",
+   "price": 1200.0,
+   "handle": "xbox-series-s-repairs"
+  },
+  {
+   "device": "Xbox Series S",
+   "item": "HDMI Port Replacement",
+   "price": 1500.0,
+   "handle": "xbox-series-s-repairs"
+  },
+  {
+   "device": "Xbox Series S",
+   "item": "HDMI Retimer Chip Replacement",
+   "price": 1800.0,
+   "handle": "xbox-series-s-repairs"
+  },
+  {
+   "device": "Xbox Series S",
+   "item": "Power Supply Replacement",
+   "price": 1800.0,
+   "handle": "xbox-series-s-repairs"
+  },
+  {
+   "device": "Xbox Series S",
+   "item": "SSD / Storage Repair",
+   "price": 1500.0,
+   "handle": "xbox-series-s-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "Board-Level / No-Power Repair",
+   "price": 1800.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "Disc Drive Repair",
+   "price": 1200.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "Full Service (Clean + Thermal Paste)",
+   "price": 1200.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "HDMI Port Replacement",
+   "price": 1500.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "HDMI Retimer Chip Replacement",
+   "price": 1800.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "Power Supply Replacement",
+   "price": 1800.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "Xbox Series X",
+   "item": "SSD / Storage Repair",
+   "price": 1500.0,
+   "handle": "xbox-series-x-repairs"
+  },
+  {
+   "device": "iPad (10th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 4350.0,
+   "handle": "ipad-10th-gen-repairs"
+  },
+  {
+   "device": "iPad (1st Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 510.0,
+   "handle": "ipad-1st-gen-repairs"
+  },
+  {
+   "device": "iPad (2nd Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 650.0,
+   "handle": "ipad-2nd-gen-repairs"
+  },
+  {
+   "device": "iPad (3rd Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 850.0,
+   "handle": "ipad-3rd-gen-repairs"
+  },
+  {
+   "device": "iPad (4th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 850.0,
+   "handle": "ipad-4th-gen-repairs"
+  },
+  {
+   "device": "iPad (5th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 1200.0,
+   "handle": "ipad-5th-gen-repairs"
+  },
+  {
+   "device": "iPad (6th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 1900.0,
+   "handle": "ipad-6th-gen-repairs"
+  },
+  {
+   "device": "iPad (8th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 2200.0,
+   "handle": "ipad-8th-gen-repairs"
+  },
+  {
+   "device": "iPad (9th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 2500.0,
+   "handle": "ipad-9th-gen-repairs"
+  },
+  {
+   "device": "iPad Air (1st Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 1200.0,
+   "handle": "ipad-air-1st-gen-repairs"
+  },
+  {
+   "device": "iPad Air (2nd Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 2500.0,
+   "handle": "ipad-air-2nd-gen-repairs"
+  },
+  {
+   "device": "iPad Air (3rd Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 4500.0,
+   "handle": "ipad-air-3rd-gen-repairs"
+  },
+  {
+   "device": "iPad Air (4th Gen)",
+   "item": "Battery Replacement",
+   "price": 1500.0,
+   "handle": "ipad-air-4th-gen-repairs"
+  },
+  {
+   "device": "iPad Air (4th Gen)",
+   "item": "Glass Only Screen Repair",
+   "price": 3000.0,
+   "handle": "ipad-air-4th-gen-repairs"
+  },
+  {
+   "device": "iPad Air (4th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 4500.0,
+   "handle": "ipad-air-4th-gen-repairs"
+  },
+  {
+   "device": "iPad Air (5th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 5500.0,
+   "handle": "ipad-air-5th-gen-repairs"
+  },
+  {
+   "device": "iPad Mini (1st Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 700.0,
+   "handle": "ipad-mini-1st-gen-repairs"
+  },
+  {
+   "device": "iPad Mini (2nd Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 800.0,
+   "handle": "ipad-mini-2nd-gen-repairs"
+  },
+  {
+   "device": "iPad Mini (3rd Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 1500.0,
+   "handle": "ipad-mini-3rd-gen-repairs"
+  },
+  {
+   "device": "iPad Mini (4th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 3000.0,
+   "handle": "ipad-mini-4th-gen-repairs"
+  },
+  {
+   "device": "iPad Mini (5th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 4000.0,
+   "handle": "ipad-mini-5th-gen"
+  },
+  {
+   "device": "iPad Mini (6th Gen)",
+   "item": "Third-Party Screen Replacement",
+   "price": 7400.0,
+   "handle": "ipad-mini-6th-gen-repairs"
+  },
+  {
+   "device": "iPad Pro (9.7-inch)",
+   "item": "Third-Party Screen Replacement",
+   "price": 3500.0,
+   "handle": "ipad-pro-9-7-inch-repairs"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Back Glass Repair – OEM",
+   "price": 1800.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Board replacement",
+   "price": 5800.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2200.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 900.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 1600.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 3500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Front Camera Repair",
+   "price": 1500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Loudspeaker – OEM",
+   "price": 1600.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2200.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "SIM Tray Replacement",
+   "price": 1500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 2400.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 1500.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 850.0,
+   "handle": "iphone-11-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Back Glass Repair – OEM",
+   "price": 1800.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1300.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2800.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 900.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2000.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 1600.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 3000.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Front Camera Repair",
+   "price": 1600.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Loudspeaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 900.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2800.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1600.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 3250.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 1800.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 11 Pro Max",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 900.0,
+   "handle": "iphone-11-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Back Glass Repair – OEM",
+   "price": 2800.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2700.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 1800.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 3000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Front Camera Repair",
+   "price": 1800.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Loudspeaker – OEM",
+   "price": 2300.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "SIM Tray Replacement",
+   "price": 1800.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 3500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 2800.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1000.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12",
+   "item": "iPhone 12 Normal Kusele",
+   "price": 4500.0,
+   "handle": "iphone-12-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Mini",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-12-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Back Glass Repair – OEM",
+   "price": 3500.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2800.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2500.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 5000.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Front Camera Repair",
+   "price": 1800.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Loudspeaker – OEM",
+   "price": 2300.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 3800.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 2800.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Back Glass Repair – OEM",
+   "price": 3500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Earpiece Speaker – OEM",
+   "price": 5000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 4000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 5500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Front Camera Repair",
+   "price": 1900.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Loudspeaker – OEM",
+   "price": 2600.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 4500.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 3000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 12 Pro Max",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1000.0,
+   "handle": "iphone-12-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1700.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Back Glass Repair – OEM",
+   "price": 3800.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1000.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2800.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1199.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2400.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 5000.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Front Camera Repair",
+   "price": 2500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Loudspeaker – OEM",
+   "price": 2200.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Motherboard replacement",
+   "price": 4500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "SIM Tray Replacement",
+   "price": 1800.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 3800.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 2500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1200.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13",
+   "item": "Used frame and lcd",
+   "price": 2500.0,
+   "handle": "iphone-13-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1600.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Back Glass Repair – OEM",
+   "price": 3500.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2400.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2500.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 3200.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 4800.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Front Camera Repair",
+   "price": 2000.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Loudspeaker – OEM",
+   "price": 1600.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 3800.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 3000.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Mini",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1200.0,
+   "handle": "iphone-13-mini-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1700.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Back Glass Repair – OEM",
+   "price": 3800.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1000.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1600.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3500.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1299.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2400.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2800.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 6000.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Front Camera Repair",
+   "price": 2600.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1300.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Loudspeaker – OEM",
+   "price": 2200.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 3000.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 3000.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 6000.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 4500.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1200.0,
+   "handle": "iphone-13-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Back Glass Repair – OEM",
+   "price": 3800.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1000.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1600.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1399.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2400.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2800.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 5000.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 6500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Front Camera Repair",
+   "price": 2800.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1400.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Loudspeaker – OEM",
+   "price": 2300.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Rebooting issue",
+   "price": 3750.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 6500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 4500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Screen replacement Used Orginal",
+   "price": 5000.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 13 Pro Max",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-13-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Back Glass Repair – OEM",
+   "price": 4600.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2700.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2500.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 4000.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 5500.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Front Camera Repair",
+   "price": 3000.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Loudspeaker – OEM",
+   "price": 1600.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "SIM Tray Replacement",
+   "price": 2000.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 4200.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 2800.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Back Glass Repair – OEM",
+   "price": 4600.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1300.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2700.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 2500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 6000.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Front Camera Repair",
+   "price": 3200.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Loudspeaker – OEM",
+   "price": 1600.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "SIM Tray Replacement",
+   "price": 2000.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 6500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 3000.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Plus",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Back Glass Repair – OEM",
+   "price": 4500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1600.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3800.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1100.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2800.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 3500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 5000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 6500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Front Camera Repair",
+   "price": 3500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Loudspeaker – OEM",
+   "price": 2600.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 3000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Rebooting issue and battery",
+   "price": 4750.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "SIM Tray Replacement",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 6800.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 4000.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1900.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Back Glass Repair – OEM",
+   "price": 4500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Battery Replacement – OEM",
+   "price": 1500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1600.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3800.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1100.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2800.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 3500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 6000.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 7500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Front Camera Repair",
+   "price": 3800.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Loudspeaker – OEM",
+   "price": 2600.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 3000.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "SIM Tray Replacement",
+   "price": 1000.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 7500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 5500.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 14 Pro Max",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-14-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Back Glass Repair – OEM",
+   "price": 4600.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Battery Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1200.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1300.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1100.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2000.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 3800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 5000.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 6500.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Front Camera Repair",
+   "price": 1799.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Loudspeaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 3200.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4000.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "SIM Tray Replacement",
+   "price": 2500.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 6800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 4500.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2600.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Back Glass Repair – OEM",
+   "price": 4600.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Battery Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1200.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1300.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 2800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2000.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 3800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 5500.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 7000.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Front Camera Repair",
+   "price": 1000.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Loudspeaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 4000.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "SIM Tray Replacement",
+   "price": 2500.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 3500.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 6800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 4500.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Plus",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2200.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Back Glass Repair – OEM",
+   "price": 4000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Battery Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1600.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 4000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2800.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 3800.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 6000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 7500.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Front Camera Repair",
+   "price": 1000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Loudspeaker – OEM",
+   "price": 2600.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 5500.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "SIM Tray Replacement",
+   "price": 1000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 7200.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 5800.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 2000.0,
+   "handle": "iphone-15-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2200.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Back Glass Repair – OEM",
+   "price": 4600.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Battery Replacement – OEM",
+   "price": 1800.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1600.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 4000.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Earpiece Speaker – OEM",
+   "price": 3000.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 4500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 7000.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 8500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Loudspeaker – OEM",
+   "price": 2800.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 6500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 5500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 8500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 6500.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 15 Pro Max",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 2000.0,
+   "handle": "iphone-15-pro-max-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Back Glass Repair – OEM",
+   "price": 4050.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2400.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 4800.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 6000.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 7500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Loudspeaker – OEM",
+   "price": 2200.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 4000.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 5000.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "SIM Tray Replacement",
+   "price": 3000.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 4000.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 7200.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 5000.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 2500.0,
+   "handle": "iphone-16-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Back Glass Repair – OEM",
+   "price": 4500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 1500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 3500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2400.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 4500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 6500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 8000.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Loudspeaker – OEM",
+   "price": 2200.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 5000.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "SIM Tray Replacement",
+   "price": 3000.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 8200.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 5300.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Plus",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 2500.0,
+   "handle": "iphone-16-plus-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 2500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Back Glass Repair – OEM",
+   "price": 4050.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Board repair charging ics",
+   "price": 4000.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Camera Lens Cover – OEM",
+   "price": 1800.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 4500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 1250.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Earpiece Speaker – OEM",
+   "price": 2800.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 6000.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Face ID Repair – Full Module",
+   "price": 7500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 7500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 9000.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Loudspeaker – OEM",
+   "price": 2600.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 4500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 6500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 5500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 8500.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 6000.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 16 Pro",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 3000.0,
+   "handle": "iphone-16-pro-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 600.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Back Glass Repair – OEM",
+   "price": 1000.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 650.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Battery Replacement – OEM",
+   "price": 1000.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Camera Lens Cover – OEM",
+   "price": 500.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 550.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 850.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 500.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1000.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 2500.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Front Camera Repair",
+   "price": 900.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 650.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Loudspeaker – OEM",
+   "price": 850.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 600.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 900.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2000.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 2200.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 1200.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 600.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone 8",
+   "item": "Touch ID Repair",
+   "price": 850.0,
+   "handle": "iphone-8-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Back Glass Repair – OEM",
+   "price": 1400.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 750.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Battery Replacement – OEM",
+   "price": 1200.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Camera Lens Cover – OEM",
+   "price": 650.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 1700.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 1800.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 2500.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Front Camera Repair",
+   "price": 900.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Loudspeaker – OEM",
+   "price": 1600.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 900.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2000.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 2200.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 1200.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 800.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone SE 2020",
+   "item": "Touch ID Repair",
+   "price": 850.0,
+   "handle": "iphone-se-2020-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Back Glass Repair – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Battery Replacement – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 700.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 1400.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 600.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 1300.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 2800.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Front Camera Repair",
+   "price": 1200.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Loudspeaker – OEM",
+   "price": 1500.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2000.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "SIM Tray Replacement",
+   "price": 1200.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 2400.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 1400.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XR",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 800.0,
+   "handle": "iphone-xr-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Back Glass Repair – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Battery Replacement – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 700.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 1400.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 600.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 1400.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 2000.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 2800.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Front Camera Repair",
+   "price": 1200.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Loudspeaker – OEM",
+   "price": 1500.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2000.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 2500.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 1500.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 800.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS",
+   "item": "iPhone X motherboard repair",
+   "price": 2500.0,
+   "handle": "iphone-xs-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Back Glass Repair – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Back Glass Repair – OEM",
+   "price": 1200.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Battery Replacement – Aftermarket",
+   "price": 850.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Camera Lens Cover – OEM",
+   "price": 850.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Charging Port Repair – Aftermarket",
+   "price": 700.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Charging Port Repair – OEM MFi",
+   "price": 1400.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Earpiece Speaker – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Earpiece Speaker – OEM",
+   "price": 1800.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Face ID Repair – Dot Projector",
+   "price": 1500.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Frame & Back Glass Assembly – Aftermarket",
+   "price": 2200.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Frame & Back Glass Assembly – OEM",
+   "price": 3200.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Front Camera Repair",
+   "price": 1200.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Loudspeaker – Aftermarket",
+   "price": 1000.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Loudspeaker – OEM",
+   "price": 1600.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Power & Volume Buttons – Aftermarket",
+   "price": 800.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Rear Camera Assembly – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Rear Camera Assembly – OEM",
+   "price": 2000.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Screen Replacement – Aftermarket",
+   "price": 1200.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Screen Replacement – OEM Brand New",
+   "price": 3000.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Screen Replacement – OEM Grade A",
+   "price": 2000.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  },
+  {
+   "device": "iPhone XS Max",
+   "item": "Taptic Engine Replacement – OEM",
+   "price": 800.0,
+   "handle": "iphone-xs-max-repair-book-online"
+  }
+ ]
+}
