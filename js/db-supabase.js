@@ -2,6 +2,9 @@
 // Same calls as db-local.js; field names are converted camelCase ↔ snake_case.
 import { CONFIG } from './config.js';
 
+// A password-reset link lands here with "type=recovery" in the address; note it before the client reads it.
+const RECOVERY = /type=recovery/.test(location.hash);
+
 let client = null;
 const sb = () => (client ??= window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, {
   auth: { persistSession: true, autoRefreshToken: true, storageKey: 'iassist-crm-auth' },
@@ -153,4 +156,18 @@ export const remote = {
   updateStaff: (id, p) => callFn('staff-admin', { action: 'update', id, ...p }),
   notify: (jobId, kind, trackUrl, to) => callFn('notify', { job_id: jobId, kind, track_url: trackUrl, to }),
   track: token => callFn('track', { token }),
+
+  // Forgot password: the server emails a one-time link from the shop mailbox.
+  requestReset: email => callFn('notify', { kind: 'reset', email, redirect_to: location.origin + location.pathname }),
+  recoveryPending: () => RECOVERY,
+  async completeRecovery() {
+    const { data: { session } } = await sb().auth.getSession();   // creating the client reads the link
+    history.replaceState(null, '', location.pathname + location.search);
+    return !!session;
+  },
+  async setNewPassword(password) {
+    const { error } = await sb().auth.updateUser({ password });
+    if (error) throw new Error(error.message);
+    return remote.currentStaff();
+  },
 };

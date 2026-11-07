@@ -132,13 +132,75 @@ function renderOwnerSignIn(app, onDone) {
         <label class="field">Password<input type="password" id="o-pass" autocomplete="current-password" required></label>
         <p class="error-msg" id="o-err" hidden></p>
         <button class="btn primary big" type="submit">Sign in</button>
+        <button class="btn ghost small" type="button" id="o-forgot">Forgot password?</button>
       </form>
     </div></div>`;
+  $('#o-forgot', app).onclick = () => renderForgot(app, onDone, $('#o-email', app).value);
   $('#signin', app).onsubmit = async e => {
     e.preventDefault();
     const err = $('#o-err', app);
     try {
       await repo.auth.passwordLogin($('#o-email', app).value, $('#o-pass', app).value);
+      if (repo.auth.isOwner() && !repo.auth.deviceRegistered()) return renderRegister(app, onDone, 'Counter iPad');
+      onDone();
+    } catch (ex) { err.textContent = ex.message; err.hidden = false; }
+  };
+}
+
+function renderForgot(app, onDone, email = '') {
+  app.innerHTML = `
+    <div class="lock"><div class="lock-card">
+      ${brand('iAssist')}
+      <h1>Reset your password</h1>
+      <p class="muted">Enter your login email. We’ll email you a link to choose a new password.</p>
+      <form class="card stack setup-form" id="forgot">
+        <label class="field">Email<input type="email" id="f-email" autocomplete="username" required value="${esc(email)}"></label>
+        <p class="muted" id="f-msg" hidden></p>
+        <div class="row"><button class="btn big" type="button" id="f-back">Back</button><span class="spacer"></span>
+          <button class="btn primary big" type="submit">Email me a reset link</button></div>
+      </form>
+    </div></div>`;
+  $('#f-back', app).onclick = () => renderOwnerSignIn(app, onDone);
+  $('#forgot', app).onsubmit = async e => {
+    e.preventDefault();
+    const msg = $('#f-msg', app), btn = e.submitter;
+    if (btn) btn.disabled = true;
+    try {
+      const r = await repo.auth.requestReset($('#f-email', app).value.trim());
+      msg.textContent = `${r.message || 'Check your email.'} Open the link on this device.`;
+    } catch (ex) { msg.textContent = ex.message; }
+    msg.hidden = false;
+    if (btn) btn.disabled = false;
+  };
+}
+
+export function renderSetPassword(app, linkWorked, onDone) {
+  if (!linkWorked) {
+    app.innerHTML = `<div class="lock"><div class="lock-card">${brand('iAssist')}
+      <h1>That link has expired</h1><p class="muted">Reset links work once and last an hour. Ask for a new one.</p>
+      <button class="btn primary big" id="again">Back to sign-in</button></div></div>`;
+    $('#again', app).onclick = onDone;
+    return;
+  }
+  app.innerHTML = `
+    <div class="lock"><div class="lock-card">
+      ${brand('iAssist')}
+      <h1>Choose a new password</h1>
+      <form class="card stack setup-form" id="newpw">
+        <label class="field">New password<span class="hint">At least 10 characters. Save it in your password manager.</span>
+          <input type="password" id="n-pass" autocomplete="new-password" minlength="10" required></label>
+        <label class="field">New password again<input type="password" id="n-pass2" autocomplete="new-password" minlength="10" required></label>
+        <p class="error-msg" id="n-err" hidden></p>
+        <button class="btn primary big" type="submit">Save new password</button>
+      </form>
+    </div></div>`;
+  $('#newpw', app).onsubmit = async e => {
+    e.preventDefault();
+    const err = $('#n-err', app);
+    if ($('#n-pass', app).value !== $('#n-pass2', app).value) { err.textContent = 'The two passwords don’t match.'; err.hidden = false; return; }
+    try {
+      await repo.auth.setNewPassword($('#n-pass', app).value);
+      toast('Password changed. You’re signed in.');
       if (repo.auth.isOwner() && !repo.auth.deviceRegistered()) return renderRegister(app, onDone, 'Counter iPad');
       onDone();
     } catch (ex) { err.textContent = ex.message; err.hidden = false; }

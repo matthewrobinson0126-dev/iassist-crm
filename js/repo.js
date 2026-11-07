@@ -97,6 +97,15 @@ export const auth = {
     return me;
   },
   registerDevice: name => remote.registerDevice(name),
+  requestReset: email => remote.requestReset(email),
+  recoveryPending: () => !!remote?.recoveryPending(),
+  completeRecovery: () => remote.completeRecovery(),
+  async setNewPassword(password) {
+    if (String(password).length < 10) throw new Error('Use at least 10 characters.');
+    me = publicStaff(await remote.setNewPassword(password));
+    saveSession();
+    return me;
+  },
   deviceRegistered: () => (remote ? remote.isRegistered() : true),
   lock() { me = null; saveSession(); remote?.signOut().catch(() => {}); },
   touch() { if (me) saveSession(); },

@@ -2,7 +2,7 @@
 import * as repo from './repo.js';
 import { db } from './db.js';
 import { $, esc, initials, toast } from './ui.js';
-import { renderLock } from './screens/lock.js';
+import { renderLock, renderSetPassword } from './screens/lock.js';
 import { renderBookIn } from './screens/bookin.js';
 import { renderJobs, renderJob } from './screens/jobs.js';
 import { renderCustomers, renderCustomer } from './screens/customers.js';
@@ -91,6 +91,10 @@ window.addEventListener('hashchange', route);
 window.addEventListener('unhandledrejection', e => { toast(e.reason?.message || 'Something went wrong', 'error'); });
 
 (async () => {
+  if (repo.auth.recoveryPending()) {
+    const ok = await repo.auth.completeRecovery();
+    return renderSetPassword($('#app'), ok, () => route());
+  }
   await repo.auth.restore();
   route();
 })();
