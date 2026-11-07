@@ -91,10 +91,7 @@ window.addEventListener('hashchange', route);
 window.addEventListener('unhandledrejection', e => { toast(e.reason?.message || 'Something went wrong', 'error'); });
 
 (async () => {
-  if (repo.auth.recoveryPending()) {
-    const ok = await repo.auth.completeRecovery();
-    return renderSetPassword($('#app'), ok, () => route());
-  }
+  if (repo.auth.recoveryPending()) return renderSetPassword($('#app'), () => route());
   await repo.auth.restore();
   route();
 })();

@@ -174,14 +174,7 @@ function renderForgot(app, onDone, email = '') {
   };
 }
 
-export function renderSetPassword(app, linkWorked, onDone) {
-  if (!linkWorked) {
-    app.innerHTML = `<div class="lock"><div class="lock-card">${brand('iAssist')}
-      <h1>That link has expired</h1><p class="muted">Reset links work once and last an hour. Ask for a new one.</p>
-      <button class="btn primary big" id="again">Back to sign-in</button></div></div>`;
-    $('#again', app).onclick = onDone;
-    return;
-  }
+export function renderSetPassword(app, onDone) {
   app.innerHTML = `
     <div class="lock"><div class="lock-card">
       ${brand('iAssist')}
@@ -192,18 +185,21 @@ export function renderSetPassword(app, linkWorked, onDone) {
         <label class="field">New password again<input type="password" id="n-pass2" autocomplete="new-password" minlength="10" required></label>
         <p class="error-msg" id="n-err" hidden></p>
         <button class="btn primary big" type="submit">Save new password</button>
+        <button class="btn ghost small" type="button" id="n-cancel">Back to sign-in</button>
       </form>
     </div></div>`;
+  $('#n-cancel', app).onclick = () => { history.replaceState(null, '', location.pathname); location.reload(); };
   $('#newpw', app).onsubmit = async e => {
     e.preventDefault();
     const err = $('#n-err', app);
     if ($('#n-pass', app).value !== $('#n-pass2', app).value) { err.textContent = 'The two passwords don’t match.'; err.hidden = false; return; }
+    const btn = e.submitter; if (btn) btn.disabled = true;
     try {
       await repo.auth.setNewPassword($('#n-pass', app).value);
       toast('Password changed. You’re signed in.');
       if (repo.auth.isOwner() && !repo.auth.deviceRegistered()) return renderRegister(app, onDone, 'Counter iPad');
       onDone();
-    } catch (ex) { err.textContent = ex.message; err.hidden = false; }
+    } catch (ex) { err.textContent = ex.message; err.hidden = false; if (btn) btn.disabled = false; }
   };
 }
 

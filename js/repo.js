@@ -99,7 +99,6 @@ export const auth = {
   registerDevice: name => remote.registerDevice(name),
   requestReset: email => remote.requestReset(email),
   recoveryPending: () => !!remote?.recoveryPending(),
-  completeRecovery: () => remote.completeRecovery(),
   async setNewPassword(password) {
     if (String(password).length < 10) throw new Error('Use at least 10 characters.');
     me = publicStaff(await remote.setNewPassword(password));

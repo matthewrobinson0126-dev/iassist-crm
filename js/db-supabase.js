@@ -2,8 +2,8 @@
 // Same calls as db-local.js; field names are converted camelCase ↔ snake_case.
 import { CONFIG } from './config.js';
 
-// A password-reset link lands here with "type=recovery" in the address; note it before the client reads it.
-const RECOVERY = /type=recovery/.test(location.hash);
+// A password-reset email links here as ?reset=<token>. The token is only used when the person saves.
+const RESET_TOKEN = new URLSearchParams(location.search).get('reset');
 
 let client = null;
 const sb = () => (client ??= window.supabase.createClient(CONFIG.supabaseUrl, CONFIG.supabaseKey, {
@@ -159,13 +159,14 @@ export const remote = {
 
   // Forgot password: the server emails a one-time link from the shop mailbox.
   requestReset: email => callFn('notify', { kind: 'reset', email, redirect_to: location.origin + location.pathname }),
-  recoveryPending: () => RECOVERY,
-  async completeRecovery() {
-    const { data: { session } } = await sb().auth.getSession();   // creating the client reads the link
-    history.replaceState(null, '', location.pathname + location.search);
-    return !!session;
-  },
+  recoveryPending: () => !!RESET_TOKEN,
   async setNewPassword(password) {
+    if (RESET_TOKEN) {
+      const { error: ve } = await sb().auth.verifyOtp({ token_hash: RESET_TOKEN, type: 'recovery' });
+      if (ve) throw new Error(/expired|invalid/i.test(ve.message)
+        ? 'This reset link has expired or a newer one was sent. Use “Forgot password?” to get a fresh link.' : ve.message);
+      history.replaceState(null, '', location.pathname);
+    }
     const { error } = await sb().auth.updateUser({ password });
     if (error) throw new Error(error.message);
     return remote.currentStaff();
