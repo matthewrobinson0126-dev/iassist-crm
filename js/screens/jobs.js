@@ -1,13 +1,13 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261107113203';
-import { STATUSES, statusLabel } from '../repo.js?v=20261107113203';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107113203';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107113203';
-import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107113203';
-import { startWarrantyJob } from './bookin.js?v=20261107113203';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261107113203';
-import { openWhatsApp } from '../messages.js?v=20261107113203';
-import { go } from '../app.js?v=20261107113203';
+import * as repo from '../repo.js?v=20261107121047';
+import { STATUSES, statusLabel } from '../repo.js?v=20261107121047';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107121047';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107121047';
+import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107121047';
+import { startWarrantyJob } from './bookin.js?v=20261107121047';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261107121047';
+import { openWhatsApp } from '../messages.js?v=20261107121047';
+import { go } from '../app.js?v=20261107121047';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -133,10 +133,10 @@ export async function renderJob(view, id) {
             ${job.internalNotes ? `<dt>Tech notes</dt><dd>${esc(job.internalNotes)}</dd>` : ''}
           </dl></div>
         <div class="card stack"><div class="row"><h2 style="margin:0">Parts &amp; labour</h2><span class="spacer"></span>
-          ${!collected ? '<button class="btn small" id="j-add-price">+ From price list</button><button class="btn small" id="j-add-custom">+ Custom line</button>' : ''}</div>
+          ${!collected ? '<button class="btn small" id="j-add-stock">+ From stock</button><button class="btn small" id="j-add-price">+ From price list</button><button class="btn small" id="j-add-custom">+ Custom line</button>' : ''}</div>
           ${(job.lines || []).length ? `<div style="overflow-x:auto"><table class="lines num">
             <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr></thead>
-            <tbody>${job.lines.map((l, i) => `<tr><td>${esc(l.name)}</td><td>${esc(l.qty)}</td><td>${money(l.price)}</td><td>${money(l.qty * l.price)}</td>
+            <tbody>${job.lines.map((l, i) => `<tr><td>${esc(l.name)}${l.productId ? ' <span class="tag">stock</span>' : ''}</td><td>${esc(l.qty)}</td><td>${money(l.price)}</td><td>${money(l.qty * l.price)}</td>
               <td>${!collected ? `<button class="btn small ghost" data-rm-line="${i}" aria-label="Remove ${esc(l.name)}">×</button>` : ''}</td></tr>`).join('')}</tbody>
             <tfoot><tr><td colspan="3">Total${job.jobType === 'warranty' ? ' (warranty: customer pays R0)' : ''}</td><td>${money(repo.linesTotal(job.lines))}</td><td></td></tr></tfoot>
           </table></div>` : '<p class="muted" style="margin:0">No parts or labour added yet. Lines set the quote automatically.</p>'}
@@ -217,9 +217,9 @@ export async function renderJob(view, id) {
   }
   $('#j-urgent', view)?.addEventListener('change', async e => { job = await repo.setUrgent(job, e.target.checked); reload(); });
   $$('[data-rm-line]', view).forEach(b => b.onclick = async () => {
-    const lines = [...job.lines]; const [gone] = lines.splice(Number(b.dataset.rmLine), 1);
-    job = await repo.setLines(job, lines, `Removed ${gone.name}`); reload();
+    job = await repo.removeLine(job, Number(b.dataset.rmLine)); reload();
   });
+  $('#j-add-stock', view)?.addEventListener('click', () => stockModal(job, reload));
   $('#j-add-price', view)?.addEventListener('click', () => priceModal(job, reload));
   // Phase 3: money + tasks
   $$('[data-pay]', view).forEach(b => b.onclick = () => paymentModal(job, b.dataset.pay, m$, reload));
@@ -373,6 +373,33 @@ function lineModal(job, line, after) {
     await repo.setLines(job, [...(job.lines || []), { name, qty, price }], `Added ${qty} × ${name} @ R${price}`);
     m.close(); toast('Line added'); after();
   };
+}
+
+// ───────────── Parts from stock ─────────────
+async function stockModal(job, after) {
+  const items = (await repo.listProducts()).filter(p => p.qty > 0);
+  const m = modal(`
+    <h2>Use a part from stock</h2>
+    <input type="search" id="sk-q" placeholder="Search e.g. ${esc(job.model)} screen" autocomplete="off">
+    <div class="result-list" id="sk-list" style="max-height:50vh;overflow:auto"></div>
+    <div class="modal-actions"><button class="btn" data-close>Close</button></div>`, { wide: true });
+  const q = m.el.querySelector('#sk-q'), list = m.el.querySelector('#sk-list');
+  const model = norm(job.model);
+  const draw = () => {
+    const words = norm(q.value).split(' ').filter(Boolean);
+    let hits = items.filter(p => words.every(w => norm(`${p.name} ${p.device || ''} ${p.category || ''} ${p.sku || ''}`).includes(w)));
+    if (!words.length) hits.sort((a, b) => (norm(b.device || b.name).includes(model) ? 1 : 0) - (norm(a.device || a.name).includes(model) ? 1 : 0));
+    list.innerHTML = hits.slice(0, 60).map(p => `<button class="result" data-p="${p.id}">
+        <span style="flex:1"><b>${esc(p.name)}</b><div class="meta">${esc([p.device, p.category, `${p.qty} in stock`].filter(Boolean).join(' · '))}</div></span>
+        <b class="num">${money(p.sellPrice)}</b></button>`).join('')
+      || `<p class="muted">${items.length ? 'Nothing matches.' : 'Nothing in stock yet. Add parts on the Stock page.'}</p>`;
+    list.querySelectorAll('[data-p]').forEach(b => b.onclick = async () => {
+      const p = items.find(x => x.id === b.dataset.p);
+      try { await repo.useStock(job, p, 1); m.close(); toast(`${p.name} taken from stock`); after(); }
+      catch (ex) { toast(ex.message, 'error'); }
+    });
+  };
+  q.oninput = draw; draw(); q.focus();
 }
 
 // ───────────── Money on a job ─────────────

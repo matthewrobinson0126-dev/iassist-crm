@@ -1,6 +1,6 @@
 // Cloud storage: Supabase (Postgres + private photo storage + staff logins).
 // Same calls as db-local.js; field names are converted camelCase ↔ snake_case.
-import { CONFIG } from './config.js?v=20261107113203';
+import { CONFIG } from './config.js?v=20261107121047';
 
 // A password-reset email links here as ?reset=<token>. The token is only used when the person saves.
 const RESET_TOKEN = new URLSearchParams(location.search).get('reset');
@@ -15,12 +15,13 @@ const OVERRIDES = {
   job_events: { at: 'created_at' },
   job_photos: { at: 'created_at', fileId: 'path' },
   job_secrets: { id: 'job_id' },
+  product_costs: { id: 'product_id' },
 };
 const DATE_COLS = new Set(['due_date', 'warranty_until']);
 const toSnake = k => k.replace(/[A-Z]/g, m => '_' + m.toLowerCase());
 const toCamel = k => k.replace(/_([a-z])/g, (_, c) => c.toUpperCase());
 const col = (table, key) => OVERRIDES[table]?.[key] || toSnake(key);
-const keyCol = table => (table === 'job_secrets' ? 'job_id' : 'id');
+const keyCol = table => (table === 'job_secrets' ? 'job_id' : table === 'product_costs' ? 'product_id' : 'id');
 
 function toRow(table, obj) {
   const row = {};
@@ -159,6 +160,7 @@ export const remote = {
   updateStaff: (id, p) => callFn('staff-admin', { action: 'update', id, ...p, commission_pct: p.commissionPct }),
   notify: (jobId, kind, trackUrl, to) => callFn('notify', { job_id: jobId, kind, track_url: trackUrl, to }),
   track: token => callFn('track', { token }),
+  rpc: async (fn, args) => check(await sb().rpc(fn, args)),
 
   // Forgot password: the server emails a one-time link from the shop mailbox.
   requestReset: email => callFn('notify', { kind: 'reset', email, redirect_to: location.origin + location.pathname }),

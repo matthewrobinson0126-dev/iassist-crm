@@ -1,15 +1,17 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261107113203';
-import { db } from './db.js?v=20261107113203';
-import { $, esc, initials, toast } from './ui.js?v=20261107113203';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107113203';
-import { renderBookIn } from './screens/bookin.js?v=20261107113203';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261107113203';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107113203';
-import { renderSettings } from './screens/settings.js?v=20261107113203';
-import { renderMoney } from './screens/money.js?v=20261107113203';
-import { renderTasks } from './screens/tasks.js?v=20261107113203';
-import { renderReports } from './screens/reports.js?v=20261107113203';
+import * as repo from './repo.js?v=20261107121047';
+import { db } from './db.js?v=20261107121047';
+import { $, esc, initials, toast } from './ui.js?v=20261107121047';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107121047';
+import { renderBookIn } from './screens/bookin.js?v=20261107121047';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261107121047';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107121047';
+import { renderSettings } from './screens/settings.js?v=20261107121047';
+import { renderMoney } from './screens/money.js?v=20261107121047';
+import { renderTasks } from './screens/tasks.js?v=20261107121047';
+import { renderReports } from './screens/reports.js?v=20261107121047';
+import { renderStock } from './screens/stock.js?v=20261107121047';
+import { renderSell } from './screens/sell.js?v=20261107121047';
 
 const routes = {
   bookin: renderBookIn,
@@ -21,6 +23,8 @@ const routes = {
   money: renderMoney,
   tasks: renderTasks,
   reports: renderReports,
+  stock: renderStock,
+  sell: renderSell,
 };
 
 export const go = hash => { if (location.hash === '#' + hash) route(); else location.hash = hash; };
@@ -39,10 +43,12 @@ function shell() {
       <div class="brand"><img src="icons/icon.svg" alt=""><span>iAssist Book-In</span></div>
       <nav class="nav" aria-label="Main">
         <a href="#bookin" data-nav="bookin" class="book">+ Book in</a>
+        <a href="#sell" data-nav="sell">Sell</a>
         <a href="#jobs" data-nav="jobs">Jobs</a>
         <a href="#customers" data-nav="customers">Customers</a>
         <a href="#tasks" data-nav="tasks">Tasks</a>
         <a href="#money" data-nav="money">Money</a>
+        <a href="#stock" data-nav="stock">Stock</a>
         ${repo.auth.isOwner() ? '<a href="#reports" data-nav="reports">Reports</a><a href="#settings" data-nav="settings">Settings</a>' : ''}
       </nav>
       <span class="spacer"></span>

@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261107113203';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107113203';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107113203';
-import { printJobCard } from '../print.js?v=20261107113203';
-import { openWhatsApp } from '../messages.js?v=20261107113203';
-import { go } from '../app.js?v=20261107113203';
+import * as repo from '../repo.js?v=20261107121047';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107121047';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107121047';
+import { printJobCard } from '../print.js?v=20261107121047';
+import { openWhatsApp } from '../messages.js?v=20261107121047';
+import { go } from '../app.js?v=20261107121047';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -155,7 +155,13 @@ const STEP_VIEWS = [
           <label class="field">Cell number<input type="tel" id="nc-phone" data-bind="newCustomer.phone" inputmode="tel" placeholder="082 123 4567" autocomplete="off"></label>
           <label class="field">Email <span class="hint">optional</span><input type="email" id="nc-email" data-bind="newCustomer.email" autocomplete="off"></label>
           <label class="field">Area / suburb <span class="hint">optional</span><input type="text" id="nc-area" data-bind="newCustomer.area" autocomplete="off"></label>
+          <label class="check"><input type="checkbox" id="nc-biz" data-bind="newCustomer.isBusiness"> This is a business customer</label>
         </div>
+        ${draft.newCustomer.isBusiness ? `<div class="grid-2">
+          <label class="field">Company name<input type="text" id="nc-company" data-bind="newCustomer.companyName" autocomplete="off"></label>
+          <label class="field">VAT number <span class="hint">optional</span><input type="text" id="nc-vat" data-bind="newCustomer.vatNumber" autocomplete="off"></label>
+          <label class="field">Billing address <span class="hint">optional</span><input type="text" id="nc-address" data-bind="newCustomer.address" autocomplete="off"></label>
+        </div>` : ''}
       </div>${referralCard()}`;
     const results = $('#cust-results', body);
     const search = $('#cust-search', body);
@@ -173,6 +179,7 @@ const STEP_VIEWS = [
     };
     search.addEventListener('input', run);
     queueMicrotask(run); // after bind() restores the last search text
+    queueMicrotask(() => { const cb = $('#nc-biz', body); if (cb) cb.addEventListener('change', () => draw(view)); });
   },
 
   // 2. Device

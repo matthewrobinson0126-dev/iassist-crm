@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261107113203';
-import { uid, now } from './ui.js?v=20261107113203';
+import { db, remote } from './db.js?v=20261107121047';
+import { uid, now } from './ui.js?v=20261107121047';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -266,7 +266,9 @@ const num = v => (v === '' || v === null || v === undefined || isNaN(Number(v)))
 
 export async function createJob(d, { demo = false } = {}) {
   requireUser();
-  const customer = d.customer || await saveCustomer({ ...d.newCustomer, referral: d.referral || '', demo });
+  const nc = d.newCustomer || {};
+  const { isBusiness, ...ncFields } = nc;
+  const customer = d.customer || await saveCustomer({ ...ncFields, type: isBusiness ? 'business' : 'individual', referral: d.referral || '', demo });
   const t = now();
   const settings = await getSettings();
   let job = {
@@ -591,3 +593,181 @@ export async function listTasks(filter) {
   return (await db.list('tasks', filter)).sort((a, b) =>
     (a.done - b.done) || (a.dueDate || '9999').localeCompare(b.dueDate || '9999') || a.createdAt.localeCompare(b.createdAt));
 }
+
+// ───────────── Phase 4: stock, suppliers, supplier orders, counter sales ─────────────
+// Cloud: quantities change only through database functions (they also record costs privately).
+// Demo mode: the same rules run here in the browser.
+const pad4 = n => String(n).padStart(4, '0');
+async function nextNo(key, prefix) {
+  const s = await getSettings();
+  const n = Number(s[key]) || 1;
+  await db.put('settings', { ...s, [key]: n + 1 });
+  return prefix + pad4(n);
+}
+async function move(productId, qtyChange, reason, ref = '', jobId = null) {
+  await db.put('stock_moves', { id: uid(), productId, qtyChange, reason, ref, jobId, createdAt: now(), staffId: me.id, staffName: me.name });
+}
+async function costOf(productId) { return Number((await db.get('product_costs', productId))?.cost) || 0; }
+
+export const PRODUCT_CATEGORIES = ['Screens', 'Batteries', 'Charging ports', 'Back glass', 'Cameras', 'Speakers / mics',
+  'Buttons / flex', 'Console parts', 'Mac parts', 'Accessories', 'Tools / consumables', 'Other'];
+
+export async function listProducts({ all = false } = {}) {
+  const list = await db.list('products');
+  return list.filter(p => all || p.active !== false).sort((a, b) => a.name.localeCompare(b.name));
+}
+export const isLow = p => p.active !== false && Number(p.qty) <= Number(p.minQty || 0);
+
+export async function saveProduct(p, cost) {
+  requireOwner();
+  if (!p.name?.trim()) throw new Error('Enter the item name.');
+  const t = now();
+  const rec = await db.put('products', { qty: 0, minQty: 0, sellPrice: 0, active: true, ...p, name: p.name.trim(),
+    sellPrice: num(p.sellPrice) ?? 0, minQty: Math.max(0, Math.round(Number(p.minQty) || 0)),
+    id: p.id || uid(), createdAt: p.createdAt || t, updatedAt: t });
+  if (cost !== undefined && cost !== '') await db.put('product_costs', { id: rec.id, cost: num(cost) ?? 0 });
+  return rec;
+}
+export async function productCost(id) { return auth.isOwner() ? costOf(id) : null; }
+
+export async function adjustStock(product, newQty, reason = 'adjust') {
+  requireOwner();
+  const q = Math.round(Number(newQty));
+  if (!(q >= 0)) throw new Error('Enter a quantity of 0 or more.');
+  if (q === product.qty) return product;
+  const rec = await db.put('products', { ...product, qty: q, updatedAt: now() });
+  await move(product.id, q - product.qty, reason, 'Manual adjustment');
+  return rec;
+}
+
+export async function stockHistory(productId) {
+  return (await db.list('stock_moves', { productId })).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+// Use a part on a job: stock down, line added at the sell price, cost recorded privately.
+export async function useStock(job, product, qty = 1) {
+  requireUser();
+  qty = Math.max(1, Math.round(Number(qty) || 1));
+  let r;
+  if (remote) r = await remote.rpc('use_stock', { p_product: product.id, p_qty: qty, p_job: job.id });
+  else {
+    const p = await db.get('products', product.id);
+    if (p.qty < qty) throw new Error(`Only ${p.qty} in stock.`);
+    await db.put('products', { ...p, qty: p.qty - qty, updatedAt: now() });
+    await move(p.id, -qty, 'used', job.jobNo, job.id);
+    const c = await costOf(p.id);
+    const exp = c > 0 ? await db.put('payments', { id: uid(), jobId: job.id, jobNo: job.jobNo, kind: 'expense', method: 'Stock',
+      amount: Math.round(c * qty * 100) / 100, category: 'Parts', note: `From stock: ${p.name}`, demo: !!job.demo,
+      createdAt: now(), staffId: me.id, staffName: me.name }) : null;
+    r = { name: p.name, price: p.sellPrice, expense_id: exp?.id || null };
+  }
+  const line = { name: r.name, qty, price: Number(r.price) || 0, productId: product.id, expenseId: r.expense_id || null };
+  return setLines(job, [...(job.lines || []), line], `Used ${qty} × ${r.name} from stock`);
+}
+
+// Remove a line; parts from stock go back on the shelf and their cost entry is removed.
+export async function removeLine(job, index) {
+  requireUser();
+  const lines = [...(job.lines || [])];
+  const [gone] = lines.splice(index, 1);
+  if (gone?.productId) {
+    if (remote) await remote.rpc('return_stock', { p_product: gone.productId, p_qty: gone.qty, p_job: job.id, p_expense: gone.expenseId || null });
+    else {
+      const p = await db.get('products', gone.productId);
+      if (p) { await db.put('products', { ...p, qty: p.qty + gone.qty, updatedAt: now() }); await move(p.id, gone.qty, 'returned', job.jobNo, job.id); }
+      if (gone.expenseId) await db.remove('payments', gone.expenseId);
+    }
+  }
+  return setLines(job, lines, `Removed ${gone.name}${gone.productId ? ' (back in stock)' : ''}`);
+}
+
+// ───────────── Suppliers + supplier orders (owner) ─────────────
+export async function listSuppliers() { return (await db.list('suppliers')).sort((a, b) => a.name.localeCompare(b.name)); }
+export async function saveSupplier(s) {
+  requireOwner();
+  if (!s.name?.trim()) throw new Error('Enter the supplier name.');
+  return db.put('suppliers', { ...s, name: s.name.trim(), id: s.id || uid(), createdAt: s.createdAt || now() });
+}
+export async function listOrders() { return (await db.list('purchase_orders')).sort((a, b) => b.createdAt.localeCompare(a.createdAt)); }
+export async function saveOrder(o) {
+  requireOwner();
+  const lines = (o.lines || []).filter(l => l.productId && Number(l.qty) > 0)
+    .map(l => ({ product_id: l.productId, productId: l.productId, name: l.name, qty: Math.round(Number(l.qty)), cost: Number(l.cost) || 0 }));
+  if (!lines.length) throw new Error('Add at least one item to the order.');
+  const total = Math.round(lines.reduce((t, l) => t + l.qty * l.cost, 0) * 100) / 100;
+  const supplier = o.supplierId ? (await listSuppliers()).find(s => s.id === o.supplierId) : null;
+  const rec = { status: 'draft', notes: '', ...o, lines, total, supplierName: supplier?.name || '', id: o.id || uid(),
+    createdAt: o.createdAt || now(), createdBy: o.createdBy || me.id };
+  if (!remote && !rec.poNo) rec.poNo = await nextNo('nextPoNo', 'PO-');
+  if (remote && !o.id) delete rec.poNo;
+  return db.put('purchase_orders', rec);
+}
+export async function setOrderStatus(o, status) {
+  requireOwner();
+  return db.put('purchase_orders', { ...o, status, orderedAt: status === 'ordered' ? now() : o.orderedAt });
+}
+export async function receiveOrder(o, method = 'EFT') {
+  requireOwner();
+  if (remote) return remote.rpc('receive_po', { p_po: o.id, p_method: method });
+  if (o.status === 'received') throw new Error('Already received.');
+  for (const l of o.lines) {
+    const p = await db.get('products', l.productId);
+    if (p) await db.put('products', { ...p, qty: p.qty + l.qty, updatedAt: now() });
+    await db.put('product_costs', { id: l.productId, cost: l.cost });
+    await move(l.productId, l.qty, 'received', o.poNo);
+  }
+  await db.put('purchase_orders', { ...o, status: 'received', receivedAt: now() });
+  if (o.total > 0) await db.put('payments', { id: uid(), jobId: null, jobNo: '', kind: 'expense', method, amount: o.total,
+    category: 'Parts', note: `Supplier order ${o.poNo}${o.supplierName ? ` · ${o.supplierName}` : ''}`, demo: false,
+    createdAt: now(), staffId: me.id, staffName: me.name });
+}
+
+export async function saveStocktake(counts) {
+  requireOwner();
+  if (remote) return remote.rpc('stocktake', { p_counts: counts.map(c => ({ product_id: c.productId, counted: c.counted })) });
+  let n = 0;
+  for (const c of counts) {
+    const p = await db.get('products', c.productId);
+    if (p && c.counted !== p.qty) {
+      await db.put('products', { ...p, qty: c.counted, updatedAt: now() });
+      await move(p.id, c.counted - p.qty, 'stocktake', `Stocktake ${todayKey()}`); n++;
+    }
+  }
+  return n;
+}
+
+// ───────────── Counter sales ─────────────
+export async function recordSale({ lines, method, customer = null, customerName = '', discount = 0 }) {
+  requireUser();
+  const clean = lines.filter(l => Number(l.qty) > 0).map(l => ({ product_id: l.productId || null, productId: l.productId || null,
+    name: l.name, qty: Math.round(Number(l.qty)), price: Number(l.price) || 0 }));
+  if (!clean.length) throw new Error('Add at least one item.');
+  if (!method) throw new Error('Choose how they paid.');
+  if (remote) {
+    const s = await remote.rpc('record_sale', { p_lines: clean, p_method: method, p_customer: customer?.id || null,
+      p_customer_name: customer?.name || customerName || '', p_discount: Number(discount) || 0 });
+    return { ...s, saleNo: s.sale_no, customerName: s.customer_name, createdAt: s.created_at, staffName: s.staff_name };
+  }
+  let cost = 0;
+  for (const l of clean) if (l.productId) {
+    const p = await db.get('products', l.productId);
+    if (p.qty < l.qty) throw new Error(`Only ${p.qty} × ${p.name} in stock.`);
+  }
+  const saleNo = await nextNo('nextSaleNo', 'S-');
+  for (const l of clean) if (l.productId) {
+    const p = await db.get('products', l.productId);
+    await db.put('products', { ...p, qty: p.qty - l.qty, updatedAt: now() });
+    await move(p.id, -l.qty, 'sold', saleNo);
+    cost += l.qty * await costOf(p.id);
+  }
+  const gross = clean.reduce((t, l) => t + l.qty * l.price, 0);
+  const total = Math.max(0, Math.round((gross - (Number(discount) || 0)) * 100) / 100);
+  const sale = await db.put('sales', { id: uid(), saleNo, customerId: customer?.id || null, customerName: customer?.name || customerName || '',
+    lines: clean, discount: Number(discount) || 0, total, method, createdAt: now(), staffId: me.id, staffName: me.name });
+  if (total > 0) await db.put('payments', { id: uid(), jobId: null, jobNo: '', kind: 'payment', method, amount: total,
+    note: `Counter sale ${saleNo}`, demo: false, createdAt: now(), staffId: me.id, staffName: me.name });
+  if (cost > 0) await db.put('payments', { id: uid(), jobId: null, jobNo: '', kind: 'expense', method: 'Stock', amount: Math.round(cost * 100) / 100,
+    category: 'Stock sold', note: `Cost of ${saleNo}`, demo: false, createdAt: now(), staffId: me.id, staffName: me.name });
+  return sale;
+}
+export async function listSales() { return (await db.list('sales')).sort((a, b) => b.createdAt.localeCompare(a.createdAt)); }

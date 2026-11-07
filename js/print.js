@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261107113203';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107113203';
-import { deviceType, collectionLabel } from './devices.js?v=20261107113203';
+import * as repo from './repo.js?v=20261107121047';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107121047';
+import { deviceType, collectionLabel } from './devices.js?v=20261107121047';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {
@@ -37,6 +37,7 @@ export async function printCompletion(job) {
       ${pcHead(settings, job, 'Certificate of completion')}
       <div class="pc-grid">
         <div><h3>Customer</h3><dl><dt>Name</dt><dd>${esc(customer?.name || job.customerName)}</dd>
+          ${customer?.type === 'business' ? `<dt>Company</dt><dd>${esc(customer.companyName || '')}${customer.vatNumber ? ` · VAT ${esc(customer.vatNumber)}` : ''}</dd>` : ''}
           <dt>Phone</dt><dd>${esc(customer?.phone || job.customerPhone)}</dd></dl></div>
         <div><h3>Device</h3><dl><dt>Model</dt><dd>${esc(job.model)}${job.colour ? `, ${esc(job.colour)}` : ''}</dd>
           <dt>IMEI / serial</dt><dd>${esc(job.serial || '—')}</dd>
@@ -65,6 +66,23 @@ export async function printCompletion(job) {
   window.print();
 }
 
+// Till slip for a counter sale.
+export async function printReceipt(sale) {
+  const settings = await repo.getSettings();
+  const lines = sale.lines || [];
+  $('#print-area').innerHTML = `
+    <div class="pc">
+      ${pcHead(settings, { jobNo: sale.saleNo || sale.sale_no }, 'Receipt')}
+      <div>${fmtDate(sale.createdAt || sale.created_at)} · ${esc(sale.customerName || sale.customer_name || 'Walk-in customer')}</div>
+      <table class="pc-lines"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+        <tbody>${lines.map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.qty)}</td><td>${money(l.price)}</td><td>${money(l.qty * l.price)}</td></tr>`).join('')}</tbody></table>
+      ${Number(sale.discount) ? `<p style="text-align:right">Discount −${money(sale.discount)}</p>` : ''}
+      <p style="text-align:right;font-size:14pt"><b>Total ${money(sale.total)}</b> · paid by ${esc(sale.method)}</p>
+      <p>Served by ${esc(sale.staffName || sale.staff_name || '')}. Thank you for shopping with ${esc(settings.shopName)}.</p>
+    </div>`;
+  window.print();
+}
+
 export async function printJobCard(job) {
   const settings = await repo.getSettings();
   const track = await trackingBlock(job);
@@ -83,6 +101,7 @@ export async function printJobCard(job) {
       <div class="pc-grid">
         <div><h3>Customer</h3><dl>
           <dt>Name</dt><dd>${esc(customer?.name || job.customerName)}</dd>
+          ${customer?.type === 'business' ? `<dt>Company</dt><dd>${esc(customer.companyName || '')}${customer.vatNumber ? ` · VAT ${esc(customer.vatNumber)}` : ''}</dd>` : ''}
           <dt>Phone</dt><dd>${esc(customer?.phone || job.customerPhone)}</dd>
           ${customer?.email ? `<dt>Email</dt><dd>${esc(customer.email)}</dd>` : ''}
         </dl></div>
