@@ -1,12 +1,13 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261107111329';
-import { STATUSES, statusLabel } from '../repo.js?v=20261107111329';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107111329';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107111329';
-import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107111329';
-import { startWarrantyJob } from './bookin.js?v=20261107111329';
-import { openWhatsApp } from '../messages.js?v=20261107111329';
-import { go } from '../app.js?v=20261107111329';
+import * as repo from '../repo.js?v=20261107113203';
+import { STATUSES, statusLabel } from '../repo.js?v=20261107113203';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107113203';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107113203';
+import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107113203';
+import { startWarrantyJob } from './bookin.js?v=20261107113203';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261107113203';
+import { openWhatsApp } from '../messages.js?v=20261107113203';
+import { go } from '../app.js?v=20261107113203';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -78,12 +79,13 @@ function card(j) {
 export async function renderJob(view, id) {
   let job = await repo.getJob(id);
   if (!job) { view.innerHTML = '<div class="card empty"><h2>Job not found</h2><p><a href="#jobs">Back to jobs</a></p></div>'; return; }
-  const [customer, photos, events] = await Promise.all([repo.getCustomer(job.customerId), repo.listPhotos(id), repo.listEvents(id)]);
+  const [customer, photos, events, payments, tasks] = await Promise.all([repo.getCustomer(job.customerId), repo.listPhotos(id),
+    repo.listEvents(id), repo.jobPayments(id), repo.listTasks({ jobId: id })]);
+  const m$ = repo.jobMoney(job, payments);
   const photoUrls = await Promise.all(photos.map(p => repo.fileUrl(p.fileId)));
   const sigIn = await repo.fileUrl(job.signatureIn), sigOut = await repo.fileUrl(job.signatureOut);
   const collected = job.status === 'collected';
   const list = a => a && a.length ? `<div class="tag-list">${a.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>` : '—';
-  const balance = job.quote === null ? null : Math.max(0, (job.quote || 0) - (job.deposit || 0));
 
   view.innerHTML = `
     <div class="page-head">
@@ -159,15 +161,30 @@ export async function renderJob(view, id) {
         <div class="card"><div class="row"><h2 style="margin:0">Money</h2><span class="spacer"></span>
           ${!collected ? '<button class="btn small" id="j-quote">Change quote</button>' : ''}</div>
           <dl class="kv num" style="margin-top:12px">
-            <dt>Quote</dt><dd>${job.quote === null ? 'After assessment' : money(job.quote)}${job.quoteNote ? ` <span class="muted">· ${esc(job.quoteNote)}</span>` : ''}</dd>
-            <dt>Deposit</dt><dd>${money(job.deposit)}</dd>
-            ${!collected ? `<dt>Still to pay</dt><dd><b>${balance === null ? '—' : money(balance)}</b></dd>` : ''}
-            ${collected ? `<dt>Paid</dt><dd>${esc(job.paidMethod || '—')} ${job.paidAmount !== null && job.paidAmount !== undefined ? money(job.paidAmount) : ''}</dd>
-              <dt>Warranty to</dt><dd>${job.warrantyUntil ? fmtDate(job.warrantyUntil) : '—'}</dd>
+            <dt>Quote</dt><dd>${job.jobType === 'warranty' ? 'No charge (warranty)' : job.quote === null ? 'After assessment' : money(job.quote)}${job.quoteNote ? ` <span class="muted">· ${esc(job.quoteNote)}</span>` : ''}</dd>
+            <dt>Paid so far</dt><dd>${money(m$.paid)}</dd>
+            ${!collected ? `<dt>Still to pay</dt><dd><b>${job.quote === null && job.jobType !== 'warranty' ? '—' : money(m$.due)}</b></dd>` : ''}
+            ${repo.auth.isOwner() && m$.costs ? `<dt>Costs <span class="badge owner">owner</span></dt><dd>${money(m$.costs)} · profit ${money(m$.paid - m$.costs)}</dd>` : ''}
+            ${collected ? `<dt>Warranty to</dt><dd>${job.warrantyUntil ? fmtDate(job.warrantyUntil) : '—'}</dd>
               <dt>Handed back</dt><dd>${fmtDateTime(job.collectedAt)} by ${esc(job.collectedByName || '')}</dd>` : ''}
             <dt>Ready by</dt><dd>${job.dueDate ? fmtDate(job.dueDate) : '—'}</dd>
             <dt>Return</dt><dd>${esc(collectionLabel(job.collection))}</dd>
-          </dl></div>
+          </dl>
+          ${payments.length ? `<div style="overflow-x:auto;margin-top:12px"><table class="lines num"><tbody>
+            ${payments.map(p => `<tr><td>${fmtDateTime(p.createdAt)}</td><td>${esc(repo.PAYMENT_KINDS[p.kind])}${p.kind === 'expense' ? ` · ${esc(p.category || 'Parts')}` : ` · ${esc(p.method)}`}</td>
+              <td>${repo.isIn(p) ? '' : '−'}${money(p.amount)}</td>
+              <td>${repo.auth.isOwner() ? `<button class="btn small ghost" data-rm-pay="${p.id}" aria-label="Remove entry">×</button>` : ''}</td></tr>`).join('')}
+          </tbody></table></div>` : ''}
+          <div class="row" style="margin-top:12px">
+            <button class="btn small" data-pay="payment">+ Payment</button>
+            <button class="btn small" data-pay="deposit">+ Deposit</button>
+            <button class="btn small" data-pay="refund">Refund</button>
+            <button class="btn small" data-pay="expense">+ Part cost</button>
+          </div></div>
+        <div class="card stack"><div class="row"><h2 style="margin:0">Tasks</h2><span class="spacer"></span>
+          <button class="btn small" id="j-task-add">+ Task</button></div>
+          ${tasks.length ? `<div class="list">${tasks.map(taskRow).join('')}</div>` : '<p class="muted" style="margin:0">No tasks. Add one to remember a call-back or a part to order.</p>'}
+        </div>
         <div class="card stack"><h2 style="margin:0">Customer tracking</h2>
           ${repo.auth.cloud ? `<p class="muted" style="margin:0">The customer scans the QR on their job card to see the live status.</p>
             <div class="row" style="align-items:center"><div class="qr" id="j-qr"></div>
@@ -204,6 +221,16 @@ export async function renderJob(view, id) {
     job = await repo.setLines(job, lines, `Removed ${gone.name}`); reload();
   });
   $('#j-add-price', view)?.addEventListener('click', () => priceModal(job, reload));
+  // Phase 3: money + tasks
+  $$('[data-pay]', view).forEach(b => b.onclick = () => paymentModal(job, b.dataset.pay, m$, reload));
+  $$('[data-rm-pay]', view).forEach(b => b.onclick = async () => {
+    const p = payments.find(x => x.id === b.dataset.rmPay);
+    if (await confirmBox(`Remove this ${repo.PAYMENT_KINDS[p.kind].toLowerCase()} of ${money(p.amount)}?`, { ok: 'Remove', danger: true })) {
+      await repo.deletePayment(p, job); toast('Entry removed'); reload();
+    }
+  });
+  $('#j-task-add', view).onclick = () => taskModal({ job }, reload);
+  bindTaskRows(view, tasks, reload);
   $('#j-add-custom', view)?.addEventListener('click', () => lineModal(job, { name: '', qty: 1, price: '' }, reload));
   $('#j-workdone-save', view)?.addEventListener('click', async () => {
     job = await repo.setWorkDone(job, $('#j-workdone', view).value); toast('Work done saved');
@@ -348,16 +375,43 @@ function lineModal(job, line, after) {
   };
 }
 
+// ───────────── Money on a job ─────────────
+function paymentModal(job, kind, m$, after) {
+  const isCost = kind === 'expense';
+  const suggested = kind === 'payment' ? (m$.due || '') : '';
+  const m = modal(`
+    <h2>${isCost ? 'Record a part cost' : `Add ${repo.PAYMENT_KINDS[kind].toLowerCase()}`} · ${esc(job.jobNo)}</h2>
+    ${isCost ? '<p class="muted" style="margin:0">What the part or service cost the shop. Only the owner sees costs and profit.</p>' : ''}
+    <div class="grid-2">
+      <label class="field">Amount (R)<input type="number" id="pm-amt" inputmode="decimal" min="0" step="0.01" value="${esc(suggested)}"></label>
+      ${isCost
+        ? `<label class="field">Type<select id="pm-cat">${repo.EXPENSE_CATEGORIES.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>`
+        : `<label class="field">Method<select id="pm-method">${repo.MONEY_METHODS.map(c => `<option>${esc(c)}</option>`).join('')}</select></label>`}
+    </div>
+    ${isCost ? `<label class="field">Paid with<select id="pm-method">${repo.MONEY_METHODS.map(c => `<option ${c === 'EFT' ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></label>` : ''}
+    <label class="field">Note <span class="hint">optional</span><input type="text" id="pm-note" placeholder="${isCost ? 'e.g. Screen from supplier' : kind === 'refund' ? 'Why the refund?' : ''}"></label>
+    <p class="error-msg" id="pm-err" hidden></p>
+    <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="pm-ok">Save</button></div>`);
+  m.el.querySelector('#pm-ok').onclick = async () => {
+    try {
+      await repo.addPayment({ job, kind, amount: m.el.querySelector('#pm-amt').value, method: m.el.querySelector('#pm-method').value,
+        category: m.el.querySelector('#pm-cat')?.value || '', note: m.el.querySelector('#pm-note').value });
+      m.close(); toast('Saved'); after();
+    } catch (ex) { const e = m.el.querySelector('#pm-err'); e.textContent = ex.message; e.hidden = false; }
+  };
+}
+
 // ───────────── Hand back ─────────────
 async function handBack(job, after) {
   const s = await repo.getSettings();
-  const balance = job.quote === null ? '' : Math.max(0, (job.quote || 0) - (job.deposit || 0));
+  const m$ = repo.jobMoney(job, await repo.jobPayments(job.id));
+  const balance = job.quote === null && job.jobType !== 'warranty' ? '' : m$.due;
   let method = '';
   const m = modal(`
     <h2>Hand back ${esc(job.jobNo)}</h2>
     ${job.status !== 'ready' ? `<p class="error-msg" style="margin:0">This job is still “${esc(statusLabel(job.status))}”. Only hand it back if the customer is collecting anyway.</p>` : ''}
     <dl class="kv num"><dt>Quote</dt><dd>${job.quote === null ? 'Not set' : money(job.quote)}</dd>
-      <dt>Deposit</dt><dd>${money(job.deposit)}</dd><dt>Still to pay</dt><dd><b>${balance === '' ? '—' : money(balance)}</b></dd></dl>
+      <dt>Paid so far</dt><dd>${money(m$.paid)}</dd><dt>Still to pay</dt><dd><b>${balance === '' ? '—' : money(balance)}</b></dd></dl>
     <div class="field">Payment<div class="chips" id="pay">${PAY_METHODS.map(p => `<button class="chip" data-p="${p}">${p}</button>`).join('')}</div></div>
     <div class="grid-2">
       <label class="field">Amount paid now (R)<input type="number" id="h-amt" inputmode="decimal" min="0" value="${balance}"></label>

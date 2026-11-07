@@ -1,6 +1,6 @@
 // Cloud storage: Supabase (Postgres + private photo storage + staff logins).
 // Same calls as db-local.js; field names are converted camelCase ↔ snake_case.
-import { CONFIG } from './config.js?v=20261107111329';
+import { CONFIG } from './config.js?v=20261107113203';
 
 // A password-reset email links here as ?reset=<token>. The token is only used when the person saves.
 const RESET_TOKEN = new URLSearchParams(location.search).get('reset');
@@ -151,9 +151,12 @@ export const remote = {
   },
   isRegistered: () => !!deviceToken(),
   async signOut() { await sb().auth.signOut({ scope: 'local' }); },
-  async listStaff() { return check(await sb().from('staff').select('id,name,role,active').order('name')); },
-  createStaff: p => callFn('staff-admin', { action: 'create', ...p }),
-  updateStaff: (id, p) => callFn('staff-admin', { action: 'update', id, ...p }),
+  async listStaff() {
+    return check(await sb().from('staff').select('id,name,role,active,commission_pct').order('name'))
+      .map(s => ({ ...s, commissionPct: Number(s.commission_pct) || 0 }));
+  },
+  createStaff: p => callFn('staff-admin', { action: 'create', ...p, commission_pct: p.commissionPct }),
+  updateStaff: (id, p) => callFn('staff-admin', { action: 'update', id, ...p, commission_pct: p.commissionPct }),
   notify: (jobId, kind, trackUrl, to) => callFn('notify', { job_id: jobId, kind, track_url: trackUrl, to }),
   track: token => callFn('track', { token }),
 

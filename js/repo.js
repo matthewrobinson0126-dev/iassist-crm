@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261107111329';
-import { uid, now } from './ui.js?v=20261107111329';
+import { db, remote } from './db.js?v=20261107113203';
+import { uid, now } from './ui.js?v=20261107113203';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -49,7 +49,7 @@ async function hashPin(pin, salt) {
   return 'f' + h1.toString(16) + h2.toString(16);
 }
 
-const publicStaff = s => s && ({ id: s.id, name: s.name, role: s.role, active: s.active });
+const publicStaff = s => s && ({ id: s.id, name: s.name, role: s.role, active: s.active, commissionPct: Number(s.commissionPct ?? s.commission_pct) || 0 });
 
 function saveSession() {
   try {
@@ -138,16 +138,16 @@ export async function listStaff() {
 }
 export const hasStaff = async () => (await db.list('staff')).length > 0;
 
-export async function createStaff({ name, role = 'staff', pin }, { firstOwner = false } = {}) {
+export async function createStaff({ name, role = 'staff', pin, commissionPct = 0 }, { firstOwner = false } = {}) {
   if (firstOwner) {
     if (await hasStaff()) throw new Error('The shop is already set up.');
     role = 'owner';
   } else requireOwner();
   if (!name?.trim()) throw new Error('Enter a name.');
   if (!validPin(pin)) throw new Error('The PIN must be 4 digits.');
-  if (remote) return remote.createStaff({ name: name.trim(), role, pin });
+  if (remote) return remote.createStaff({ name: name.trim(), role, pin, commissionPct });
   const salt = uid();
-  const s = { id: uid(), name: name.trim(), role, active: true, salt, pinHash: await hashPin(pin, salt),
+  const s = { id: uid(), name: name.trim(), role, active: true, commissionPct: Number(commissionPct) || 0, salt, pinHash: await hashPin(pin, salt),
     createdAt: now(), createdBy: me?.id || null };
   await db.put('staff', s);
   return publicStaff(s);
@@ -166,6 +166,7 @@ export async function updateStaff(id, patch) {
   if (patch.name !== undefined) next.name = patch.name.trim() || s.name;
   if (patch.role !== undefined) next.role = patch.role;
   if (patch.active !== undefined) next.active = patch.active;
+  if (patch.commissionPct !== undefined) next.commissionPct = Math.min(100, Math.max(0, Number(patch.commissionPct) || 0));
   if (patch.pin) {
     if (!validPin(patch.pin)) throw new Error('The PIN must be 4 digits.');
     next.salt = uid();
@@ -291,6 +292,7 @@ export async function createJob(d, { demo = false } = {}) {
   for (const p of d.photos || []) await addPhoto(job, p.blob, p.caption || 'Condition at book-in', { log: false });
   await logEvent(job, 'booked', `Booked in by ${me.name}${job.jobType === 'warranty' ? ` (warranty return for ${job.warrantyOfNo})` : ''}`);
   if (job.technicianName) await logEvent(job, 'assign', `Assigned to ${job.technicianName}`);
+  if (job.deposit > 0) await addPayment({ job, kind: 'deposit', method: d.depositMethod || 'Cash', amount: job.deposit });
   if (!demo) notify(job, 'booked');
   return job;
 }
@@ -433,6 +435,7 @@ export async function handBack(job, { method, amount, warrantyMonths, signature 
     collectedAt: t, collectedBy: me.id, collectedByName: me.name,
   });
   await db.remove('job_secrets', job.id); // POPIA: passcode gone once collected
+  if (num(amount) > 0 && method && method !== 'No charge') await addPayment({ job: next, kind: 'payment', method, amount });
   if (!job.demo) notify(next, 'review');
   await logEvent(job, 'collected', `Handed back by ${me.name}${method ? ` · paid ${method}${num(amount) !== null ? ` R${num(amount)}` : ''}` : ''}${warrantyUntil ? ` · warranty to ${warrantyUntil}` : ''}. Passcode deleted.`);
   return next;
@@ -483,4 +486,108 @@ export async function exportBackup() {
   for (const t of ['staff', 'customers', 'jobs', 'job_events', 'job_photos', 'settings'])
     out[t] = (await db.list(t)).map(r => { const { pinHash, salt, ...rest } = r; return rest; });
   return JSON.stringify(out, null, 2);
+}
+
+// ───────────── Phase 3: payments ledger, cash-up, tasks ─────────────
+export const PAYMENT_KINDS = { deposit: 'Deposit', payment: 'Payment', refund: 'Refund', expense: 'Expense' };
+export const EXPENSE_CATEGORIES = ['Parts', 'Courier', 'Collection / delivery', 'Rent', 'Wages', 'Utilities', 'Marketing',
+  'Tools / equipment', 'Other'];
+export const MONEY_METHODS = ['Cash', 'Card', 'EFT', 'Other'];
+const IN_KINDS = ['deposit', 'payment'];
+export const isIn = p => IN_KINDS.includes(p.kind);
+export const signed = p => (isIn(p) ? 1 : -1) * (Number(p.amount) || 0);
+// Practice (demo) records stay out of the real shop's money and reports, except when the whole app runs in demo mode.
+export const countsAsReal = r => !r.demo || !remote;
+export const dayKey = iso => new Date(iso).toLocaleDateString('en-CA');      // local YYYY-MM-DD
+export const todayKey = () => new Date().toLocaleDateString('en-CA');
+
+export async function addPayment({ job = null, kind, method = 'Cash', amount, category = '', note = '' }) {
+  requireUser();
+  const amt = num(amount);
+  if (amt === null || amt <= 0) throw new Error('Enter an amount above R0.');
+  if (!PAYMENT_KINDS[kind]) throw new Error('Unknown payment type.');
+  if (kind === 'expense' && !job) requireOwner();          // shop-wide costs are owner-only
+  const rec = { id: uid(), jobId: job?.id || null, jobNo: job?.jobNo || '', kind, method, amount: amt,
+    category: category || '', note: note || '', demo: !!job?.demo, createdAt: now(), staffId: me.id, staffName: me.name };
+  const saved = await db.put('payments', rec);
+  if (job) {
+    // Part costs stay private to the owner, so the job history (seen by staff) doesn't show the amount.
+    await logEvent(job, 'money', kind === 'expense'
+      ? `Cost recorded (${category || 'Parts'}): visible to the owner only`
+      : `${PAYMENT_KINDS[kind]} ${method} R${amt}${note ? ` · ${note}` : ''}`);
+  }
+  return saved;
+}
+
+export async function listPayments(filter) {
+  return (await db.list('payments', filter)).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+export const jobPayments = jobId => listPayments({ jobId });
+
+export async function deletePayment(p, job = null) {
+  requireOwner();
+  await db.remove('payments', p.id);
+  if (job) await logEvent(job, 'money', `Removed ${PAYMENT_KINDS[p.kind].toLowerCase()} entry`);
+}
+
+// What the customer has paid (deposits + payments − refunds) and what is still owed.
+export function jobMoney(job, payments) {
+  const paid = payments.filter(p => p.kind !== 'expense').reduce((t, p) => t + signed(p), 0);
+  const costs = payments.filter(p => p.kind === 'expense').reduce((t, p) => t + Number(p.amount || 0), 0);
+  const quote = job.jobType === 'warranty' ? 0 : Number(job.quote) || 0;
+  return { paid: Math.round(paid * 100) / 100, costs, due: Math.max(0, Math.round((quote - paid) * 100) / 100), quote };
+}
+
+// End of day: what should be in the till vs what was counted.
+export async function cashupSummary(day = todayKey()) {
+  const list = (await listPayments()).filter(p => dayKey(p.createdAt) === day && countsAsReal(p));
+  const by = (pred) => Math.round(list.filter(pred).reduce((t, p) => t + signed(p), 0) * 100) / 100;
+  return {
+    day, count: list.length, list,
+    cashIn: by(p => isIn(p) && p.method === 'Cash'),
+    cashOut: Math.abs(by(p => !isIn(p) && p.method === 'Cash')),
+    expectedCash: by(p => p.method === 'Cash'),
+    // Card/EFT show takings only; costs paid by card or EFT don't come out of the shop's takings for the day.
+    card: by(p => p.method === 'Card' && p.kind !== 'expense'),
+    eft: by(p => p.method === 'EFT' && p.kind !== 'expense'),
+  };
+}
+
+export async function saveCashup({ day, counted, note }) {
+  requireUser();
+  const s = await cashupSummary(day);
+  const c = num(counted);
+  if (c === null || c < 0) throw new Error('Enter the cash you counted.');
+  return db.put('cashups', { id: uid(), day, expectedCash: s.expectedCash, countedCash: c,
+    difference: Math.round((c - s.expectedCash) * 100) / 100, cardTotal: s.card, eftTotal: s.eft, note: note || '',
+    createdAt: now(), staffId: me.id, staffName: me.name });
+}
+export async function listCashups() {
+  return (await db.list('cashups')).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
+// ───────────── Tasks ─────────────
+export async function addTask({ title, notes = '', dueDate = '', job = null, assignedTo = '' }) {
+  requireUser();
+  if (!title?.trim()) throw new Error('Enter what needs doing.');
+  const staff = assignedTo ? (await listStaff()).find(s => s.id === assignedTo) : null;
+  const t = await db.put('tasks', { id: uid(), title: title.trim(), notes, dueDate: dueDate || '', jobId: job?.id || null,
+    jobNo: job?.jobNo || '', assignedTo: staff?.id || null, assignedName: staff?.name || '', done: false, doneAt: null,
+    doneByName: '', createdAt: now(), createdBy: me.id, createdByName: me.name });
+  if (job) await logEvent(job, 'task', `Task added: ${t.title}${staff ? ` (for ${staff.name})` : ''}`);
+  return t;
+}
+export async function setTaskDone(task, done) {
+  requireUser();
+  const t = await db.put('tasks', { ...task, done, doneAt: done ? now() : null, doneByName: done ? me.name : '' });
+  if (task.jobId) {
+    const job = await getJob(task.jobId);
+    if (job) await logEvent(job, 'task', `${done ? 'Done' : 'Re-opened'}: ${task.title}`);
+  }
+  return t;
+}
+export async function deleteTask(task) { requireOwner(); await db.remove('tasks', task.id); }
+export async function listTasks(filter) {
+  return (await db.list('tasks', filter)).sort((a, b) =>
+    (a.done - b.done) || (a.dueDate || '9999').localeCompare(b.dueDate || '9999') || a.createdAt.localeCompare(b.createdAt));
 }

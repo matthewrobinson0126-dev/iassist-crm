@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261107111329';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107111329';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107111329';
-import { printJobCard } from '../print.js?v=20261107111329';
-import { openWhatsApp } from '../messages.js?v=20261107111329';
-import { go } from '../app.js?v=20261107111329';
+import * as repo from '../repo.js?v=20261107113203';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107113203';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107113203';
+import { printJobCard } from '../print.js?v=20261107113203';
+import { openWhatsApp } from '../messages.js?v=20261107113203';
+import { go } from '../app.js?v=20261107113203';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -16,7 +16,7 @@ const newDraft = () => ({
   faults: [], faultNotes: '', damage: [], conditionNotes: '', photos: [], accessories: [],
   passcode: '', quoteMode: 'assess', quote: '', quoteNote: '', deposit: '', dueDate: '', collection: 'store',
   internalNotes: '', accepted: false, startedBy: repo.auth.user?.name,
-  referral: '', urgent: false, technicianId: '', technicianName: '', jobType: 'paid', warrantyOf: null, warrantyOfNo: '',
+  depositMethod: 'Cash', referral: '', urgent: false, technicianId: '', technicianName: '', jobType: 'paid', warrantyOf: null, warrantyOfNo: '',
 });
 
 export async function renderBookIn(view) {
@@ -253,7 +253,10 @@ const STEP_VIEWS = [
           <label class="field">What the price covers <span class="hint">optional</span><input type="text" id="q-note" data-bind="quoteNote" placeholder="e.g. Screen replacement, incl. VAT"></label>
         </div>` : '<p class="muted" style="margin:0">We’ll contact the customer with a price before doing any work.</p>'}
         <p class="muted" style="margin:0">Add exact parts &amp; labour from your website prices on the job page after booking.</p>
-        <label class="field">Deposit paid (R) <span class="hint">optional</span><input type="number" id="q-dep" data-bind="deposit" inputmode="decimal" min="0"></label>
+        <div class="grid-2">
+          <label class="field">Deposit paid (R) <span class="hint">optional</span><input type="number" id="q-dep" data-bind="deposit" inputmode="decimal" min="0"></label>
+          <label class="field">Deposit paid by<select id="q-dep-method" data-bind="depositMethod">${repo.MONEY_METHODS.map(x => `<option>${x}</option>`).join('')}</select></label>
+        </div>
       </div>`}
       <div class="card stack"><h2 style="margin:0">Timing</h2>
         <label class="field">Estimated ready date <span class="hint">optional</span><input type="date" id="q-due" data-bind="dueDate"></label>

@@ -1,12 +1,15 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261107111329';
-import { db } from './db.js?v=20261107111329';
-import { $, esc, initials, toast } from './ui.js?v=20261107111329';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107111329';
-import { renderBookIn } from './screens/bookin.js?v=20261107111329';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261107111329';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107111329';
-import { renderSettings } from './screens/settings.js?v=20261107111329';
+import * as repo from './repo.js?v=20261107113203';
+import { db } from './db.js?v=20261107113203';
+import { $, esc, initials, toast } from './ui.js?v=20261107113203';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107113203';
+import { renderBookIn } from './screens/bookin.js?v=20261107113203';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261107113203';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107113203';
+import { renderSettings } from './screens/settings.js?v=20261107113203';
+import { renderMoney } from './screens/money.js?v=20261107113203';
+import { renderTasks } from './screens/tasks.js?v=20261107113203';
+import { renderReports } from './screens/reports.js?v=20261107113203';
 
 const routes = {
   bookin: renderBookIn,
@@ -15,6 +18,9 @@ const routes = {
   customers: renderCustomers,
   customer: renderCustomer,
   settings: renderSettings,
+  money: renderMoney,
+  tasks: renderTasks,
+  reports: renderReports,
 };
 
 export const go = hash => { if (location.hash === '#' + hash) route(); else location.hash = hash; };
@@ -35,7 +41,9 @@ function shell() {
         <a href="#bookin" data-nav="bookin" class="book">+ Book in</a>
         <a href="#jobs" data-nav="jobs">Jobs</a>
         <a href="#customers" data-nav="customers">Customers</a>
-        ${repo.auth.isOwner() ? '<a href="#settings" data-nav="settings">Settings</a>' : ''}
+        <a href="#tasks" data-nav="tasks">Tasks</a>
+        <a href="#money" data-nav="money">Money</a>
+        ${repo.auth.isOwner() ? '<a href="#reports" data-nav="reports">Reports</a><a href="#settings" data-nav="settings">Settings</a>' : ''}
       </nav>
       <span class="spacer"></span>
       <button class="user-chip" id="lock-btn" title="Switch user / lock">

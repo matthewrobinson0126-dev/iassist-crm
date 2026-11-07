@@ -1,7 +1,7 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261107111329';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261107111329';
-import { go } from '../app.js?v=20261107111329';
+import * as repo from '../repo.js?v=20261107113203';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261107113203';
+import { go } from '../app.js?v=20261107113203';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -14,7 +14,7 @@ export async function renderSettings(view) {
         <p class="muted" style="margin:0">Each person signs in with their own 4-digit PIN. Staff can book in, update and hand back jobs. Only owners can open Settings or delete jobs.</p>
         <div class="list">${staff.map(p => `<button class="list-row" data-staff="${p.id}">
           <span class="avatar">${esc(initials(p.name))}</span><span class="grow"><b>${esc(p.name)}</b>${p.id === repo.auth.user.id ? ' <span class="muted">(you)</span>' : ''}</span>
-          <span class="badge ${p.role === 'owner' ? 'owner' : ''}">${p.role}</span>${p.active ? '' : '<span class="badge off">Off</span>'}</button>`).join('')}</div>
+          ${p.commissionPct ? `<span class="muted">${p.commissionPct}%</span>` : ''}<span class="badge ${p.role === 'owner' ? 'owner' : ''}">${p.role}</span>${p.active ? '' : '<span class="badge off">Off</span>'}</button>`).join('')}</div>
       </div>
       <form class="card stack" id="shop-form"><h2 style="margin:0">Shop details</h2>
         <label class="field">Shop name<input type="text" id="sh-name" value="${esc(s.shopName)}"></label>
@@ -93,6 +93,8 @@ function staffModal(person, view) {
       <button type="button" data-r="staff">Staff</button><button type="button" data-r="owner">Owner</button></div></div>
     <label class="field">${isNew ? '4-digit PIN' : 'New PIN'} ${isNew ? '' : '<span class="hint">leave empty to keep the current PIN</span>'}
       <input type="password" id="sm-pin" inputmode="numeric" maxlength="4"></label>
+    <label class="field">Commission (% of job profit) <span class="hint">used in Reports; 0 = none</span>
+      <input type="number" id="sm-comm" min="0" max="100" step="0.5" value="${esc(person?.commissionPct ?? 0)}"></label>
     ${!isNew ? `<label class="check"><input type="checkbox" id="sm-active" ${person.active ? 'checked' : ''}> Can sign in</label>` : ''}
     <p class="error-msg" id="sm-err" hidden></p>
     <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="sm-save">${isNew ? 'Add staff member' : 'Save'}</button></div>`);
@@ -102,9 +104,10 @@ function staffModal(person, view) {
   paint();
   m.el.querySelector('#sm-save').onclick = async () => {
     const name = m.el.querySelector('#sm-name').value, pin = m.el.querySelector('#sm-pin').value;
+    const commissionPct = Number(m.el.querySelector('#sm-comm').value) || 0;
     try {
-      if (isNew) await repo.createStaff({ name, role, pin });
-      else await repo.updateStaff(person.id, { name, role, pin, active: m.el.querySelector('#sm-active').checked });
+      if (isNew) await repo.createStaff({ name, role, pin, commissionPct });
+      else await repo.updateStaff(person.id, { name, role, pin, commissionPct, active: m.el.querySelector('#sm-active').checked });
       m.close();
       toast(isNew ? `${name} added` : 'Saved');
       // Your own role may have changed: rebuild the shell via the router.
