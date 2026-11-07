@@ -1,6 +1,6 @@
 // Ready-made WhatsApp messages. Staff can edit before sending.
-import * as repo from './repo.js?v=20261107143707';
-import { esc, firstName, money, modal, toast } from './ui.js?v=20261107143707';
+import * as repo from './repo.js?v=20261107152030';
+import { esc, firstName, money, modal, toast } from './ui.js?v=20261107152030';
 
 const trackLine = j => (repo.auth.cloud && j.trackToken ? `\nTrack your repair: ${repo.trackUrl(j)}` : '');
 
@@ -53,4 +53,24 @@ export async function openWhatsApp(job) {
     setTimeout(m.close, 300);
   };
   pick(current);
+}
+
+// WhatsApp a quote: the link lets the customer accept or decline it online.
+export async function whatsAppQuote(q) {
+  const s = await repo.getSettings();
+  const number = repo.waNumber(q.customerPhone);
+  const url = repo.auth.cloud ? repo.quoteUrl(q) : '';
+  const text = `Hi ${firstName(q.customerName)}, here is your quote ${q.quoteNo}${q.model ? ` for your ${q.model}` : ''} from ${s.shopName}: ${money(q.total)}.`
+    + (url ? `\nView and accept it here: ${url}` : `\nPlease reply YES if you'd like us to go ahead.`)
+    + (q.validUntil ? `\nValid until ${new Date(q.validUntil + 'T12:00:00').toLocaleDateString('en-ZA', { day: 'numeric', month: 'long' })}.` : '');
+  const m = modal(`
+    <h2>WhatsApp quote ${esc(q.quoteNo)}</h2>
+    <label class="field">Message<textarea id="wa-text" rows="6">${esc(text)}</textarea></label>
+    <p class="muted">Sends to +${esc(number)}. WhatsApp opens with the message ready. You press send there.</p>
+    <div class="modal-actions"><button class="btn" data-close>Cancel</button>
+      <a class="btn primary" id="wa-go" target="_blank" rel="noopener">Open WhatsApp</a></div>`, { wide: true });
+  const ta = m.el.querySelector('#wa-text'), link = m.el.querySelector('#wa-go');
+  const setLink = () => { link.href = `https://wa.me/${number}?text=${encodeURIComponent(ta.value)}`; };
+  ta.oninput = setLink; setLink();
+  link.onclick = () => { toast('Opened WhatsApp'); setTimeout(m.close, 300); };
 }

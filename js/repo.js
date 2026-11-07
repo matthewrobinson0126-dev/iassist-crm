@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261107143707';
-import { uid, now } from './ui.js?v=20261107143707';
+import { db, remote } from './db.js?v=20261107152030';
+import { uid, now } from './ui.js?v=20261107152030';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -31,6 +31,8 @@ const DEFAULT_SETTINGS = {
   idleLockMinutes: 10,
   terms: DEFAULT_TERMS,
   nextJobNo: 1,
+  quoteValidDays: 7,
+  vatNumber: '',
 };
 
 // ───────────── Sign-in (PIN) ─────────────
@@ -295,6 +297,7 @@ export async function createJob(d, { demo = false } = {}) {
   await logEvent(job, 'booked', `Booked in by ${me.name}${job.jobType === 'warranty' ? ` (warranty return for ${job.warrantyOfNo})` : ''}`);
   if (job.technicianName) await logEvent(job, 'assign', `Assigned to ${job.technicianName}`);
   if (job.deposit > 0) await addPayment({ job, kind: 'deposit', method: d.depositMethod || 'Cash', amount: job.deposit });
+  if (d.quoteId) job = await linkQuoteToJob(d.quoteId, job);
   if (!demo) notify(job, 'booked');
   return job;
 }
@@ -480,12 +483,13 @@ export async function loadDemoData() {
 export async function removeDemoData() {
   requireOwner();
   for (const j of (await db.list('jobs')).filter(j => j.demo)) await deleteJob(j);
+  for (const q of (await db.list('quotes')).filter(q => q.demo)) await db.remove('quotes', q.id);
   for (const c of (await db.list('customers')).filter(c => c.demo)) await db.remove('customers', c.id);
 }
 
 export async function exportBackup() {
   const out = { exportedAt: now(), app: 'iAssist Book-In CRM' };
-  for (const t of ['staff', 'customers', 'jobs', 'job_events', 'job_photos', 'settings'])
+  for (const t of ['staff', 'customers', 'jobs', 'job_events', 'job_photos', 'quotes', 'settings'])
     out[t] = (await db.list(t)).map(r => { const { pinHash, salt, ...rest } = r; return rest; });
   return JSON.stringify(out, null, 2);
 }
@@ -771,3 +775,132 @@ export async function recordSale({ lines, method, customer = null, customerName 
   return sale;
 }
 export async function listSales() { return (await db.list('sales')).sort((a, b) => b.createdAt.localeCompare(a.createdAt)); }
+
+// ───────────── Phase 5: quotes (Q-0001…) ─────────────
+// A quote is linked to a booked-in job (sent after assessment) or stands alone (phone, walk-in, business enquiry)
+// and becomes a job when the customer says yes. Customers accept or decline online through quote.html.
+export const QUOTE_STATES = { draft: 'Draft', sent: 'Waiting for answer', accepted: 'Accepted', declined: 'Declined', expired: 'Expired' };
+export const quoteState = q => (q.status === 'sent' && q.validUntil && q.validUntil < todayKey() ? 'expired' : q.status);
+export const quoteUrl = q => (q.token ? new URL(`quote.html?q=${q.token}`, location.href).href : '');
+const newToken = () => uid().replace(/-/g, '') + uid().replace(/-/g, '');
+const daysFromNow = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toLocaleDateString('en-CA'); };
+const QUOTE_COLS = ['id', 'quoteNo', 'jobId', 'jobNo', 'customerId', 'customerName', 'customerPhone', 'deviceType', 'model', 'fault',
+  'lines', 'total', 'notes', 'validUntil', 'status', 'token', 'sentAt', 'respondedAt', 'responseVia', 'responseNote', 'demo',
+  'createdAt', 'updatedAt', 'createdBy', 'createdByName'];
+const pickQuote = q => Object.fromEntries(QUOTE_COLS.filter(k => q[k] !== undefined).map(k => [k, q[k]]));
+const putQuote = q => db.put('quotes', pickQuote({ ...q, updatedAt: now() }));
+
+export async function listQuotes(filter) {
+  return (await db.list('quotes', filter)).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+export const getQuote = id => db.get('quotes', id);
+export const quotesForJob = jobId => listQuotes({ jobId });
+
+// Save a quote. The customer is either an existing one (customerId) or typed in (customer: {name, phone, email…}).
+export async function saveQuote(q) {
+  requireUser();
+  const settings = await getSettings();
+  const lines = (q.lines || []).filter(l => String(l.name || '').trim()).map(l => ({ name: String(l.name).trim(),
+    qty: Math.max(1, Math.round(Number(l.qty) || 1)), price: Math.round((Number(l.price) || 0) * 100) / 100 }));
+  let customer = q.customerId ? await getCustomer(q.customerId) : null;
+  const typed = q.customer;
+  if (typed) {
+    if (customer) {
+      // Details edited on the quote (e.g. an email address added so the quote can be emailed).
+      if (typed.name !== customer.name || typed.phone !== customer.phone || (typed.email || '') !== (customer.email || ''))
+        customer = await saveCustomer({ ...customer, name: typed.name, phone: typed.phone, email: typed.email || '' });
+    } else {
+      const found = await findByPhone(typed.phone);
+      customer = found
+        ? await saveCustomer({ ...found, email: typed.email || found.email || '' })
+        : await saveCustomer({ name: typed.name, phone: typed.phone, email: typed.email || '', area: typed.area || '',
+          type: typed.isBusiness ? 'business' : 'individual', companyName: typed.companyName || '', vatNumber: typed.vatNumber || '',
+          referral: 'Quote', demo: !!q.demo });
+    }
+  }
+  if (!customer) throw new Error('Choose the customer, or type their name and number.');
+  const t = now();
+  const rec = { status: 'draft', notes: '', deviceType: '', model: '', fault: '', ...q,
+    customerId: customer.id, customerName: customer.name, customerPhone: customer.phone,
+    model: String(q.model || '').trim(), lines, total: linesTotal(lines),
+    validUntil: q.validUntil || daysFromNow(Number(settings.quoteValidDays) || 7),
+    id: q.id || uid(), createdAt: q.createdAt || t, createdBy: q.createdBy || me.id, createdByName: q.createdByName || me.name,
+    demo: !!q.demo };
+  if (!remote && !rec.quoteNo) rec.quoteNo = await nextNo('nextQuoteNo', 'Q-');
+  if (remote && !q.id) delete rec.quoteNo;   // the cloud database numbers it
+  return putQuote(rec);
+}
+
+// "Send quote" on a job: the job's parts & labour become the quote lines (an open quote is updated, not duplicated).
+export async function quoteFromJob(job) {
+  requireUser();
+  if (job.jobType === 'warranty') throw new Error('Warranty jobs are free to the customer, so they don’t need a quote.');
+  if (!(job.lines || []).length) throw new Error('Add the parts & labour first. They become the lines on the quote.');
+  const open = (await quotesForJob(job.id)).find(q => q.status === 'draft' || q.status === 'sent');
+  return saveQuote({ ...(open || { jobId: job.id, jobNo: job.jobNo, customerId: job.customerId, demo: !!job.demo }),
+    deviceType: job.deviceType, model: job.model, fault: open?.fault || (job.faults || []).join(', ') || job.faultNotes || '',
+    lines: job.lines.map(({ name, qty, price }) => ({ name, qty, price })) });
+}
+
+// Mark as sent, email the link (when the customer has an email address) and move a linked job to "Waiting for approval".
+export async function sendQuote(q) {
+  requireUser();
+  if (!(q.lines || []).length) throw new Error('Add at least one line to the quote.');
+  const settings = await getSettings();
+  const state = quoteState(q);
+  if (state === 'accepted') throw new Error('This quote is already accepted.');
+  const patch = { token: q.token || newToken(), status: 'sent', sentAt: now() };
+  if (state === 'expired' || state === 'declined') {   // sending again gives the customer a fresh validity period
+    patch.validUntil = daysFromNow(Number(settings.quoteValidDays) || 7);
+    Object.assign(patch, { respondedAt: null, responseVia: null, responseNote: null });
+  }
+  const next = await putQuote({ ...q, ...patch });
+  if (q.jobId) {
+    const job = await getJob(q.jobId);
+    if (job) {
+      let j = job;
+      if (j.jobType !== 'warranty' && Number(j.quote) !== Number(next.total)) j = await saveJob(j, { quote: next.total });
+      await logEvent(job, 'quote', `Quote ${next.quoteNo} sent: R${next.total}`);
+      if (['booked', 'diagnosing'].includes(j.status)) {          // no separate "approval" email: the quote email covers it
+        await saveJob(j, { status: 'approval', statusAt: now() });
+        await logEvent(job, 'status', `${statusLabel(j.status)} → ${statusLabel('approval')}`);
+      }
+    }
+  }
+  let email = { skipped: 'Demo mode' };
+  if (remote && !next.demo) {
+    try { email = await remote.notifyQuote(next.id, quoteUrl(next)); } catch (ex) { email = { error: ex.message }; }
+  }
+  return { quote: next, email };
+}
+
+// Staff record the answer themselves (customer phoned or came in).
+export async function answerQuote(q, accepted, note = '') {
+  requireUser();
+  const next = await putQuote({ ...q, status: accepted ? 'accepted' : 'declined', respondedAt: now(), responseVia: 'staff',
+    responseNote: note.trim() || null });
+  if (q.jobId) {
+    const job = await getJob(q.jobId);
+    if (job) {
+      await logEvent(job, 'quote', `Quote ${q.quoteNo} ${accepted ? 'ACCEPTED' : 'DECLINED'} (recorded by ${me.name})${note.trim() ? `: ${note.trim()}` : ''}`);
+      if (accepted) {
+        let j = job.jobType !== 'warranty' ? await saveJob(job, { quote: q.total }) : job;
+        if (['booked', 'diagnosing', 'approval'].includes(j.status)) j = await setStatus(j, 'repairing');
+      }
+    }
+  }
+  return next;
+}
+
+// Booking in from an accepted (or phoned-in) quote: the quote lines and price go onto the new job.
+async function linkQuoteToJob(quoteId, job) {
+  const q = await getQuote(quoteId);
+  if (!q) return job;
+  const next = await saveJob(job, { lines: q.lines, quote: job.jobType === 'warranty' ? 0 : q.total });
+  await logEvent(job, 'quote', `Booked in from quote ${q.quoteNo} (R${q.total})`);
+  await putQuote({ ...q, jobId: job.id, jobNo: next.jobNo,
+    ...(q.status !== 'accepted' ? { status: 'accepted', respondedAt: now(), responseVia: 'staff' } : {}) });
+  return next;
+}
+
+export async function deleteQuote(q) { requireOwner(); await db.remove('quotes', q.id); }

@@ -1,8 +1,8 @@
 // Demo-mode storage: IndexedDB on this device only.
 const DB_NAME = 'iassist-crm';
-const VERSION = 3;
+const VERSION = 4;
 const TABLES = ['staff', 'customers', 'jobs', 'job_events', 'job_photos', 'job_secrets', 'files', 'settings',
-  'payments', 'cashups', 'tasks', 'suppliers', 'products', 'product_costs', 'stock_moves', 'purchase_orders', 'sales'];
+  'payments', 'cashups', 'tasks', 'suppliers', 'products', 'product_costs', 'stock_moves', 'purchase_orders', 'sales', 'quotes'];
 
 let opening = null;
 function open() {

@@ -1,9 +1,9 @@
 // Owner reports: takings, profit, turnaround, technicians (with commission), top repairs, where customers come from.
 // Every figure is worked out from the jobs and the payments ledger; demo data is left out.
-import * as repo from '../repo.js?v=20261107143707';
-import { STATUSES } from '../repo.js?v=20261107143707';
-import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261107143707';
-import { deviceType } from '../devices.js?v=20261107143707';
+import * as repo from '../repo.js?v=20261107152030';
+import { STATUSES } from '../repo.js?v=20261107152030';
+import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261107152030';
+import { deviceType } from '../devices.js?v=20261107152030';
 
 const RANGES = [
   { id: 'week', label: 'Last 7 days', days: 7 },
@@ -56,7 +56,7 @@ function dayColumns(from, to, byDay) {
 
 export async function renderReports(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can see reports</h2></div>'; return; }
-  const [allJobs, allPay, staff] = await Promise.all([repo.listJobs(), repo.listPayments(), repo.listStaff()]);
+  const [allJobs, allPay, staff, allQuotes] = await Promise.all([repo.listJobs(), repo.listPayments(), repo.listStaff(), repo.listQuotes()]);
   const jobs = allJobs.filter(repo.countsAsReal), pay = allPay.filter(repo.countsAsReal);
   const { from, to } = bounds(range);
   const inRange = iso => { if (!iso) return false; const k = repo.dayKey(iso); return k >= from && k <= to; };
@@ -88,6 +88,13 @@ export async function renderReports(view) {
   }).filter(r => r.jobs);
   const unassigned = collected.filter(j => !j.technicianId).length;
 
+  // Quotes sent in the period and what became of them.
+  const qSent = allQuotes.filter(q => repo.countsAsReal(q) && q.status !== 'draft' && inRange(q.sentAt || q.createdAt));
+  const qBy = st => qSent.filter(q => repo.quoteState(q) === st);
+  const qAcc = qBy('accepted'), qDec = qBy('declined'), qWait = qBy('sent'), qExp = qBy('expired');
+  const qAnswered = qAcc.length + qDec.length + qExp.length;
+  const qRate = qAnswered ? Math.round((qAcc.length / qAnswered) * 100) : null;
+
   const expensesByCat = [...payR.filter(p => p.kind === 'expense').reduce((m, p) => m.set(p.category || 'Other', (m.get(p.category || 'Other') || 0) + Number(p.amount)), new Map())].sort((a, b) => b[1] - a[1]);
 
   view.innerHTML = `
@@ -118,6 +125,13 @@ export async function renderReports(view) {
       <div class="card"><h2>Top repairs booked</h2>${hbars(countBy(booked, j => j.faults || []).slice(0, 8))}</div>
       <div class="card"><h2>Devices booked</h2>${hbars(countBy(booked, j => deviceType(j.deviceType)?.label || j.deviceType).slice(0, 9))}</div>
       <div class="card"><h2>Where customers came from</h2>${hbars(countBy(booked, j => j.referral || 'Not asked').slice(0, 8))}</div>
+      <div class="card"><h2>Quotes</h2>
+        ${qSent.length ? `<div class="stat-row" style="margin:0 0 12px">
+            <div class="stat"><span>Accepted</span><b class="num">${qRate === null ? '—' : qRate + '%'}</b><small>${qAcc.length} of ${qAnswered} answered · ${money(sum(qAcc, q => q.total))}</small></div>
+            <div class="stat"><span>Waiting</span><b class="num">${qWait.length}</b><small>${money(sum(qWait, q => q.total))} still open</small></div></div>
+          ${hbars([['Accepted', qAcc.length], ['Declined', qDec.length], ['Expired, no answer', qExp.length], ['Waiting for answer', qWait.length]].filter(r => r[1]))}
+          <p class="muted" style="margin:8px 0 0">${qSent.length} quote${qSent.length === 1 ? '' : 's'} sent in this period. Expired quotes count as not accepted.</p>`
+          : '<p class="muted" style="margin:0">No quotes sent in this period.</p>'}</div>
       <div class="card"><h2>Costs by type</h2>${hbars(expensesByCat.map(([k, v]) => [k, round(v)]), money, 'No costs recorded in this period.')}</div>
     </div>`;
   $$('[data-r]', view).forEach(b => b.onclick = () => { range = b.dataset.r; renderReports(view); });

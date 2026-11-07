@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261107143707';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107143707';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107143707';
-import { printJobCard } from '../print.js?v=20261107143707';
-import { openWhatsApp } from '../messages.js?v=20261107143707';
-import { go } from '../app.js?v=20261107143707';
+import * as repo from '../repo.js?v=20261107152030';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107152030';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107152030';
+import { printJobCard } from '../print.js?v=20261107152030';
+import { openWhatsApp } from '../messages.js?v=20261107152030';
+import { go } from '../app.js?v=20261107152030';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -32,10 +32,18 @@ export function startWarrantyJob(job, customer) {
   go('bookin');
 }
 
+// Booking in from a quote: customer, device and the quoted price carry over; the quote lines go onto the job.
+export function startQuoteJob(q, customer) {
+  draft = { ...newDraft(), customer, deviceType: q.deviceType || '', model: q.model || '', faultNotes: q.fault || '',
+    quoteMode: 'fixed', quote: String(q.total), quoteNote: `Quote ${q.quoteNo}`, quoteId: q.id, quoteNo: q.quoteNo,
+    referral: 'Quote', step: 1, maxStep: 1 };
+  go('bookin');
+}
+
 function draw(view) {
   view.innerHTML = `
     <div class="wizard">
-      <div class="page-head"><h1>Book in a device</h1><span class="spacer"></span>
+      <div class="page-head"><h1>Book in a device</h1>${draft.quoteNo ? `<span class="tag">From quote ${esc(draft.quoteNo)}</span>` : ''}<span class="spacer"></span>
         <button class="btn small ghost" id="restart">Start over</button></div>
       <ol class="steps">${STEPS.map((s, i) => {
         const reach = i <= (draft.maxStep || 0) && i !== draft.step;

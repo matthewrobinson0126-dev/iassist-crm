@@ -1,6 +1,6 @@
 // Public tracking page: reads the job status through the "track" server function (no login).
-import { CONFIG } from './config.js?v=20261107143707';
-import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107143707';
+import { CONFIG } from './config.js?v=20261107152030';
+import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107152030';
 
 const app = document.getElementById('app');
 const ORDER = ['Booked in', 'Being checked', 'Being repaired', 'Ready to collect', 'Collected'];
@@ -37,6 +37,9 @@ function render(d) {
       <span class="status ${done ? 'done' : ''}">${esc(d.statusLabel)}</span>
       <p class="muted" style="margin:10px 0 0">Updated ${fmtDateTime(d.statusAt)}</p>
     </div>
+    ${d.quoteOpen ? `<div class="card"><b>Your quote ${esc(d.quoteOpen.quoteNo)} is waiting for you</b>
+      <p class="muted" style="margin:6px 0 12px">Total ${money(d.quoteOpen.total)}. Please accept it so we can start the repair.</p>
+      <a class="status" style="text-decoration:none" href="quote.html?q=${encodeURIComponent(d.quoteOpen.token)}">View and accept the quote</a></div>` : ''}
     <div class="card"><ol class="steps">${ORDER.map((label, i) => {
       const when = i === 0 ? d.bookedAt : i === stage ? d.statusAt : i === 4 ? d.collectedAt : null;
       return `<li class="${i <= stage ? '' : 'todo'}"><b>${esc(label)}</b>${i <= stage && when ? `<div class="when">${fmtDateTime(when)}</div>` : ''}</li>`;

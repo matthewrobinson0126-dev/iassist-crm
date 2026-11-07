@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261107143707';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107143707';
-import { deviceType, collectionLabel } from './devices.js?v=20261107143707';
+import * as repo from './repo.js?v=20261107152030';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107152030';
+import { deviceType, collectionLabel } from './devices.js?v=20261107152030';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {
@@ -134,5 +134,40 @@ export async function printJobCard(job) {
       </div>
     </div>`;
   await Promise.all([...document.querySelectorAll('#print-area img')].map(i => i.decode().catch(() => {})));
+  window.print();
+}
+
+// Printable / PDF quote (AirPrint, or "Save as PDF" in the print dialog).
+export async function printQuote(q) {
+  const settings = await repo.getSettings();
+  const customer = q.customerId ? await repo.getCustomer(q.customerId) : null;
+  const url = repo.auth.cloud ? repo.quoteUrl(q) : '';
+  const lines = q.lines || [];
+  const vat = settings.vatNumber;
+  const excl = Math.round((Number(q.total) / 1.15) * 100) / 100;
+  $('#print-area').innerHTML = `
+    <div class="pc">
+      <div class="pc-head">
+        <div><h1>${esc(settings.shopName)}</h1><div>${esc(settings.address)}</div>
+          <div>${esc([settings.phone, settings.email].filter(Boolean).join(' · '))}</div>${vat ? `<div>VAT no. ${esc(vat)}</div>` : ''}</div>
+        <div><div class="pc-no">${esc(q.quoteNo || '')}</div><div>${vat ? 'Quotation' : 'Quote'}</div>
+          <div>${fmtDate(q.sentAt || q.createdAt)}</div>${q.jobNo ? `<div>Job ${esc(q.jobNo)}</div>` : ''}</div>
+      </div>
+      <div class="pc-grid">
+        <div><h3>Customer</h3><dl><dt>Name</dt><dd>${esc(customer?.name || q.customerName)}</dd>
+          ${customer?.type === 'business' ? `<dt>Company</dt><dd>${esc(customer.companyName || '')}${customer.vatNumber ? ` · VAT ${esc(customer.vatNumber)}` : ''}</dd>` : ''}
+          <dt>Phone</dt><dd>${esc(customer?.phone || q.customerPhone)}</dd>
+          ${customer?.email ? `<dt>Email</dt><dd>${esc(customer.email)}</dd>` : ''}</dl></div>
+        <div><h3>Device</h3><dl><dt>Model</dt><dd>${esc(q.model || '—')}</dd>${q.fault ? `<dt>Problem</dt><dd>${esc(q.fault)}</dd>` : ''}</dl></div>
+      </div>
+      <table class="pc-lines"><thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr></thead>
+        <tbody>${lines.map(l => `<tr><td>${esc(l.name)}</td><td>${esc(l.qty)}</td><td>${money(l.price)}</td><td>${money(l.qty * l.price)}</td></tr>`).join('')}</tbody></table>
+      <div style="text-align:right;margin-top:8px">
+        ${vat ? `<div>Subtotal (excl. VAT) ${money(excl)}</div><div>VAT 15% ${money(Math.round((q.total - excl) * 100) / 100)}</div>` : ''}
+        <div style="font-size:14pt"><b>Total${vat ? ' (incl. VAT)' : ''} ${money(q.total)}</b></div></div>
+      ${q.notes ? `<h3>Notes</h3><div style="white-space:pre-line">${esc(q.notes)}</div>` : ''}
+      <p>${q.validUntil ? `This quote is valid until <b>${fmtDate(q.validUntil)}</b>.` : ''} Prepared by ${esc(q.createdByName || '')}.</p>
+      ${url ? `<div class="pc-qr">${qrSvg(url, 2)}<div><b>Accept online</b><br>Scan the code to view and accept or decline quote ${esc(q.quoteNo)}.</div></div>` : ''}
+    </div>`;
   window.print();
 }

@@ -1,17 +1,18 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261107143707';
-import { db } from './db.js?v=20261107143707';
-import { $, esc, initials, toast } from './ui.js?v=20261107143707';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107143707';
-import { renderBookIn } from './screens/bookin.js?v=20261107143707';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261107143707';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107143707';
-import { renderSettings } from './screens/settings.js?v=20261107143707';
-import { renderMoney } from './screens/money.js?v=20261107143707';
-import { renderTasks } from './screens/tasks.js?v=20261107143707';
-import { renderReports } from './screens/reports.js?v=20261107143707';
-import { renderStock } from './screens/stock.js?v=20261107143707';
-import { renderSell } from './screens/sell.js?v=20261107143707';
+import * as repo from './repo.js?v=20261107152030';
+import { db } from './db.js?v=20261107152030';
+import { $, esc, initials, toast } from './ui.js?v=20261107152030';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107152030';
+import { renderBookIn } from './screens/bookin.js?v=20261107152030';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261107152030';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107152030';
+import { renderSettings } from './screens/settings.js?v=20261107152030';
+import { renderMoney } from './screens/money.js?v=20261107152030';
+import { renderTasks } from './screens/tasks.js?v=20261107152030';
+import { renderReports } from './screens/reports.js?v=20261107152030';
+import { renderStock } from './screens/stock.js?v=20261107152030';
+import { renderSell } from './screens/sell.js?v=20261107152030';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261107152030';
 
 const routes = {
   bookin: renderBookIn,
@@ -25,6 +26,8 @@ const routes = {
   reports: renderReports,
   stock: renderStock,
   sell: renderSell,
+  quotes: renderQuotes,
+  quote: renderQuote,
 };
 
 export const go = hash => { if (location.hash === '#' + hash) route(); else location.hash = hash; };
@@ -45,6 +48,7 @@ function shell() {
         <a href="#bookin" data-nav="bookin" class="book">+ Book in</a>
         <a href="#sell" data-nav="sell">Sell</a>
         <a href="#jobs" data-nav="jobs">Jobs</a>
+        <a href="#quotes" data-nav="quotes">Quotes</a>
         <a href="#customers" data-nav="customers">Customers</a>
         <a href="#tasks" data-nav="tasks">Tasks</a>
         <a href="#money" data-nav="money">Money</a>
@@ -73,7 +77,7 @@ async function route() {
   if (shellFor !== repo.auth.user.id + repo.auth.user.role) { shell(); shellFor = repo.auth.user.id + repo.auth.user.role; }
   const { name, id } = parseHash();
   const screen = routes[name] || renderJobs;
-  const navName = name === 'job' ? 'jobs' : name === 'customer' ? 'customers' : name;
+  const navName = name === 'job' ? 'jobs' : name === 'customer' ? 'customers' : name === 'quote' ? 'quotes' : name;
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === navName && navName !== 'bookin'));
   const view = $('#view');
   try {

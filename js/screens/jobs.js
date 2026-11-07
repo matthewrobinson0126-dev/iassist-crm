@@ -1,13 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261107143707';
-import { STATUSES, statusLabel } from '../repo.js?v=20261107143707';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107143707';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107143707';
-import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107143707';
-import { startWarrantyJob } from './bookin.js?v=20261107143707';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261107143707';
-import { openWhatsApp } from '../messages.js?v=20261107143707';
-import { go } from '../app.js?v=20261107143707';
+import * as repo from '../repo.js?v=20261107152030';
+import { STATUSES, statusLabel } from '../repo.js?v=20261107152030';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107152030';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107152030';
+import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107152030';
+import { startWarrantyJob } from './bookin.js?v=20261107152030';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261107152030';
+import { openWhatsApp } from '../messages.js?v=20261107152030';
+import { go } from '../app.js?v=20261107152030';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261107152030';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -30,8 +31,21 @@ export async function renderJobs(view) {
       <input type="search" id="job-search" placeholder="Search job no, name, phone, model, IMEI" style="max-width:420px" autocomplete="off">
       <label class="check"><input type="checkbox" id="show-collected"> Show collected</label>
     </div>
+    <div id="quote-news"></div>
     <div class="chips" id="filters" style="margin-bottom:14px"></div>
     <div class="board" id="board"></div>`;
+  // Quotes the customer answered online (accepted / declined) since this iPad last looked.
+  recentOnlineAnswers().then(list => {
+    const box = $('#quote-news', view);
+    if (!list.length || !box) return;
+    box.innerHTML = `<div class="card stack" style="margin-bottom:14px;border-color:var(--s-ready)">
+      <div class="row"><h2 style="margin:0">Quote answers</h2><span class="spacer"></span><button class="btn small ghost" id="qn-dismiss">Got it</button></div>
+      <div class="list">${list.map(q => `<a class="list-row" href="#${q.jobId ? 'job-' + q.jobId : 'quote-' + q.id}">
+        <span class="grow"><b>${esc(q.customerName)}</b> ${q.status === 'accepted' ? 'accepted' : 'declined'} ${esc(q.quoteNo)}${q.model ? ` · ${esc(q.model)}` : ''}
+          <div class="muted">${fmtDateTime(q.respondedAt)}${q.jobNo ? ` · job ${esc(q.jobNo)}${q.status === 'accepted' ? ' moved to Repairing' : ''}` : q.status === 'accepted' ? ' · book the device in when it arrives' : ''}${q.responseNote ? ` · “${esc(q.responseNote)}”` : ''}</div></span>
+        <b class="num">${money(q.total)}</b>${quotePill(q)}</a>`).join('')}</div></div>`;
+    $('#qn-dismiss', box).onclick = () => { markAnswersSeen(list.map(q => q.id)); box.innerHTML = ''; };
+  }).catch(() => {});
   const search = $('#job-search', view), toggle = $('#show-collected', view);
   search.value = boardState.q; toggle.checked = boardState.showCollected;
   const draw = () => {
@@ -79,8 +93,8 @@ function card(j) {
 export async function renderJob(view, id) {
   let job = await repo.getJob(id);
   if (!job) { view.innerHTML = '<div class="card empty"><h2>Job not found</h2><p><a href="#jobs">Back to jobs</a></p></div>'; return; }
-  const [customer, photos, events, payments, tasks] = await Promise.all([repo.getCustomer(job.customerId), repo.listPhotos(id),
-    repo.listEvents(id), repo.jobPayments(id), repo.listTasks({ jobId: id })]);
+  const [customer, photos, events, payments, tasks, quotes] = await Promise.all([repo.getCustomer(job.customerId), repo.listPhotos(id),
+    repo.listEvents(id), repo.jobPayments(id), repo.listTasks({ jobId: id }), repo.quotesForJob(id)]);
   const m$ = repo.jobMoney(job, payments);
   const photoUrls = await Promise.all(photos.map(p => repo.fileUrl(p.fileId)));
   const sigIn = await repo.fileUrl(job.signatureIn), sigOut = await repo.fileUrl(job.signatureOut);
@@ -133,7 +147,8 @@ export async function renderJob(view, id) {
             ${job.internalNotes ? `<dt>Tech notes</dt><dd>${esc(job.internalNotes)}</dd>` : ''}
           </dl></div>
         <div class="card stack"><div class="row"><h2 style="margin:0">Parts &amp; labour</h2><span class="spacer"></span>
-          ${!collected ? '<button class="btn small" id="j-add-stock">+ From stock</button><button class="btn small" id="j-add-price">+ From price list</button><button class="btn small" id="j-add-custom">+ Custom line</button>' : ''}</div>
+          ${!collected ? '<button class="btn small" id="j-add-stock">+ From stock</button><button class="btn small" id="j-add-price">+ From price list</button><button class="btn small" id="j-add-custom">+ Custom line</button>' : ''}
+          ${!collected && job.jobType !== 'warranty' && (job.lines || []).length ? '<button class="btn small primary" id="j-send-quote">Send quote</button>' : ''}</div>
           ${(job.lines || []).length ? `<div style="overflow-x:auto"><table class="lines num">
             <thead><tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th></th></tr></thead>
             <tbody>${job.lines.map((l, i) => `<tr><td>${esc(l.name)}${l.productId ? ' <span class="tag">stock</span>' : ''}</td><td>${esc(l.qty)}</td><td>${money(l.price)}</td><td>${money(l.qty * l.price)}</td>
@@ -175,6 +190,9 @@ export async function renderJob(view, id) {
               <td>${repo.isIn(p) ? '' : '−'}${money(p.amount)}</td>
               <td>${repo.auth.isOwner() ? `<button class="btn small ghost" data-rm-pay="${p.id}" aria-label="Remove entry">×</button>` : ''}</td></tr>`).join('')}
           </tbody></table></div>` : ''}
+          ${quotes.length ? `<div class="list" style="margin-top:12px">${quotes.map(q => `<a class="list-row" href="#quote-${q.id}">
+            <span class="grow"><b class="mono">${esc(q.quoteNo)}</b> · quote<div class="muted">${fmtDate(q.sentAt || q.createdAt)}</div></span>
+            <b class="num">${money(q.total)}</b>${quotePill(q)}</a>`).join('')}</div>` : ''}
           <div class="row" style="margin-top:12px">
             <button class="btn small" data-pay="payment">+ Payment</button>
             <button class="btn small" data-pay="deposit">+ Deposit</button>
@@ -220,6 +238,11 @@ export async function renderJob(view, id) {
     job = await repo.removeLine(job, Number(b.dataset.rmLine)); reload();
   });
   $('#j-add-stock', view)?.addEventListener('click', () => stockModal(job, reload));
+  // Phase 5: the parts & labour become a quote (Q-0001) the customer accepts online.
+  $('#j-send-quote', view)?.addEventListener('click', async () => {
+    try { const q = await repo.quoteFromJob(job); go('quote-' + q.id); }
+    catch (ex) { toast(ex.message, 'error'); }
+  });
   $('#j-add-price', view)?.addEventListener('click', () => priceModal(job, reload));
   // Phase 3: money + tasks
   $$('[data-pay]', view).forEach(b => b.onclick = () => paymentModal(job, b.dataset.pay, m$, reload));
@@ -322,15 +345,16 @@ export async function renderJob(view, id) {
 // Website prices are matched to the job's model first (e.g. "iPhone 13 Pro" finds the iPhone 13 Pro repair list).
 const norm = s => String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
-async function priceModal(job, after) {
+// Website price list search. Used by jobs and quotes; onLine({name, qty, price}) saves the chosen line.
+export async function pickFromPriceList(model, onLine, okLabel = 'Add to job') {
   const items = await repo.priceList();
-  const model = norm(job.model);
+  const modelN = norm(model);
   // Best device match: the longest website device name the model starts with ("iPhone 13 Pro Max" ≠ "iPhone 13").
   const devices = [...new Set(items.map(it => norm(it.device)))];
-  const best = devices.filter(d => model === d || model.startsWith(d + ' ')).sort((a, b) => b.length - a.length)[0];
+  const best = devices.filter(d => modelN === d || modelN.startsWith(d + ' ')).sort((a, b) => b.length - a.length)[0];
   const m = modal(`
     <h2>Add from price list</h2>
-    <input type="search" id="pl-q" placeholder="Search e.g. ${esc(job.model)} screen" autocomplete="off">
+    <input type="search" id="pl-q" placeholder="Search e.g. ${esc(model || 'iPhone 13')} screen" autocomplete="off">
     <div class="result-list" id="pl-list" style="max-height:52vh;overflow:auto"></div>
     <p class="muted" style="margin:0">Prices from your website (iassist.net.za). Items priced R0 there aren't listed.</p>
     <div class="modal-actions"><button class="btn" data-close>Close</button></div>`, { wide: true });
@@ -339,13 +363,13 @@ async function priceModal(job, after) {
     const words = norm(q.value).split(' ').filter(Boolean);
     let hits = items.filter(it => words.every(w => norm(`${it.device} ${it.item}`).includes(w)));
     if (!words.length) hits = best ? items.filter(it => norm(it.device) === best) : [];
-    list.innerHTML = hits.slice(0, 60).map((it, i) => `<button class="result" data-i="${items.indexOf(it)}">
+    list.innerHTML = hits.slice(0, 60).map(it => `<button class="result" data-i="${items.indexOf(it)}">
         <span style="flex:1"><b>${esc(it.item)}</b><div class="meta">${esc(it.device)}</div></span><b class="num">${money(it.price)}</b></button>`).join('')
-      || `<p class="muted">${words.length ? 'Nothing matches. Try fewer words, or add a custom line.' : `No website prices for “${esc(job.model)}”. Search above, or add a custom line.`}</p>`;
+      || `<p class="muted">${words.length ? 'Nothing matches. Try fewer words, or add a custom line.' : model ? `No website prices for “${esc(model)}”. Search above, or add a custom line.` : 'Type to search the price list.'}</p>`;
     list.querySelectorAll('[data-i]').forEach(b => b.onclick = () => {
       const it = items[Number(b.dataset.i)];
       m.close();
-      lineModal(job, { name: `${it.device}: ${it.item}`, qty: 1, price: it.price }, after);
+      editLineModal({ name: `${it.device}: ${it.item}`, qty: 1, price: it.price }, onLine, okLabel);
     });
   };
   q.oninput = draw;
@@ -353,7 +377,7 @@ async function priceModal(job, after) {
   q.focus();
 }
 
-function lineModal(job, line, after) {
+export function editLineModal(line, onLine, okLabel = 'Add to job') {
   const m = modal(`
     <h2>${line.name ? 'Add line' : 'Add custom line'}</h2>
     <label class="field">Item<input type="text" id="ln-name" value="${esc(line.name)}" placeholder="e.g. Labour, Screen protector"></label>
@@ -362,7 +386,7 @@ function lineModal(job, line, after) {
       <label class="field">Price each (R)<input type="number" id="ln-price" min="0" step="0.01" inputmode="decimal" value="${esc(line.price)}"></label>
     </div>
     <p class="error-msg" id="ln-err" hidden></p>
-    <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="ln-ok">Add to job</button></div>`);
+    <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="ln-ok">${esc(okLabel)}</button></div>`);
   m.el.querySelector('#ln-ok').onclick = async () => {
     const name = m.el.querySelector('#ln-name').value.trim();
     const qty = Math.max(1, Math.round(Number(m.el.querySelector('#ln-qty').value) || 1));
@@ -370,10 +394,17 @@ function lineModal(job, line, after) {
     const err = m.el.querySelector('#ln-err');
     if (!name) { err.textContent = 'Enter what the line is for.'; err.hidden = false; return; }
     if (!(price >= 0) || m.el.querySelector('#ln-price').value === '') { err.textContent = 'Enter a price (0 is fine for free items).'; err.hidden = false; return; }
-    await repo.setLines(job, [...(job.lines || []), { name, qty, price }], `Added ${qty} × ${name} @ R${price}`);
-    m.close(); toast('Line added'); after();
+    await onLine({ name, qty, price });
+    m.close();
   };
 }
+
+const addJobLine = (job, after) => async l => {
+  await repo.setLines(job, [...(job.lines || []), l], `Added ${l.qty} × ${l.name} @ R${l.price}`);
+  toast('Line added'); after();
+};
+const priceModal = (job, after) => pickFromPriceList(job.model, addJobLine(job, after));
+const lineModal = (job, line, after) => editLineModal(line, addJobLine(job, after));
 
 // ───────────── Parts from stock ─────────────
 async function stockModal(job, after) {

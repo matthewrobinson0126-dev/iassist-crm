@@ -1,7 +1,7 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261107143707';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261107143707';
-import { go } from '../app.js?v=20261107143707';
+import * as repo from '../repo.js?v=20261107152030';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261107152030';
+import { go } from '../app.js?v=20261107152030';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -25,9 +25,11 @@ export async function renderSettings(view) {
           <label class="field">Opening hours <span class="hint">shown on the tracking page + emails</span><input type="text" id="sh-hours" value="${esc(s.hours || '')}" placeholder="e.g. Mon–Fri 9:00–17:30, Sat 9:00–13:00"></label>
           <label class="field">Google review link <span class="hint">sent after collection</span><input type="url" id="sh-review" value="${esc(s.googleReviewUrl || '')}" placeholder="https://g.page/r/…/review"></label>
           <label class="field">Default warranty (months)<input type="number" id="sh-war" min="0" value="${esc(s.warrantyMonths)}"></label>
+          <label class="field">Quotes valid for (days)<input type="number" id="sh-qdays" min="1" max="90" value="${esc(s.quoteValidDays ?? 7)}"></label>
+          <label class="field">VAT number <span class="hint">only if VAT registered: quotes then show 15% VAT</span><input type="text" id="sh-vat" value="${esc(s.vatNumber || '')}" inputmode="numeric" placeholder="Leave empty if not registered"></label>
           <label class="field">Auto-lock after (minutes)<input type="number" id="sh-idle" min="1" max="120" value="${esc(s.idleLockMinutes)}"></label>
         </div>
-        <label class="check"><input type="checkbox" id="sh-email-on" ${s.emailEnabled === false ? '' : 'checked'}> Email customers automatically (booked, quote, waiting for parts, ready, review request)</label>
+        <label class="check"><input type="checkbox" id="sh-email-on" ${s.emailEnabled === false ? '' : 'checked'}> Email customers automatically (booked, quotes, waiting for parts, ready, review request)</label>
         ${repo.auth.cloud ? `<div class="row"><input type="email" id="sh-test-to" placeholder="Send a test email to…" style="max-width:300px">
           <button class="btn" type="button" id="sh-test">Send test email</button></div>` : ''}
         <label class="field">Terms the customer signs<span class="hint">Shown at book-in and printed on the job card. Each job keeps the version that was signed.</span>
@@ -56,7 +58,7 @@ export async function renderSettings(view) {
     e.preventDefault();
     const v = q => $(q, view).value;
     await repo.saveSettings({ shopName: v('#sh-name'), address: v('#sh-addr'), phone: v('#sh-phone'), email: v('#sh-email'),
-      warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), googleReviewUrl: v('#sh-review').trim(),
+      warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), quoteValidDays: Math.min(90, Math.max(1, Number(v('#sh-qdays')) || 7)), vatNumber: v('#sh-vat').trim(), googleReviewUrl: v('#sh-review').trim(),
       emailEnabled: $('#sh-email-on', view).checked, idleLockMinutes: Math.max(1, Number(v('#sh-idle')) || 10), terms: v('#sh-terms') });
     toast('Shop details saved');
   };
