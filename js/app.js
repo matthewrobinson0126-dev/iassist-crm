@@ -1,12 +1,12 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js';
-import { db } from './db.js';
-import { $, esc, initials, toast } from './ui.js';
-import { renderLock, renderSetPassword } from './screens/lock.js';
-import { renderBookIn } from './screens/bookin.js';
-import { renderJobs, renderJob } from './screens/jobs.js';
-import { renderCustomers, renderCustomer } from './screens/customers.js';
-import { renderSettings } from './screens/settings.js';
+import * as repo from './repo.js?v=20261107111329';
+import { db } from './db.js?v=20261107111329';
+import { $, esc, initials, toast } from './ui.js?v=20261107111329';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107111329';
+import { renderBookIn } from './screens/bookin.js?v=20261107111329';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261107111329';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107111329';
+import { renderSettings } from './screens/settings.js?v=20261107111329';
 
 const routes = {
   bookin: renderBookIn,

@@ -1,12 +1,12 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js';
-import { STATUSES, statusLabel } from '../repo.js';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js';
-import { printJobCard, printCompletion, qrSvg } from '../print.js';
-import { startWarrantyJob } from './bookin.js';
-import { openWhatsApp } from '../messages.js';
-import { go } from '../app.js';
+import * as repo from '../repo.js?v=20261107111329';
+import { STATUSES, statusLabel } from '../repo.js?v=20261107111329';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107111329';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107111329';
+import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107111329';
+import { startWarrantyJob } from './bookin.js?v=20261107111329';
+import { openWhatsApp } from '../messages.js?v=20261107111329';
+import { go } from '../app.js?v=20261107111329';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
