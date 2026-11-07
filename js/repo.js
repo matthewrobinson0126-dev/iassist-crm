@@ -297,6 +297,12 @@ export async function notify(job, kind) {
   catch (ex) { console.warn('email', ex); return { error: ex.message }; }
 }
 
+export async function sendTestEmail(to) {
+  requireOwner();
+  if (!remote) return { skipped: 'Demo mode' };
+  try { return await remote.notify(null, 'test', '', to); } catch (ex) { return { error: ex.message }; }
+}
+
 export async function assignTech(job, staffId) {
   requireUser();
   const staff = staffId ? (await listStaff()).find(s => s.id === staffId) : null;

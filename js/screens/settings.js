@@ -28,6 +28,8 @@ export async function renderSettings(view) {
           <label class="field">Auto-lock after (minutes)<input type="number" id="sh-idle" min="1" max="120" value="${esc(s.idleLockMinutes)}"></label>
         </div>
         <label class="check"><input type="checkbox" id="sh-email-on" ${s.emailEnabled === false ? '' : 'checked'}> Email customers automatically (booked, quote, waiting for parts, ready, review request)</label>
+        ${repo.auth.cloud ? `<div class="row"><input type="email" id="sh-test-to" placeholder="Send a test email to…" style="max-width:300px">
+          <button class="btn" type="button" id="sh-test">Send test email</button></div>` : ''}
         <label class="field">Terms the customer signs<span class="hint">Shown at book-in and printed on the job card. Each job keeps the version that was signed.</span>
           <textarea id="sh-terms" rows="9">${esc(s.terms)}</textarea></label>
         <div class="row"><span class="spacer"></span><button class="btn primary" type="submit">Save shop details</button></div>
@@ -62,6 +64,10 @@ export async function renderSettings(view) {
     await repo.auth.registerDevice($('#dev-name', view).value);
     toast('Registered as a shop iPad');
     renderSettings(view);
+  });
+  $('#sh-test', view)?.addEventListener('click', async () => {
+    const r = await repo.sendTestEmail($('#sh-test-to', view).value.trim());
+    toast(r.sent ? `Test email sent to ${r.to}` : r.skipped ? `Not sent: ${r.skipped}` : `Failed: ${r.error}`, r.sent ? '' : 'error');
   });
   $('#demo-load', view).onclick = async () => { await repo.loadDemoData(); toast('Demo jobs loaded'); go('jobs'); };
   $('#demo-clear', view).onclick = async () => {

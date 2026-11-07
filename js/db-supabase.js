@@ -151,6 +151,6 @@ export const remote = {
   async listStaff() { return check(await sb().from('staff').select('id,name,role,active').order('name')); },
   createStaff: p => callFn('staff-admin', { action: 'create', ...p }),
   updateStaff: (id, p) => callFn('staff-admin', { action: 'update', id, ...p }),
-  notify: (jobId, kind, trackUrl) => callFn('notify', { job_id: jobId, kind, track_url: trackUrl }),
+  notify: (jobId, kind, trackUrl, to) => callFn('notify', { job_id: jobId, kind, track_url: trackUrl, to }),
   track: token => callFn('track', { token }),
 };
