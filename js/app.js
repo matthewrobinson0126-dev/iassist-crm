@@ -1,17 +1,17 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261107121047';
-import { db } from './db.js?v=20261107121047';
-import { $, esc, initials, toast } from './ui.js?v=20261107121047';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107121047';
-import { renderBookIn } from './screens/bookin.js?v=20261107121047';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261107121047';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107121047';
-import { renderSettings } from './screens/settings.js?v=20261107121047';
-import { renderMoney } from './screens/money.js?v=20261107121047';
-import { renderTasks } from './screens/tasks.js?v=20261107121047';
-import { renderReports } from './screens/reports.js?v=20261107121047';
-import { renderStock } from './screens/stock.js?v=20261107121047';
-import { renderSell } from './screens/sell.js?v=20261107121047';
+import * as repo from './repo.js?v=20261107142533';
+import { db } from './db.js?v=20261107142533';
+import { $, esc, initials, toast } from './ui.js?v=20261107142533';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261107142533';
+import { renderBookIn } from './screens/bookin.js?v=20261107142533';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261107142533';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261107142533';
+import { renderSettings } from './screens/settings.js?v=20261107142533';
+import { renderMoney } from './screens/money.js?v=20261107142533';
+import { renderTasks } from './screens/tasks.js?v=20261107142533';
+import { renderReports } from './screens/reports.js?v=20261107142533';
+import { renderStock } from './screens/stock.js?v=20261107142533';
+import { renderSell } from './screens/sell.js?v=20261107142533';
 
 const routes = {
   bookin: renderBookIn,
