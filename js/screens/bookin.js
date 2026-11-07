@@ -1,17 +1,17 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261107142533';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107142533';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107142533';
-import { printJobCard } from '../print.js?v=20261107142533';
-import { openWhatsApp } from '../messages.js?v=20261107142533';
-import { go } from '../app.js?v=20261107142533';
+import * as repo from '../repo.js?v=20261107143707';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107143707';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107143707';
+import { printJobCard } from '../print.js?v=20261107143707';
+import { openWhatsApp } from '../messages.js?v=20261107143707';
+import { go } from '../app.js?v=20261107143707';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
 let pad = null;
 
 const newDraft = () => ({
-  step: 0, customer: null, newCustomer: { name: '', phone: '', email: '', area: '' }, search: '',
+  step: 0, maxStep: 0, customer: null, newCustomer: { name: '', phone: '', email: '', area: '' }, search: '',
   deviceType: '', model: '', colour: '', serial: '', powersOn: 'Yes',
   faults: [], faultNotes: '', damage: [], conditionNotes: '', photos: [], accessories: [],
   passcode: '', quoteMode: 'assess', quote: '', quoteNote: '', deposit: '', dueDate: '', collection: 'store',
@@ -28,7 +28,7 @@ export async function renderBookIn(view) {
 export function startWarrantyJob(job, customer) {
   draft = { ...newDraft(), customer, deviceType: job.deviceType, model: job.model, colour: job.colour || '',
     serial: job.serial || '', jobType: 'warranty', warrantyOf: job.id, warrantyOfNo: job.jobNo,
-    referral: 'Returning customer', faultNotes: `Warranty return for ${job.jobNo} (${(job.faults || []).join(', ')})`, step: 2 };
+    referral: 'Returning customer', faultNotes: `Warranty return for ${job.jobNo} (${(job.faults || []).join(', ')})`, step: 2, maxStep: 2 };
   go('bookin');
 }
 
@@ -37,8 +37,11 @@ function draw(view) {
     <div class="wizard">
       <div class="page-head"><h1>Book in a device</h1><span class="spacer"></span>
         <button class="btn small ghost" id="restart">Start over</button></div>
-      <ol class="steps">${STEPS.map((s, i) =>
-        `<li class="${i === draft.step ? 'on' : i < draft.step ? 'done' : ''}"><b>${i + 1}</b>${s}</li>`).join('')}</ol>
+      <ol class="steps">${STEPS.map((s, i) => {
+        const reach = i <= (draft.maxStep || 0) && i !== draft.step;
+        return `<li class="${i === draft.step ? 'on' : i <= (draft.maxStep || 0) ? 'done' : ''}">${reach
+          ? `<button type="button" data-goto="${i}" title="Go back to ${s}"><b>${i + 1}</b>${s}</button>`
+          : `<span><b>${i + 1}</b>${s}</span>`}</li>`; }).join('')}</ol>
       <section class="step-body" id="step"></section>
       <p class="error-msg" id="step-err" hidden></p>
       <footer class="wizard-nav">
@@ -52,6 +55,16 @@ function draw(view) {
   STEP_VIEWS[draft.step](body, view);
   bind(body, view);
   $('#back', view).onclick = () => { draft.step--; draw(view); };
+  // Tap any step you've already reached to jump straight to it and fix a mistake.
+  $$('[data-goto]', view).forEach(b => b.onclick = async () => {
+    const to = Number(b.dataset.goto);
+    if (to > draft.step) { // going forward again: the current step must still be filled in properly
+      const err = $('#step-err', view);
+      const problem = await STEP_CHECKS[draft.step](view);
+      if (problem) { err.textContent = problem; err.hidden = false; return; }
+    }
+    draft.step = to; draw(view);
+  });
   $('#next', view).onclick = () => next(view);
   $('#restart', view).onclick = async () => {
     if (await confirmBox('Clear this booking and start again?', { ok: 'Start over', danger: true })) {
@@ -66,8 +79,13 @@ async function next(view) {
   err.hidden = true;
   const problem = await STEP_CHECKS[draft.step](view);
   if (problem) { err.textContent = problem; err.hidden = false; return; }
-  if (draft.step < STEPS.length - 1) { draft.step++; draw(view); return; }
-  // Final step: save the job.
+  if (draft.step < STEPS.length - 1) { draft.step++; draft.maxStep = Math.max(draft.maxStep || 0, draft.step); draw(view); return; }
+  // Final step: re-check every earlier step, in case something was changed after jumping back.
+  for (let i = 0; i < STEPS.length - 1; i++) {
+    const p = await STEP_CHECKS[i](view);
+    if (p) { draft.step = i; draw(view); const e = $('#step-err', view); e.textContent = p; e.hidden = false; return; }
+  }
+  // Save the job.
   const btn = $('#next', view);
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
@@ -289,14 +307,14 @@ const STEP_VIEWS = [
     body.innerHTML = `
       <div class="card"><h2>Check with the customer</h2>
         <dl class="kv">
-          <dt>Customer</dt><dd>${esc(c.name)} · ${esc(c.phone)}</dd>
-          <dt>Device</dt><dd>${esc(draft.model)}${draft.colour ? ', ' + esc(draft.colour) : ''}${draft.serial ? ` · <span class="mono">${esc(draft.serial)}</span>` : ''}</dd>
-          <dt>Fault</dt><dd>${list(draft.faults)}${draft.faultNotes ? ` · ${esc(draft.faultNotes)}` : ''}</dd>
-          <dt>Condition</dt><dd>${list(draft.damage)} · ${draft.photos.length} photo${draft.photos.length === 1 ? '' : 's'}</dd>
-          <dt>Left with it</dt><dd>${list(draft.accessories)}</dd>
-          <dt>Job</dt><dd>${esc(jobTypeLabel(draft.jobType))}${draft.warrantyOfNo ? ` for ${esc(draft.warrantyOfNo)}` : ''}${draft.urgent ? ' · <b style="color:var(--danger)">URGENT</b>' : ''}${draft.technicianName ? ` · ${esc(draft.technicianName)}` : ''}</dd>
-          <dt>Quote</dt><dd>${draft.jobType === 'warranty' ? 'No charge (warranty)' : draft.quoteMode === 'fixed' ? money(draft.quote) : 'After assessment'}${draft.deposit ? ` · deposit ${money(draft.deposit)}` : ''}</dd>
-          <dt>Return</dt><dd>${esc(collectionLabel(draft.collection))}</dd>
+          <dt>Customer <button type="button" class="edit-link" data-goto="0">Edit</button></dt><dd>${esc(c.name)} · ${esc(c.phone)}</dd>
+          <dt>Device <button type="button" class="edit-link" data-goto="1">Edit</button></dt><dd>${esc(draft.model)}${draft.colour ? ', ' + esc(draft.colour) : ''}${draft.serial ? ` · <span class="mono">${esc(draft.serial)}</span>` : ''}</dd>
+          <dt>Fault <button type="button" class="edit-link" data-goto="2">Edit</button></dt><dd>${list(draft.faults)}${draft.faultNotes ? ` · ${esc(draft.faultNotes)}` : ''}</dd>
+          <dt>Condition <button type="button" class="edit-link" data-goto="3">Edit</button></dt><dd>${list(draft.damage)} · ${draft.photos.length} photo${draft.photos.length === 1 ? '' : 's'}</dd>
+          <dt>Left with it <button type="button" class="edit-link" data-goto="3">Edit</button></dt><dd>${list(draft.accessories)}</dd>
+          <dt>Job <button type="button" class="edit-link" data-goto="4">Edit</button></dt><dd>${esc(jobTypeLabel(draft.jobType))}${draft.warrantyOfNo ? ` for ${esc(draft.warrantyOfNo)}` : ''}${draft.urgent ? ' · <b style="color:var(--danger)">URGENT</b>' : ''}${draft.technicianName ? ` · ${esc(draft.technicianName)}` : ''}</dd>
+          <dt>Quote <button type="button" class="edit-link" data-goto="4">Edit</button></dt><dd>${draft.jobType === 'warranty' ? 'No charge (warranty)' : draft.quoteMode === 'fixed' ? money(draft.quote) : 'After assessment'}${draft.deposit ? ` · deposit ${money(draft.deposit)}` : ''}</dd>
+          <dt>Return <button type="button" class="edit-link" data-goto="4">Edit</button></dt><dd>${esc(collectionLabel(draft.collection))}</dd>
         </dl></div>
       <div class="card stack"><h2>Terms</h2>
         <div class="terms" id="terms">Loading…</div>

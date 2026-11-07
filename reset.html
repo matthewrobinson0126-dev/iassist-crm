@@ -46,7 +46,7 @@
   <script type="module">
     // Standalone on purpose: a new page has no old saved copy on the phone, so the reset link always opens here.
     // The token is only used when "Save new password" is pressed, so email link-checkers can't use it up.
-    import { CONFIG } from './js/config.js?v=20261107142533';
+    import { CONFIG } from './js/config.js?v=20261107143707';
     const $ = id => document.getElementById(id);
     const token = new URLSearchParams(location.search).get('token');
     const fail = msg => { $('err').textContent = msg; $('err').hidden = false; $('go').disabled = false; };

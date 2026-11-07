@@ -1,6 +1,6 @@
 // Cloud storage: Supabase (Postgres + private photo storage + staff logins).
 // Same calls as db-local.js; field names are converted camelCase ↔ snake_case.
-import { CONFIG } from './config.js?v=20261107142533';
+import { CONFIG } from './config.js?v=20261107143707';
 
 // A password-reset email links here as ?reset=<token>. The token is only used when the person saves.
 const RESET_TOKEN = new URLSearchParams(location.search).get('reset');

@@ -157,6 +157,11 @@ main#view { padding: 20px max(16px, env(safe-area-inset-right, 0px)) 40px max(16
 .steps li.on { background: var(--accent); color: var(--accent-ink); }
 .steps li.on b { color: var(--accent); }
 .steps li.done { background: var(--accent-soft); color: var(--ink); }
+.steps li > button, .steps li > span { all: unset; display: flex; gap: 8px; align-items: center; width: 100%; }
+.steps li > button { cursor: pointer; }
+.steps li > button:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.edit-link { border: 0; background: none; color: var(--accent); font: inherit; font-size: 0.8rem; font-weight: 600;
+  padding: 4px 6px; margin-left: 4px; cursor: pointer; text-decoration: underline; }
 .step-body { display: grid; gap: 20px; }
 .wizard-nav { position: sticky; bottom: 0; display: flex; gap: 12px; padding: 14px 0 calc(14px + env(safe-area-inset-bottom, 0px));
   background: linear-gradient(to top, var(--bg) 75%, transparent); }
