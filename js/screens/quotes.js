@@ -1,13 +1,13 @@
 // Quotes: list + quote page. A quote is linked to a booked-in job, or stands alone (phone / walk-in / business)
 // and becomes a job when the customer says yes. Customers accept or decline online through the emailed link.
-import * as repo from '../repo.js?v=20261107152030';
-import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal, confirmBox } from '../ui.js?v=20261107152030';
-import { DEVICE_TYPES, deviceType } from '../devices.js?v=20261107152030';
-import { printQuote, qrSvg } from '../print.js?v=20261107152030';
-import { whatsAppQuote } from '../messages.js?v=20261107152030';
-import { pickFromPriceList, editLineModal } from './jobs.js?v=20261107152030';
-import { startQuoteJob } from './bookin.js?v=20261107152030';
-import { go } from '../app.js?v=20261107152030';
+import * as repo from '../repo.js?v=20261114144809';
+import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal, confirmBox } from '../ui.js?v=20261114144809';
+import { DEVICE_TYPES, deviceType } from '../devices.js?v=20261114144809';
+import { printQuote, qrSvg } from '../print.js?v=20261114144809';
+import { whatsAppQuote } from '../messages.js?v=20261114144809';
+import { pickFromPriceList, editLineModal } from './jobs.js?v=20261114144809';
+import { startQuoteJob } from './bookin.js?v=20261114144809';
+import { go } from '../app.js?v=20261114144809';
 
 const STATE_COLOUR = { draft: 'var(--s-booked)', sent: 'var(--s-approval)', accepted: 'var(--s-ready)', declined: 'var(--danger)', expired: 'var(--s-collected)' };
 export const quotePill = q => { const s = repo.quoteState(q); return `<span class="pill" style="--sc:${STATE_COLOUR[s]}">${esc(repo.QUOTE_STATES[s])}</span>`; };

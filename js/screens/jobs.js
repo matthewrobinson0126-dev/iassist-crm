@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261107152030';
-import { STATUSES, statusLabel } from '../repo.js?v=20261107152030';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261107152030';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261107152030';
-import { printJobCard, printCompletion, qrSvg } from '../print.js?v=20261107152030';
-import { startWarrantyJob } from './bookin.js?v=20261107152030';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261107152030';
-import { openWhatsApp } from '../messages.js?v=20261107152030';
-import { go } from '../app.js?v=20261107152030';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261107152030';
+import * as repo from '../repo.js?v=20261114144809';
+import { STATUSES, statusLabel } from '../repo.js?v=20261114144809';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261114144809';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261114144809';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261114144809';
+import { startWarrantyJob } from './bookin.js?v=20261114144809';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261114144809';
+import { openWhatsApp } from '../messages.js?v=20261114144809';
+import { go } from '../app.js?v=20261114144809';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261114144809';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -111,6 +111,7 @@ export async function renderJob(view, id) {
       <span class="muted">in for ${ageText(job.createdAt)}</span>
       <span class="spacer"></span>
       <button class="btn" id="j-wa">WhatsApp</button>
+      <button class="btn" id="j-label">Print label</button>
       <button class="btn" id="j-print">Print job card</button>
       ${['ready', 'collected'].includes(job.status) ? '<button class="btn" id="j-cert">Certificate of completion</button>' : ''}
       ${collected ? '<button class="btn" id="j-warranty">Warranty return</button>' : ''}
@@ -286,6 +287,7 @@ export async function renderJob(view, id) {
   });
   $('#j-wa', view).onclick = () => openWhatsApp(job);
   $('#j-print', view).onclick = () => printJobCard(job);
+  $('#j-label', view).onclick = () => printLabel(job);
   $('#j-hand', view)?.addEventListener('click', () => handBack(job, reload));
   $('#j-pass', view)?.addEventListener('click', async () => {
     const code = await repo.getPasscode(job);

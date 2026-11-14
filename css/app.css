@@ -318,4 +318,15 @@ td.neg { color: var(--danger); }
   .pc-lines th, .pc-lines td { border-bottom: 1px solid #bbb; padding: 3px 4px; text-align: left; }
   .pc-lines td:nth-child(n+2), .pc-lines th:nth-child(n+2) { text-align: right; }
   @page { margin: 12mm; }
+  /* Sticker labels: one label per page, sized in mm by print.js */
+  .lb { box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 0.8mm; overflow: hidden;
+    page-break-after: always; break-after: page; font-family: var(--font); color: #000; line-height: 1.12; }
+  .lb:last-child { page-break-after: auto; break-after: auto; }
+  .lb-row { display: flex; align-items: center; min-height: 0; }
+  .lb-stack .lb-row { flex: 1; }
+  .lb-text { flex: 1; min-width: 0; display: grid; gap: 0.4mm; align-content: center; }
+  .lb-no { font-family: var(--mono); font-weight: 800; letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
+  .lb-l { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lb-f { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .lb-qr { flex: none; } .lb-qr svg { width: 100%; height: 100%; display: block; }
 }

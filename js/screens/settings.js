@@ -1,7 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261107152030';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261107152030';
-import { go } from '../app.js?v=20261107152030';
+import * as repo from '../repo.js?v=20261114144809';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261114144809';
+import { go } from '../app.js?v=20261114144809';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261114144809';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -42,6 +43,15 @@ export async function renderSettings(view) {
           : `<p class="muted" style="margin:0">Not a shop iPad: only the owner’s email sign-in works here. Register it to show the staff PIN screen.</p>
              <div class="row"><input type="text" id="dev-name" value="Counter iPad" style="max-width:260px"><button class="btn primary" id="dev-reg">Register as shop iPad</button></div>`}
       </div>` : ''}
+      <div class="card stack"><h2 style="margin:0">Sticker labels</h2>
+        <p class="muted" style="margin:0">For the <b>Print label</b> button on jobs. The iPad can print to AirPrint label printers (e.g. Brother QL-820NWB). Pick the size of the labels in your printer.</p>
+        <div class="grid-2">
+          <label class="field">Label size<select id="lb-size">${LABEL_SIZES.map(x => `<option value="${x.id}" ${x.id === labelSize(s.labelSize).id ? 'selected' : ''}>${esc(x.label)}</option>`).join('')}</select></label>
+          <label class="field">Labels per job<select id="lb-copies">${[1, 2, 3].map(n => `<option value="${n}" ${Number(s.labelCopies || 1) === n ? 'selected' : ''}>${n}${n === 2 ? ' (device + bag)' : ''}</option>`).join('')}</select></label>
+        </div>
+        <label class="check"><input type="checkbox" id="lb-qr" ${s.labelQr === false ? '' : 'checked'}> QR code on the label (scan with the iPad camera to open the job)</label>
+        <div class="row"><button class="btn" id="lb-test" type="button">Print a test label</button><span class="spacer"></span><button class="btn primary" id="lb-save" type="button">Save label settings</button></div>
+      </div>
       <div class="card stack"><h2 style="margin:0">Practice data</h2>
         <p class="muted" style="margin:0">Load 5 demo jobs to try the board, then remove them before going live. Demo customers are named “Demo – …”.</p>
         <div class="row"><button class="btn" id="demo-load">Load demo jobs</button><button class="btn" id="demo-clear">Remove demo data</button></div>
@@ -53,6 +63,10 @@ export async function renderSettings(view) {
     </div>`;
 
   $('#st-add', view).onclick = () => staffModal(null, view);
+  const saveLabels = () => repo.saveSettings({ labelSize: $('#lb-size', view).value, labelCopies: Number($('#lb-copies', view).value),
+    labelQr: $('#lb-qr', view).checked });
+  $('#lb-save', view).onclick = async () => { await saveLabels(); toast('Label settings saved'); };
+  $('#lb-test', view).onclick = async () => { await saveLabels(); printTestLabel(); };
   $$('[data-staff]', view).forEach(r => r.onclick = () => staffModal(staff.find(p => p.id === r.dataset.staff), view));
   $('#shop-form', view).onsubmit = async e => {
     e.preventDefault();

@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261107152030';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261107152030';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261107152030';
-import { printJobCard } from '../print.js?v=20261107152030';
-import { openWhatsApp } from '../messages.js?v=20261107152030';
-import { go } from '../app.js?v=20261107152030';
+import * as repo from '../repo.js?v=20261114144809';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261114144809';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261114144809';
+import { printJobCard, printLabel } from '../print.js?v=20261114144809';
+import { openWhatsApp } from '../messages.js?v=20261114144809';
+import { go } from '../app.js?v=20261114144809';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -393,15 +393,17 @@ function done(view, job) {
       <span class="muted">Booked in</span>
       <div class="job-no-big">${esc(job.jobNo)}</div>
       <div><b>${esc(job.customerName)}</b> · ${esc(job.model)}</div>
-      <p class="muted" style="margin:0">Write this number on the device bag or print the job card.</p>
+      <p class="muted" style="margin:0">Stick a label on the device (and bag), or print the job card.</p>
       <div class="row" style="justify-content:center">
+        <button class="btn primary big" id="d-label">Print label</button>
         <button class="btn big" id="d-print">Print job card</button>
         <button class="btn big" id="d-wa">WhatsApp the customer</button>
         <button class="btn big" id="d-open">Open job</button>
-        <button class="btn primary big" id="d-new">Book in another</button>
+        <button class="btn big" id="d-new">Book in another</button>
       </div>
     </div>`;
   $('#d-print', view).onclick = () => printJobCard(job);
+  $('#d-label', view).onclick = () => printLabel(job);
   $('#d-wa', view).onclick = () => openWhatsApp(job);
   $('#d-open', view).onclick = () => go('job-' + job.id);
   $('#d-new', view).onclick = () => { draft = newDraft(); draw(view); };

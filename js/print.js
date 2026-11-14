@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261107152030';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261107152030';
-import { deviceType, collectionLabel } from './devices.js?v=20261107152030';
+import * as repo from './repo.js?v=20261114144809';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261114144809';
+import { deviceType, collectionLabel } from './devices.js?v=20261114144809';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {
@@ -28,6 +28,7 @@ const pcHead = (settings, job, title) => `
 
 // Hand-over document: what was done, what it cost, warranty, customer's collection signature.
 export async function printCompletion(job) {
+  setPageSize('');
   const settings = await repo.getSettings();
   const customer = await repo.getCustomer(job.customerId);
   const sigOut = await repo.fileUrl(job.signatureOut);
@@ -68,6 +69,7 @@ export async function printCompletion(job) {
 
 // Till slip for a counter sale.
 export async function printReceipt(sale) {
+  setPageSize('');
   const settings = await repo.getSettings();
   const lines = sale.lines || [];
   $('#print-area').innerHTML = `
@@ -84,6 +86,7 @@ export async function printReceipt(sale) {
 }
 
 export async function printJobCard(job) {
+  setPageSize('');
   const settings = await repo.getSettings();
   const track = await trackingBlock(job);
   const customer = await repo.getCustomer(job.customerId);
@@ -139,6 +142,7 @@ export async function printJobCard(job) {
 
 // Printable / PDF quote (AirPrint, or "Save as PDF" in the print dialog).
 export async function printQuote(q) {
+  setPageSize('');
   const settings = await repo.getSettings();
   const customer = q.customerId ? await repo.getCustomer(q.customerId) : null;
   const url = repo.auth.cloud ? repo.quoteUrl(q) : '';
@@ -170,4 +174,73 @@ export async function printQuote(q) {
       ${url ? `<div class="pc-qr">${qrSvg(url, 2)}<div><b>Accept online</b><br>Scan the code to view and accept or decline quote ${esc(q.quoteNo)}.</div></div>` : ''}
     </div>`;
   window.print();
+}
+
+// ───────────── Sticker labels (thermal / label printers) ─────────────
+// The iPad prints to AirPrint printers only (e.g. Brother QL-820NWB). Pick the label size in Settings.
+export const LABEL_SIZES = [
+  { id: '62x29', label: 'Brother 62 × 29 mm (DK-11209)', w: 62, h: 29 },
+  { id: '62x40', label: 'Brother 62 mm roll, cut at 40 mm', w: 62, h: 40 },
+  { id: '50x30', label: 'Thermal 50 × 30 mm', w: 50, h: 30 },
+  { id: '40x30', label: 'Thermal 40 × 30 mm', w: 40, h: 30 },
+  { id: '58x40', label: 'Thermal 58 × 40 mm', w: 58, h: 40 },
+  { id: '100x50', label: 'Thermal 100 × 50 mm', w: 100, h: 50 },
+];
+export const labelSize = id => LABEL_SIZES.find(x => x.id === id) || LABEL_SIZES[0];
+
+// One <style> holds the paper size: labels set it, A4 documents clear it (falls back to app.css).
+function setPageSize(css) {
+  let el = document.getElementById('page-size');
+  if (!el) { el = document.createElement('style'); el.id = 'page-size'; document.head.appendChild(el); }
+  el.textContent = css;
+}
+
+export const jobLink = job => new URL(`#job-${job.id}`, location.href.split('#')[0]).href;
+
+export async function printLabel(job, { copies } = {}) {
+  const settings = await repo.getSettings();
+  const size = labelSize(settings.labelSize);
+  const n = Math.max(1, Math.min(5, Number(copies ?? settings.labelCopies) || 1));
+  const qrWanted = settings.labelQr !== false;
+  const fault = (job.faults || []).join(', ') || job.faultNotes || '';
+  const no = String(job.jobNo || '');
+  const r1 = n => Math.round(n * 10) / 10;
+  const pad = r1(Math.max(1.4, size.h * 0.05)), gap = 1.5;
+  const inner = size.w - 2 * pad;
+  // Wide labels (62 × 29, 100 × 50): details left, QR right. Squarer labels: job number across the top, details + QR below.
+  const wide = size.w / size.h >= 1.9;
+  let qr, textW, k, noFs;
+  if (wide) {
+    qr = qrWanted ? r1(Math.min(size.h - 2 * pad, size.w * 0.36)) : 0;
+    textW = inner - (qr ? qr + gap : 0);
+    k = Math.min(size.h / 29, textW / 34);
+    noFs = r1(Math.min(7 * k, textW / (no.length * 0.62)));
+  } else {
+    noFs = r1(Math.min(size.h * 0.24, inner / (no.length * 0.62)));
+    const rowH = size.h - 2 * pad - noFs - 0.8;
+    qr = qrWanted ? r1(Math.min(rowH, inner * 0.45)) : 0;
+    textW = inner - (qr ? qr + gap : 0);
+    k = Math.min(rowH / 16, textW / 26, 1.4);
+  }
+  const lines = `
+        <div class="lb-l" style="font-size:${r1(3.1 * k)}mm;font-weight:700">${esc(job.customerName || '')}</div>
+        <div class="lb-l" style="font-size:${r1(2.7 * k)}mm">${esc(job.model || '')}</div>
+        ${fault ? `<div class="lb-f" style="font-size:${r1(2.4 * k)}mm">${esc(fault)}</div>` : ''}
+        <div class="lb-l" style="font-size:${r1(2.1 * k)}mm">${fmtDate(job.createdAt)}${job.urgent ? ' · URGENT' : ''}${job.jobType === 'warranty' ? ' · WARRANTY' : ''}</div>`;
+  const qrBox = qr ? `<div class="lb-qr" style="width:${qr}mm;height:${qr}mm">${qrSvg(jobLink(job), 2)}</div>` : '';
+  const noDiv = `<div class="lb-no" style="font-size:${noFs}mm">${esc(no)}</div>`;
+  const one = `
+    <div class="lb ${wide ? '' : 'lb-stack'}" style="width:${size.w}mm;height:${size.h}mm;padding:${pad}mm">
+      ${wide ? `<div class="lb-row" style="gap:${gap}mm"><div class="lb-text">${noDiv}${lines}</div>${qrBox}</div>`
+        : `${noDiv}<div class="lb-row" style="gap:${gap}mm"><div class="lb-text">${lines}</div>${qrBox}</div>`}
+    </div>`;
+  $('#print-area').innerHTML = Array.from({ length: n }, () => one).join('');
+  setPageSize(`@media print { @page { size: ${size.w}mm ${size.h}mm; margin: 0; } html, body { margin: 0 !important; padding: 0 !important; } }`);
+  window.print();
+}
+
+// A sample label for checking the size in Settings.
+export function printTestLabel() {
+  return printLabel({ id: 'test', jobNo: 'IA-0123', customerName: 'Test Customer', model: 'iPhone 13 Pro',
+    faults: ['Screen', 'Battery'], createdAt: new Date().toISOString() }, { copies: 1 });
 }
