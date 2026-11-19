@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261119224701';
-import { STATUSES, statusLabel } from '../repo.js?v=20261119224701';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119224701';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261119224701';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119224701';
-import { startWarrantyJob } from './bookin.js?v=20261119224701';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119224701';
-import { openWhatsApp } from '../messages.js?v=20261119224701';
-import { go } from '../app.js?v=20261119224701';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119224701';
+import * as repo from '../repo.js?v=20261119225737';
+import { STATUSES, statusLabel } from '../repo.js?v=20261119225737';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119225737';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261119225737';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119225737';
+import { startWarrantyJob } from './bookin.js?v=20261119225737';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119225737';
+import { openWhatsApp } from '../messages.js?v=20261119225737';
+import { go } from '../app.js?v=20261119225737';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119225737';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };

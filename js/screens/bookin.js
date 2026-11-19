@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261119224701';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119224701';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261119224701';
-import { printJobCard, printLabel } from '../print.js?v=20261119224701';
-import { openWhatsApp } from '../messages.js?v=20261119224701';
-import { go } from '../app.js?v=20261119224701';
+import * as repo from '../repo.js?v=20261119225737';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119225737';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261119225737';
+import { printJobCard, printLabel } from '../print.js?v=20261119225737';
+import { openWhatsApp } from '../messages.js?v=20261119225737';
+import { go } from '../app.js?v=20261119225737';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -165,8 +165,13 @@ function drawCustomerMode(view) {
       </div>
       <div class="card stack"><h2 style="margin:0">What’s wrong with your device?</h2>
         <textarea data-bind="faultNotes" rows="3" placeholder="In your own words: what happened and when it started"></textarea>
-        <label class="field">Device passcode <span class="hint">optional. Only used to test your device, and deleted when you collect it</span>
-          <input type="password" data-bind="passcode" autocomplete="off" inputmode="text"></label>
+      </div>
+      <div class="card stack"><h2 style="margin:0">Your device passcode</h2>
+        <p style="margin:0">We need your passcode to test your device before and after the repair, and to check our work. We only use it for testing, keep it hidden, and delete it when you collect your device.</p>
+        <label class="field">Passcode<input type="password" id="k-pass" data-bind="passcode" autocomplete="off" inputmode="text"></label>
+        <label class="check"><input type="checkbox" data-bind="passcodeNoLock"> My device doesn’t have a passcode</label>
+        <label class="check"><input type="checkbox" id="k-declined" data-bind="passcodeDeclined"> I’d rather not share my passcode</label>
+        <p class="note-box" id="k-declined-note" ${draft.passcodeDeclined ? '' : 'hidden'}>We understand. If your device has private or confidential information, you have the right to keep it private (POPIA). Without your passcode we can’t fully test or quality-check your device, so we can only check what works without unlocking it, and we can’t be held responsible for faults we were unable to test.</p>
       </div>
       <div class="card stack"><h2 style="margin:0">How did you hear about us? <span class="muted" style="font-weight:400">optional</span></h2>
         <div class="seg" id="k-ref">${REFERRALS.map(r => `<button type="button" data-ref="${esc(r)}">${esc(r)}</button>`).join('')}</div>
@@ -191,6 +196,7 @@ function drawCustomerMode(view) {
     const t = $('#k-terms', view); if (t) t.textContent = s.terms;
     const h = $('#k-title', view); if (h) h.textContent = `Welcome to ${s.shopName}`;
   });
+  $('#k-declined', view).addEventListener('change', e => { $('#k-declined-note', view).hidden = !e.target.checked; });
   const paintRef = () => $$('[data-ref]', view).forEach(b => b.classList.toggle('on', draft.referral === b.dataset.ref));
   $$('[data-ref]', view).forEach(b => b.onclick = () => { draft.referral = draft.referral === b.dataset.ref ? '' : b.dataset.ref; paintRef(); });
   paintRef();
@@ -208,6 +214,8 @@ function drawCustomerMode(view) {
       if (!nc.name.trim()) return err('Please enter your name.');
       if (repo.digits(nc.phone).length < 9) return err('Please enter your cell number.');
     }
+    if (!String(draft.passcode || '').trim() && !draft.passcodeNoLock && !draft.passcodeDeclined)
+      return err('Please enter your device passcode, or tick one of the boxes below it.');
     if (!draft.accepted) return err('Please tick the box to accept the terms.');
     if (!kpad || kpad.isEmpty()) return err('Please sign in the box above.');
     draft.customerSignature = await kpad.toBlob();
@@ -342,9 +350,11 @@ const STEP_VIEWS = [
       <div class="card stack"><h2>Left with the device</h2>
         <div class="chips">${ACCESSORIES.map((a, i) => chip('accessories', a, i === 0)).join('')}</div>
       </div>
-      ${type.passcode ? `<div class="card stack"><h2>Passcode <span class="muted" style="font-weight:400">optional</span></h2>
-        <p class="muted" style="margin:0">Used only to test the device. It is hidden on the job and deleted when the device is collected.</p>
+      ${type.passcode ? `<div class="card stack"><h2>Passcode</h2>
+        <p class="muted" style="margin:0">Needed to test the device before and after the repair. It is hidden on the job and deleted when the device is collected.</p>
         <label class="field">Passcode<input type="password" id="c-pass" data-bind="passcode" autocomplete="off" inputmode="text"></label>
+        <label class="check"><input type="checkbox" data-bind="passcodeNoLock"> No passcode on this device</label>
+        <label class="check"><input type="checkbox" data-bind="passcodeDeclined"> Customer won’t share it (we can’t fully test or quality-check the device)</label>
       </div>` : ''}`;
     drawPhotos($('#photos', body));
   },

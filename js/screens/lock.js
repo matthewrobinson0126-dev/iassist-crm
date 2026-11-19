@@ -1,7 +1,7 @@
 // Lock screen. Registered shop iPad: tap your name, enter your PIN.
 // Unregistered device (cloud mode): owner signs in with email + password, then can register it.
-import * as repo from '../repo.js?v=20261119224701';
-import { $, $$, esc, initials, toast } from '../ui.js?v=20261119224701';
+import * as repo from '../repo.js?v=20261119225737';
+import { $, $$, esc, initials, toast } from '../ui.js?v=20261119225737';
 
 const brand = name => `<div class="brand"><img src="icons/icon.svg" alt=""><span>${esc(name)} Book-In</span></div>`;
 

@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261119224701';
-import { uid, now } from './ui.js?v=20261119224701';
+import { db, remote } from './db.js?v=20261119225737';
+import { uid, now } from './ui.js?v=20261119225737';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -21,7 +21,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 2. IMPORTANT: YOUR DATA. Back up your device before you hand it in. Repairs and tests can sometimes erase data, and some repairs need a factory reset. We are not responsible for lost data, unless we caused the loss through gross negligence.
 
-3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. We keep your name, number and email to manage your repair and send you updates (POPIA). We never sell your details. Ask us at any time to see or delete them.
+3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. If your device has private information and you choose not to give us your passcode, we understand, but we cannot fully test or quality-check the device, and we are not responsible for faults we were unable to test. We keep your name, number and email to manage your repair and send you updates (POPIA). We never sell your details. Ask us at any time to see or delete them.
 
 4. ASSESSMENT AND QUOTES. Checking your device and giving you a quote is free, unless we tell you about an assessment fee before we start and you agree to it. We will not do extra work or charge more than the quote unless you approve the extra cost first. A quote is valid for the number of days shown on it.
 
@@ -320,7 +320,8 @@ export async function createJob(d, { demo = false } = {}) {
     passcodeGiven: !!d.passcode,
     quote: d.jobType === 'warranty' ? 0 : d.quoteMode === 'fixed' ? num(d.quote) : null, quoteNote: d.quoteNote || '',
     deposit: num(d.deposit), dueDate: d.dueDate || '', collection: d.collection,
-    internalNotes: d.internalNotes || '', termsText: settings.terms,
+    internalNotes: [d.passcode ? '' : d.passcodeDeclined ? 'PASSCODE NOT GIVEN: customer chose not to share it (POPIA). Device cannot be fully tested or quality-checked.'
+      : d.passcodeNoLock ? 'No passcode on this device.' : '', d.internalNotes || ''].filter(Boolean).join('\n'), termsText: settings.terms,
     // Phase 2
     jobType: d.jobType || 'paid', warrantyOf: d.warrantyOf || null, warrantyOfNo: d.warrantyOfNo || '',
     urgent: !!d.urgent, technicianId: d.technicianId || null, technicianName: d.technicianName || '',
@@ -333,6 +334,7 @@ export async function createJob(d, { demo = false } = {}) {
   for (const p of d.photos || []) await addPhoto(job, p.blob, p.caption || 'Condition at book-in', { log: false });
   await logEvent(job, 'booked', `Booked in by ${me.name}${job.jobType === 'warranty' ? ` (warranty return for ${job.warrantyOfNo})` : ''}`);
   if (job.technicianName) await logEvent(job, 'assign', `Assigned to ${job.technicianName}`);
+  if (!d.passcode && d.passcodeDeclined) await logEvent(job, 'passcode', 'Customer chose not to share the passcode: device cannot be fully tested or quality-checked');
   if (job.deposit > 0) await addPayment({ job, kind: 'deposit', method: d.depositMethod || 'Cash', amount: job.deposit });
   if (d.quoteId) job = await linkQuoteToJob(d.quoteId, job);
   if (!demo) notify(job, 'booked');
