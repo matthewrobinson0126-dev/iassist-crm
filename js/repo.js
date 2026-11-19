@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261119230159';
-import { uid, now } from './ui.js?v=20261119230159';
+import { db, remote } from './db.js?v=20261119230928';
+import { uid, now } from './ui.js?v=20261119230928';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -31,29 +31,27 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 7. IMPORTANT: LIQUID DAMAGE. Liquid damage keeps spreading after a repair. We will do our best, but we cannot guarantee that a liquid-damaged device will work or keep working. Liquid-damage repairs carry no warranty unless we say so in writing.
 
-8. WATER RESISTANCE. Once a device has been opened, we cannot guarantee it is still water resistant, even after we reseal it.
+8. PARTS AND APPLE MESSAGES. We will tell you which type of part we use. On newer iPhones and iPads, Apple may show a "non-genuine" or "unknown part" message after a part is replaced, and some features (for example True Tone, battery health readings or Face ID on some models) can be affected. A repair by us may affect any Apple warranty or AppleCare you still have.
 
-9. PARTS AND APPLE MESSAGES. We will tell you which type of part we use. On newer iPhones and iPads, Apple may show a "non-genuine" or "unknown part" message after a part is replaced, and some features (for example True Tone, battery health readings or Face ID on some models) can be affected. A repair by us may affect any Apple warranty or AppleCare you still have.
+9. WARRANTY. The parts we fit and our labour are guaranteed for 6 months from the day you collect your device (the Consumer Protection Act, section 57, requires at least 3 months). The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
 
-10. WARRANTY. The parts we fit and our labour are guaranteed for 6 months from the day you collect your device (the Consumer Protection Act, section 57, requires at least 3 months). The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
+10. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly.
 
-11. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly.
+11. PAYMENT. Please pay in full before you collect your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
 
-12. PAYMENT. Please pay in full before you collect your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
+12. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
 
-13. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
+13. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable.
 
-14. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable.
+14. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then.
 
-15. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then.
+15. IMPORTANT: QUOTE DECLINED. If you decline our quote, please collect your device. If it is not collected within 90 days of you declining the quote, it will be recycled as e-waste. We are a repair shop, not a storage facility.
 
-16. IMPORTANT: QUOTE DECLINED. If you decline our quote, please collect your device. If it is not collected within 90 days of you declining the quote, it will be recycled as e-waste. We are a repair shop, not a storage facility.
+16. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
 
-17. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
+17. COMPLAINTS. If you are unhappy with anything, please talk to us first so we can sort it out. Please remember that we cannot take responsibility for the things these terms have already explained to you, such as lost data, liquid damage, hidden faults, faults we could not test without your passcode, or devices that were not collected in time.
 
-18. COMPLAINTS. Please talk to us first. If we cannot sort it out, you can contact the Consumer Goods and Services Ombud (CGSO) at www.cgso.org.za.
-
-19. YOUR RIGHTS. Nothing in these terms takes away your rights under the Consumer Protection Act.`;
+18. YOUR RIGHTS. Nothing in these terms takes away your rights under the Consumer Protection Act.`;
 const DEFAULT_TERMS = RECOMMENDED_TERMS;
 
 const DEFAULT_SETTINGS = {
