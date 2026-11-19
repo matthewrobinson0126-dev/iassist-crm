@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261119230928';
-import { uid, now } from './ui.js?v=20261119230928';
+import { db, remote } from './db.js?v=20261119231444';
+import { uid, now } from './ui.js?v=20261119231444';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -19,15 +19,15 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 1. YOUR DEVICE. You confirm the device is yours, or that the owner has allowed you to hand it in. Please remove SIM cards, memory cards and cases. Anything not written on your job card is your responsibility.
 
-2. IMPORTANT: YOUR DATA. Back up your device before you hand it in. Repairs and tests can sometimes erase data, and some repairs need a factory reset. We are not responsible for lost data, unless we caused the loss through gross negligence.
+2. IMPORTANT: YOUR DATA. Back up your device before you hand it in. Repairs and tests can sometimes erase data, and some repairs need a factory reset. We are not responsible for lost data, unless we caused the loss through gross negligence. After a reset you will need your Apple ID or Google account password to use the device again. We cannot remove Activation Lock (Find My), Google account locks (FRP) or company device management (MDM), and unlocking the device remains your responsibility.
 
-3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. If your device has private information and you choose not to give us your passcode, we understand, but we cannot fully test or quality-check the device, and we are not responsible for faults we were unable to test. We keep your name, number and email to manage your repair and send you updates (POPIA). We never sell your details. Ask us at any time to see or delete them.
+3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. If your device has private information and you choose not to give us your passcode, we understand, but we cannot fully test or quality-check the device, and we are not responsible for faults we were unable to test. We keep your name, number and email to manage your repair and send you updates (POPIA). We only contact you about your repair: we will not send you marketing unless you separately agree to it. We never sell your details. Ask us at any time to see or delete them.
 
-4. ASSESSMENT AND QUOTES. Checking your device and giving you a quote is free, unless we tell you about an assessment fee before we start and you agree to it. We will not do extra work or charge more than the quote unless you approve the extra cost first. A quote is valid for the number of days shown on it.
+4. ASSESSMENT AND QUOTES. Checking your device and giving you a quote is free, unless we tell you about an assessment fee before we start and you agree to it. We will not do extra work or charge more than the quote unless you approve the extra cost first. A quote is valid for the number of days shown on it, or 7 days if no period is stated, because part prices change quickly.
 
 5. CONDITION. The damage and faults recorded on your job card were already on the device when you handed it in.
 
-6. IMPORTANT: RISKS DURING REPAIR. Devices that have been dropped, bent, exposed to liquid or repaired before can have hidden damage. Opening them can reveal more faults and, in rare cases, the device can stop working completely. If we find this, we will contact you before going further. We are not liable for faults that were already there, unless we were grossly negligent.
+6. IMPORTANT: RISKS DURING REPAIR. Devices that have been dropped, bent, exposed to liquid or repaired before can have hidden damage. Opening them can reveal more faults and, in rare cases, the device can stop working completely. Board-level repairs (micro-soldering) need high heat on delicate parts, and chips that were already stressed or damaged can fail during heating. Separating glass from a screen, or moving a battery's circuit board onto new cells, carries a small risk of damaging the display or connector underneath. If any of this happens, we will contact you before going further and tell you about any extra cost. We are not liable for faults that were already there, unless we were grossly negligent.
 
 7. IMPORTANT: LIQUID DAMAGE. Liquid damage keeps spreading after a repair. We will do our best, but we cannot guarantee that a liquid-damaged device will work or keep working. Liquid-damage repairs carry no warranty unless we say so in writing.
 
@@ -35,15 +35,15 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 9. WARRANTY. The parts we fit and our labour are guaranteed for 6 months from the day you collect your device (the Consumer Protection Act, section 57, requires at least 3 months). The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
 
-10. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly.
+10. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly. If a repair is priced on an exchange basis (the old part is part of the price), we keep the old part.
 
 11. PAYMENT. Please pay in full before you collect your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
 
 12. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
 
-13. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable.
+13. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable. Once we hand your device to an outside courier, loss or damage in transit is covered only up to the courier's own limits, unless you ask for and pay for extra transit insurance beforehand.
 
-14. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then.
+14. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then. From the sale we keep the repair cost and reasonable storage, admin and selling costs; any money left over is kept for you to claim. A device that is still locked (Activation Lock or FRP) cannot be resold, so it will be stripped for parts or recycled instead.
 
 15. IMPORTANT: QUOTE DECLINED. If you decline our quote, please collect your device. If it is not collected within 90 days of you declining the quote, it will be recycled as e-waste. We are a repair shop, not a storage facility.
 
@@ -332,6 +332,7 @@ export async function createJob(d, { demo = false } = {}) {
   for (const p of d.photos || []) await addPhoto(job, p.blob, p.caption || 'Condition at book-in', { log: false });
   await logEvent(job, 'booked', `Booked in by ${me.name}${job.jobType === 'warranty' ? ` (warranty return for ${job.warrantyOfNo})` : ''}`);
   if (job.technicianName) await logEvent(job, 'assign', `Assigned to ${job.technicianName}`);
+  if (d.acceptedImportant) await logEvent(job, 'terms', 'Customer accepted the terms and specifically accepted the clauses marked IMPORTANT');
   if (!d.passcode && d.passcodeDeclined) await logEvent(job, 'passcode', 'Customer chose not to share the passcode: device cannot be fully tested or quality-checked');
   if (job.deposit > 0) await addPayment({ job, kind: 'deposit', method: d.depositMethod || 'Cash', amount: job.deposit });
   if (d.quoteId) job = await linkQuoteToJob(d.quoteId, job);
