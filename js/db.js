@@ -1,7 +1,7 @@
 // Picks where data lives: Supabase when configured, otherwise this device (demo mode).
-import { CONFIG } from './config.js?v=20261119222643';
-import { localDb } from './db-local.js?v=20261119222643';
-import { supaDb, remote as supaRemote } from './db-supabase.js?v=20261119222643';
+import { CONFIG } from './config.js?v=20261119223127';
+import { localDb } from './db-local.js?v=20261119223127';
+import { supaDb, remote as supaRemote } from './db-supabase.js?v=20261119223127';
 
 const cloud = !!(CONFIG.supabaseUrl && CONFIG.supabaseKey && window.supabase);
 export const db = cloud ? supaDb : localDb;

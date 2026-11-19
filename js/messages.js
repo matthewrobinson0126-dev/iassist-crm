@@ -1,6 +1,6 @@
 // Ready-made WhatsApp messages. Staff can edit before sending.
-import * as repo from './repo.js?v=20261119222643';
-import { esc, firstName, money, modal, toast } from './ui.js?v=20261119222643';
+import * as repo from './repo.js?v=20261119223127';
+import { esc, firstName, money, modal, toast } from './ui.js?v=20261119223127';
 
 const trackLine = j => (repo.auth.cloud && j.trackToken ? `\nTrack your repair: ${repo.trackUrl(j)}` : '');
 

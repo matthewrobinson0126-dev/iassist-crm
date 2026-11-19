@@ -1,6 +1,6 @@
 // Public quote page: the customer reads their quote and taps Accept or Decline (no login; the link's token is the key).
-import { CONFIG } from './config.js?v=20261119222643';
-import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119222643';
+import { CONFIG } from './config.js?v=20261119223127';
+import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119223127';
 
 const app = document.getElementById('app');
 const token = new URLSearchParams(location.search).get('q');
@@ -68,7 +68,7 @@ function render(d, msg) {
         <tfoot>${totals(d)}</tfoot></table>
       ${d.notes ? `<p style="margin:14px 0 0;white-space:pre-line">${esc(d.notes)}</p>` : ''}
       <p class="muted" style="margin:14px 0 0">${d.validUntil ? `Valid until ${fmtDate(d.validUntil)}.` : ''}${d.vatNumber ? ` VAT no. ${esc(d.vatNumber)}.` : ''}</p>
-      ${d.jobNo ? `<p class="muted" style="margin:6px 0 0">Please collect your device within 90 days of this quote if you don’t go ahead. Uncollected devices are recycled as e-waste (see our terms).</p>` : ''}
+      ${d.jobNo ? `<p class="muted" style="margin:6px 0 0">If you decline this quote, please collect your device within 90 days. Devices not collected after a declined quote are recycled as e-waste (see our terms).</p>` : ''}
     </div>
     <div class="card">${answerBox(d, msg)}</div>
     <div class="card"><b>${esc(d.shop.name)}</b><div class="muted">${esc(d.shop.address)}</div>

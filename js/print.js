@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261119222643';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119222643';
-import { deviceType, collectionLabel } from './devices.js?v=20261119222643';
+import * as repo from './repo.js?v=20261119223127';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119223127';
+import { deviceType, collectionLabel } from './devices.js?v=20261119223127';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {
@@ -171,7 +171,7 @@ export async function printQuote(q) {
         <div style="font-size:14pt"><b>Total${vat ? ' (incl. VAT)' : ''} ${money(q.total)}</b></div></div>
       ${q.notes ? `<h3>Notes</h3><div style="white-space:pre-line">${esc(q.notes)}</div>` : ''}
       <p>${q.validUntil ? `This quote is valid until <b>${fmtDate(q.validUntil)}</b>.` : ''} Prepared by ${esc(q.createdByName || '')}.</p>
-      ${q.jobId ? '<p style="font-size:9pt">Please collect your device within 90 days of this quote if you don’t go ahead. Uncollected devices are recycled as e-waste (see our terms).</p>' : ''}
+      ${q.jobId ? '<p style="font-size:9pt">If you decline this quote, please collect your device within 90 days. Devices not collected after a declined quote are recycled as e-waste (see our terms).</p>' : ''}
       ${url ? `<div class="pc-qr">${qrSvg(url, 2)}<div><b>Accept online</b><br>Scan the code to view and accept or decline quote ${esc(q.quoteNo)}.</div></div>` : ''}
     </div>`;
   window.print();
