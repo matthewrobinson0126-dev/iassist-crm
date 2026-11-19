@@ -1,8 +1,9 @@
 // Customer list + customer page (details and every device they've brought in).
-import * as repo from '../repo.js?v=20261119231444';
-import { statusLabel } from '../repo.js?v=20261119231444';
-import { $, $$, esc, fmtDate, toast } from '../ui.js?v=20261119231444';
-import { go } from '../app.js?v=20261119231444';
+import * as repo from '../repo.js?v=20261119232851';
+import { statusLabel } from '../repo.js?v=20261119232851';
+import { $, $$, esc, fmtDate, toast } from '../ui.js?v=20261119232851';
+import { go } from '../app.js?v=20261119232851';
+import { CONTACT_PREFS } from '../devices.js?v=20261119232851';
 
 let lastQ = '';
 
@@ -40,6 +41,8 @@ export async function renderCustomer(view, id) {
           <label class="field">Cell number<input type="tel" id="cf-phone" value="${esc(c.phone)}" required></label>
           <label class="field">Email<input type="email" id="cf-email" value="${esc(c.email || '')}"></label>
           <label class="field">Area / suburb<input type="text" id="cf-area" value="${esc(c.area || '')}"></label>
+          <label class="field">Contact by<select id="cf-cp"><option value="">Not chosen</option>${CONTACT_PREFS.map(p => `<option value="${p.id}" ${c.contactPref === p.id ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}</select></label>
+          <label class="check" style="align-self:end"><input type="checkbox" id="cf-noemail" ${c.noEmail ? 'checked' : ''}> Doesn’t use email</label>
           <label class="field">Customer type<select id="cf-type"><option value="individual">Individual</option><option value="business" ${c.type === 'business' ? 'selected' : ''}>Business</option></select></label>
         </div>
         <div class="grid-2" id="cf-biz" ${c.type === 'business' ? '' : 'hidden'}>
@@ -66,6 +69,7 @@ export async function renderCustomer(view, id) {
     const v = s => $(s, view).value;
     try {
       await repo.saveCustomer({ ...c, name: v('#cf-name'), phone: v('#cf-phone'), email: v('#cf-email'), area: v('#cf-area'), notes: v('#cf-notes'),
+        contactPref: v('#cf-cp') || null, noEmail: $('#cf-noemail', view).checked,
         type: v('#cf-type'), companyName: v('#cf-company'), vatNumber: v('#cf-vat'), contactPerson: v('#cf-contact'), address: v('#cf-address') });
       toast('Customer saved');
       renderCustomer(view, id);

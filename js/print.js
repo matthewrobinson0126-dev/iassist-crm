@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261119231444';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119231444';
-import { deviceType, collectionLabel } from './devices.js?v=20261119231444';
+import * as repo from './repo.js?v=20261119232851';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119232851';
+import { deviceType, collectionLabel } from './devices.js?v=20261119232851';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {
@@ -115,7 +115,7 @@ export async function printJobCard(job) {
           <dt>Powers on</dt><dd>${esc(job.powersOn || '—')}</dd>
         </dl></div>
         <div><h3>Fault</h3><div>${list(job.faults)}</div>${job.faultNotes ? `<div>${esc(job.faultNotes)}</div>` : ''}</div>
-        <div><h3>Condition at book-in</h3><div>${list(job.damage)}</div>${job.conditionNotes ? `<div>${esc(job.conditionNotes)}</div>` : ''}
+        <div><h3>Condition at book-in</h3><div>${list(job.damage)}</div>${(job.history || []).length ? `<div><b>History:</b> ${list(job.history)}</div>` : ''}${job.conditionNotes ? `<div>${esc(job.conditionNotes)}</div>` : ''}
           <div><b>Accessories left:</b> ${list(job.accessories)}</div></div>
         <div><h3>Quote</h3><dl>
           <dt>Quote</dt><dd>${job.quote === null ? 'After assessment' : money(job.quote)}</dd>

@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261119231444';
-import { STATUSES, statusLabel } from '../repo.js?v=20261119231444';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119231444';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261119231444';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119231444';
-import { startWarrantyJob } from './bookin.js?v=20261119231444';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119231444';
-import { openWhatsApp } from '../messages.js?v=20261119231444';
-import { go } from '../app.js?v=20261119231444';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119231444';
+import * as repo from '../repo.js?v=20261119232851';
+import { STATUSES, statusLabel } from '../repo.js?v=20261119232851';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119232851';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261119232851';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119232851';
+import { startWarrantyJob } from './bookin.js?v=20261119232851';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119232851';
+import { openWhatsApp } from '../messages.js?v=20261119232851';
+import { go } from '../app.js?v=20261119232851';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119232851';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -160,7 +160,8 @@ export async function renderJob(view, id) {
           <dl class="kv" style="margin-top:12px">
             <dt>Name</dt><dd>${esc(customer?.name || job.customerName)}</dd>
             <dt>Cell</dt><dd class="num">${esc(customer?.phone || job.customerPhone)}</dd>
-            ${customer?.email ? `<dt>Email</dt><dd>${esc(customer.email)}</dd>` : ''}
+            ${customer?.email ? `<dt>Email</dt><dd>${esc(customer.email)}</dd>` : customer?.noEmail ? '<dt>Email</dt><dd>Doesn’t use email: <b>send reminders on WhatsApp</b></dd>' : ''}
+            ${customer?.contactPref ? `<dt>Contact by</dt><dd><b>${esc(contactPrefLabel(customer.contactPref))}</b></dd>` : ''}
             ${customer?.area ? `<dt>Area</dt><dd>${esc(customer.area)}</dd>` : ''}
           </dl></div>
         <div class="card"><div class="row"><h2 style="margin:0">Device</h2><span class="spacer"></span>
@@ -171,6 +172,7 @@ export async function renderJob(view, id) {
             <dt>IMEI / serial</dt><dd class="mono">${esc(job.serial || '—')}</dd>
             <dt>Powers on</dt><dd>${esc(job.powersOn || '—')}</dd>
             <dt>Fault</dt><dd>${list(job.faults)}${job.faultNotes ? `<div style="margin-top:6px">${esc(job.faultNotes)}</div>` : ''}</dd>
+            ${(job.history || []).length ? `<dt>History</dt><dd>${list(job.history)}</dd>` : ''}
             <dt>Condition</dt><dd>${list(job.damage)}${job.conditionNotes ? `<div style="margin-top:6px">${esc(job.conditionNotes)}</div>` : ''}</dd>
             <dt>Left with it</dt><dd>${list(job.accessories)}</dd>
             <dt>Passcode</dt><dd>${job.passcodeGiven ? (collected ? 'Deleted at collection' : '<button class="btn small" id="j-pass">Show passcode</button>') : 'Not given'}</dd>

@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261119231444';
-import { uid, now } from './ui.js?v=20261119231444';
+import { db, remote } from './db.js?v=20261119232851';
+import { uid, now } from './ui.js?v=20261119232851';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -305,7 +305,9 @@ export async function createJob(d, { demo = false } = {}) {
   requireUser();
   const nc = d.newCustomer || {};
   const { isBusiness, ...ncFields } = nc;
-  const customer = d.customer || await saveCustomer({ ...ncFields, type: isBusiness ? 'business' : 'individual', referral: d.referral || '', demo });
+  let customer = d.customer || await saveCustomer({ ...ncFields, type: isBusiness ? 'business' : 'individual', referral: d.referral || '', demo });
+  // Returning customer picked a (new) way to be contacted.
+  if (d.customer && d.contactPref && d.customer.contactPref !== d.contactPref) customer = await saveCustomer({ ...d.customer, contactPref: d.contactPref });
   const t = now();
   const settings = await getSettings();
   let job = {
@@ -313,7 +315,7 @@ export async function createJob(d, { demo = false } = {}) {
     id: uid(), jobNo: remote ? undefined : await nextJobNo(),
     customerId: customer.id, customerName: customer.name, customerPhone: customer.phone,
     deviceType: d.deviceType, model: d.model.trim(), colour: d.colour || '', serial: d.serial || '',
-    powersOn: d.powersOn, faults: [...d.faults], faultNotes: d.faultNotes || '',
+    powersOn: d.powersOn, faults: [...d.faults], faultNotes: d.faultNotes || '', history: [...(d.history || [])],
     damage: [...d.damage], conditionNotes: d.conditionNotes || '', accessories: [...d.accessories],
     passcodeGiven: !!d.passcode,
     quote: d.jobType === 'warranty' ? 0 : d.quoteMode === 'fixed' ? num(d.quote) : null, quoteNote: d.quoteNote || '',

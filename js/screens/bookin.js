@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261119231444';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119231444';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261119231444';
-import { printJobCard, printLabel } from '../print.js?v=20261119231444';
-import { openWhatsApp } from '../messages.js?v=20261119231444';
-import { go } from '../app.js?v=20261119231444';
+import * as repo from '../repo.js?v=20261119232851';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119232851';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261119232851';
+import { printJobCard, printLabel } from '../print.js?v=20261119232851';
+import { openWhatsApp } from '../messages.js?v=20261119232851';
+import { go } from '../app.js?v=20261119232851';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -13,7 +13,7 @@ let pad = null;
 const newDraft = () => ({
   step: 0, maxStep: 0, customer: null, newCustomer: { name: '', phone: '', email: '', area: '' }, search: '',
   deviceType: '', model: '', colour: '', serial: '', powersOn: 'Yes',
-  faults: [], faultNotes: '', damage: [], conditionNotes: '', photos: [], accessories: [],
+  faults: [], faultNotes: '', history: [], contactPref: '', damage: [], conditionNotes: '', photos: [], accessories: [],
   passcode: '', quoteMode: 'assess', quote: '', quoteNote: '', deposit: '', dueDate: '', collection: 'store',
   internalNotes: '', accepted: false, startedBy: repo.auth.user?.name,
   depositMethod: 'Cash', referral: '', urgent: false, technicianId: '', technicianName: '', jobType: 'paid', warrantyOf: null, warrantyOfNo: '',
@@ -159,12 +159,19 @@ function drawCustomerMode(view) {
           : `<div class="grid-2">
           <label class="field">Full name<input type="text" data-bind="newCustomer.name" autocomplete="name" autocapitalize="words"></label>
           <label class="field">Cell number<input type="tel" data-bind="newCustomer.phone" inputmode="tel" autocomplete="tel" placeholder="082 123 4567"></label>
-          <label class="field">Email <span class="hint">for repair updates</span><input type="email" data-bind="newCustomer.email" autocomplete="email" autocapitalize="off"></label>
+          <label class="field">Email <span class="hint">for repair updates and collection reminders</span><input type="email" id="k-email" data-bind="newCustomer.email" autocomplete="email" autocapitalize="off"></label>
           <label class="field">Suburb <span class="hint">optional</span><input type="text" data-bind="newCustomer.area" autocomplete="address-level2"></label>
-        </div>`}
+        </div>
+        <label class="check"><input type="checkbox" id="k-noemail" data-bind="newCustomer.noEmail"> I don’t use email: please contact me on WhatsApp</label>`}
+      </div>
+      <div class="card stack"><h2 style="margin:0">How should we contact you?</h2>
+        <p class="muted" style="margin:0">For your quote, updates and when your device is ready.</p>
+        <div class="seg" id="k-cp">${CONTACT_PREFS.map(p => `<button type="button" data-cp="${p.id}">${esc(p.label)}</button>`).join('')}</div>
       </div>
       <div class="card stack"><h2 style="margin:0">What’s wrong with your device?</h2>
         <textarea data-bind="faultNotes" rows="3" placeholder="In your own words: what happened and when it started"></textarea>
+        <div class="field">Has any of this happened to it? <span class="hint">tap all that apply</span>
+          <div class="chips">${HISTORY.map(h => chip('history', h)).join('')}</div></div>
       </div>
       <div class="card stack"><h2 style="margin:0">Your device passcode</h2>
         <p style="margin:0">We need your passcode to test your device before and after the repair, and to check our work. We only use it for testing, keep it hidden, and delete it when you collect your device.</p>
@@ -198,6 +205,13 @@ function drawCustomerMode(view) {
     const h = $('#k-title', view); if (h) h.textContent = `Welcome to ${s.shopName}`;
   });
   $('#k-declined', view).addEventListener('change', e => { $('#k-declined-note', view).hidden = !e.target.checked; });
+  if (!draft.contactPref && draft.customer?.contactPref) draft.contactPref = draft.customer.contactPref;
+  const paintCp = () => $$('[data-cp]', view).forEach(b => b.classList.toggle('on', draft.contactPref === b.dataset.cp));
+  $$('[data-cp]', view).forEach(b => b.onclick = () => { draft.contactPref = b.dataset.cp; paintCp(); });
+  paintCp();
+  $('#k-noemail', view)?.addEventListener('change', e => {
+    if (e.target.checked) { draft.contactPref = 'whatsapp'; paintCp(); }
+  });
   const paintRef = () => $$('[data-ref]', view).forEach(b => b.classList.toggle('on', draft.referral === b.dataset.ref));
   $$('[data-ref]', view).forEach(b => b.onclick = () => { draft.referral = draft.referral === b.dataset.ref ? '' : b.dataset.ref; paintRef(); });
   paintRef();
@@ -214,13 +228,19 @@ function drawCustomerMode(view) {
     if (!draft.customer) {
       if (!nc.name.trim()) return err('Please enter your name.');
       if (repo.digits(nc.phone).length < 9) return err('Please enter your cell number.');
+      if (!nc.noEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(nc.email || '').trim()))
+        return err('Please enter your email address, or tick “I don’t use email”.');
     }
+    if (!draft.contactPref) return err('Please choose how we should contact you.');
+    if (draft.contactPref === 'email' && (draft.customer ? !draft.customer.email : nc.noEmail))
+      return err('You chose email, but we don’t have an email address for you. Please choose WhatsApp or a phone call.');
     if (!String(draft.passcode || '').trim() && !draft.passcodeNoLock && !draft.passcodeDeclined)
       return err('Please enter your device passcode, or tick one of the boxes below it.');
     if (!draft.accepted) return err('Please tick the box to accept the terms.');
     if (!draft.acceptedImportant) return err('Please also tick the box to accept the clauses marked IMPORTANT.');
     if (!kpad || kpad.isEmpty()) return err('Please sign in the box above.');
     draft.customerSignature = await kpad.toBlob();
+    if (!draft.customer) { nc.contactPref = draft.contactPref; if (nc.noEmail) nc.email = ''; }
     let note = 'Customer details saved. Carry on with the device.';
     if (!draft.customer) {
       const existing = await repo.findByPhone(nc.phone);
@@ -333,6 +353,8 @@ const STEP_VIEWS = [
     body.innerHTML = `
       <div class="card stack"><h2>What’s wrong with the ${esc(draft.model)}?</h2>
         <div class="chips">${type.faults.map(f => chip('faults', f)).join('')}${chip('faults', 'Other')}</div>
+        <div class="field">Device history <span class="hint">optional</span>
+          <div class="chips">${HISTORY.map(h => chip('history', h)).join('')}</div></div>
         <label class="field">What the customer says<span class="hint">In their words: when it started, what happened (dropped, got wet…)</span>
           <textarea id="f-notes" data-bind="faultNotes"></textarea></label>
       </div>`;
