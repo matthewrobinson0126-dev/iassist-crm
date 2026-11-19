@@ -1,8 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261119221720';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261119221720';
-import { go } from '../app.js?v=20261119221720';
-import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261119221720';
+import * as repo from '../repo.js?v=20261119222643';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261119222643';
+import { go } from '../app.js?v=20261119222643';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261119222643';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -35,6 +35,8 @@ export async function renderSettings(view) {
           <button class="btn" type="button" id="sh-test">Send test email</button></div>` : ''}
         <label class="field">Terms the customer signs<span class="hint">Shown at book-in and printed on the job card. Each job keeps the version that was signed.</span>
           <textarea id="sh-terms" rows="9">${esc(s.terms)}</textarea></label>
+        ${s.terms === repo.RECOMMENDED_TERMS ? '<p class="muted" style="margin:0">Using the recommended iAssist terms (90-day collection rule included).</p>'
+          : '<div class="row"><button class="btn small" type="button" id="sh-terms-rec">Use the recommended iAssist terms</button><span class="muted">Then tap Save shop details.</span></div>'}
         <div class="row"><span class="spacer"></span><button class="btn primary" type="submit">Save shop details</button></div>
       </form>
       ${repo.auth.cloud ? `<div class="card stack"><h2 style="margin:0">This device</h2>
@@ -63,6 +65,11 @@ export async function renderSettings(view) {
     </div>`;
 
   $('#st-add', view).onclick = () => staffModal(null, view);
+  $('#sh-terms-rec', view)?.addEventListener('click', async () => {
+    if (await confirmBox('Replace the current terms with the recommended iAssist terms? Jobs already booked keep the terms they signed.', { ok: 'Replace terms' })) {
+      $('#sh-terms', view).value = repo.RECOMMENDED_TERMS; toast('Recommended terms loaded. Tap Save shop details.');
+    }
+  });
   const saveLabels = () => repo.saveSettings({ labelSize: $('#lb-size', view).value, labelCopies: Number($('#lb-copies', view).value),
     labelQr: $('#lb-qr', view).checked });
   $('#lb-save', view).onclick = async () => { await saveLabels(); toast('Label settings saved'); };

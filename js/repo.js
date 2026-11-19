@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261119221720';
-import { uid, now } from './ui.js?v=20261119221720';
+import { db, remote } from './db.js?v=20261119222643';
+import { uid, now } from './ui.js?v=20261119222643';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -13,13 +13,48 @@ export const STATUSES = [
 ];
 export const statusLabel = id => STATUSES.find(s => s.id === id)?.label || id;
 
-const DEFAULT_TERMS = `DRAFT: replace with your own terms in Settings.
+// Recommended terms (researched 2026-11-19 against the Consumer Protection Act ss 15, 49, 57, 65, 67). Get a lawyer to check them.
+export const RECOMMENDED_TERMS = `IASSIST REPAIR TERMS AND CONDITIONS
+Please read these before you sign. Clauses marked IMPORTANT limit our liability or put a risk on you. By signing, you confirm you have read and accept them.
 
-1. Please back up your device before handing it in. We are not responsible for data loss.
-2. We only use your passcode to test the device before and after the repair. It is deleted when you collect the device.
-3. The damage noted on this job card was already on the device when you handed it in.
-4. The quote can change after we have assessed the device. We will contact you for approval before doing any extra work.
-5. Warranty covers the part we replaced and our workmanship. It does not cover new physical or liquid damage.`;
+1. YOUR DEVICE. You confirm the device is yours, or that the owner has allowed you to hand it in. Please remove SIM cards, memory cards and cases. Anything not written on your job card is your responsibility.
+
+2. IMPORTANT: YOUR DATA. Back up your device before you hand it in. Repairs and tests can sometimes erase data, and some repairs need a factory reset. We are not responsible for lost data, unless we caused the loss through gross negligence.
+
+3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. We keep your name, number and email to manage your repair and send you updates (POPIA). We never sell your details. Ask us at any time to see or delete them.
+
+4. ASSESSMENT AND QUOTES. Checking your device and giving you a quote is free, unless we tell you about an assessment fee before we start and you agree to it. We will not do extra work or charge more than the quote unless you approve the extra cost first. A quote is valid for the number of days shown on it.
+
+5. CONDITION. The damage and faults recorded on your job card were already on the device when you handed it in.
+
+6. IMPORTANT: RISKS DURING REPAIR. Devices that have been dropped, bent, exposed to liquid or repaired before can have hidden damage. Opening them can reveal more faults and, in rare cases, the device can stop working completely. If we find this, we will contact you before going further. We are not liable for faults that were already there, unless we were grossly negligent.
+
+7. IMPORTANT: LIQUID DAMAGE. Liquid damage keeps spreading after a repair. We will do our best, but we cannot guarantee that a liquid-damaged device will work or keep working. Liquid-damage repairs carry no warranty unless we say so in writing.
+
+8. WATER RESISTANCE. Once a device has been opened, we cannot guarantee it is still water resistant, even after we reseal it.
+
+9. PARTS AND APPLE MESSAGES. We will tell you which type of part we use. On newer iPhones and iPads, Apple may show a "non-genuine" or "unknown part" message after a part is replaced, and some features (for example True Tone, battery health readings or Face ID on some models) can be affected. A repair by us may affect any Apple warranty or AppleCare you still have.
+
+10. WARRANTY. The parts we fit and our labour are guaranteed for 3 months, or longer if written on your job card or invoice (Consumer Protection Act, section 57). The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
+
+11. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly.
+
+12. PAYMENT. Please pay in full before you collect your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
+
+13. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
+
+14. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable.
+
+15. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then.
+
+16. IMPORTANT: DEVICES NOT REPAIRED. If we gave you a quote and you did not go ahead, or did not reply, please collect your device. If it is not collected within 90 days of the quote, it will be recycled as e-waste. We are a repair shop, not a storage facility.
+
+17. REMINDERS AND YOUR DATA. Before we sell or recycle an uncollected device, we will send at least two reminders to the contact details on your job card, including a final notice at least 14 days before the 90 days end. All data on the device is erased before it is sold or recycled. Please tell us if your number or email changes.
+
+18. COMPLAINTS. Please talk to us first. If we cannot sort it out, you can contact the Consumer Goods and Services Ombud (CGSO) at www.cgso.org.za.
+
+19. YOUR RIGHTS. Nothing in these terms takes away your rights under the Consumer Protection Act.`;
+const DEFAULT_TERMS = RECOMMENDED_TERMS;
 
 const DEFAULT_SETTINGS = {
   id: 'shop',
