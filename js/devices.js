@@ -80,7 +80,9 @@ export const JOB_TYPES = [
 export const jobTypeLabel = id => JOB_TYPES.find(t => t.id === id)?.label || 'Paid repair';
 
 // What happened to the device before it came in (tapped by the customer at book-in).
-export const HISTORY = ['Dropped', 'Liquid exposure', 'Repaired elsewhere before'];
+export const HISTORY = ['Dropped', 'Liquid exposure', 'Died suddenly', 'Lightning / power surge', 'Load-shedding (power came back)',
+  'Got very hot', 'Bent or sat on', 'Battery swollen / screen lifting', 'Non-original charger', 'Software update went wrong',
+  'Repaired elsewhere before'];
 // How the customer wants to be contacted.
 export const CONTACT_PREFS = [{ id: 'whatsapp', label: 'WhatsApp' }, { id: 'call', label: 'Phone call' }, { id: 'email', label: 'Email' }];
 export const contactPrefLabel = id => CONTACT_PREFS.find(p => p.id === id)?.label || '';
