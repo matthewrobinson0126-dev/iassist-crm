@@ -1,0 +1,21 @@
+# Collection reminders: every morning at 09:00 SAST, emails customers whose device has been waiting
+# 30, 60 or 90 days (repaired and not collected, or quote declined). The server function never sends
+# the same reminder twice. Needs the REMINDERS_KEY repository secret (same value as in Supabase).
+# Source of truth: My Drive/CRM/github/reminders.yml (publish.py copies it into the repo).
+name: Collection reminders
+on:
+  schedule:
+    - cron: "0 7 * * *"   # 09:00 SAST every day
+  workflow_dispatch:
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send due reminders
+        env:
+          KEY: ${{ secrets.REMINDERS_KEY }}
+        run: |
+          out=$(curl -s -w "\n%{http_code}" -X POST -H "Content-Type: application/json" -H "x-reminders-key: $KEY" \
+            -d '{}' https://ffoehufktdvmwkzxyqng.supabase.co/functions/v1/reminders)
+          echo "$out"
+          [ "$(echo "$out" | tail -1)" = "200" ]
