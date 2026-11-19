@@ -1,18 +1,18 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261119225737';
-import { db } from './db.js?v=20261119225737';
-import { $, esc, initials, toast } from './ui.js?v=20261119225737';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261119225737';
-import { renderBookIn } from './screens/bookin.js?v=20261119225737';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261119225737';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261119225737';
-import { renderSettings } from './screens/settings.js?v=20261119225737';
-import { renderMoney } from './screens/money.js?v=20261119225737';
-import { renderTasks } from './screens/tasks.js?v=20261119225737';
-import { renderReports } from './screens/reports.js?v=20261119225737';
-import { renderStock } from './screens/stock.js?v=20261119225737';
-import { renderSell } from './screens/sell.js?v=20261119225737';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261119225737';
+import * as repo from './repo.js?v=20261119230159';
+import { db } from './db.js?v=20261119230159';
+import { $, esc, initials, toast } from './ui.js?v=20261119230159';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261119230159';
+import { renderBookIn } from './screens/bookin.js?v=20261119230159';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261119230159';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261119230159';
+import { renderSettings } from './screens/settings.js?v=20261119230159';
+import { renderMoney } from './screens/money.js?v=20261119230159';
+import { renderTasks } from './screens/tasks.js?v=20261119230159';
+import { renderReports } from './screens/reports.js?v=20261119230159';
+import { renderStock } from './screens/stock.js?v=20261119230159';
+import { renderSell } from './screens/sell.js?v=20261119230159';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261119230159';
 
 const routes = {
   bookin: renderBookIn,
@@ -109,7 +109,30 @@ setInterval(async () => {
 window.addEventListener('hashchange', route);
 window.addEventListener('unhandledrejection', e => { toast(e.reason?.message || 'Something went wrong', 'error'); });
 
+// New version published? iPads can keep an old copy of the page for a while, so ask the server
+// (bypassing the cache) which version is current and reload if it's newer. Checked on start-up and
+// whenever the app comes back to the front, but never in the middle of a booking.
+const MY_VERSION = new URL(import.meta.url).searchParams.get('v');
+async function checkForUpdate() {
+  if (!MY_VERSION || location.hash.startsWith('#bookin')) return false;
+  try {
+    const html = await (await fetch(location.pathname + '?check=' + Date.now(), { cache: 'no-store' })).text();
+    const live = (html.match(/js\/app\.js\?v=([\w-]+)/) || [])[1];
+    if (live && live !== MY_VERSION) {
+      const key = 'crm.reloadedFor';
+      if (sessionStorage.getItem(key) === live) return false;   // never loop
+      sessionStorage.setItem(key, live);
+      // A new address can't come from the old cache, so this always loads the new version.
+      location.replace(location.pathname + '?u=' + encodeURIComponent(live) + location.hash);
+      return true;
+    }
+  } catch { /* offline: carry on with this version */ }
+  return false;
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') checkForUpdate(); });
+
 (async () => {
+  if (await checkForUpdate()) return;
   if (repo.auth.recoveryPending()) return renderSetPassword($('#app'), () => route());
   await repo.auth.restore();
   route();
