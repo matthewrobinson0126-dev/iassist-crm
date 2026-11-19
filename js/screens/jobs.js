@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261119224502';
-import { STATUSES, statusLabel } from '../repo.js?v=20261119224502';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119224502';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261119224502';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119224502';
-import { startWarrantyJob } from './bookin.js?v=20261119224502';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119224502';
-import { openWhatsApp } from '../messages.js?v=20261119224502';
-import { go } from '../app.js?v=20261119224502';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119224502';
+import * as repo from '../repo.js?v=20261119224701';
+import { STATUSES, statusLabel } from '../repo.js?v=20261119224701';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119224701';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel } from '../devices.js?v=20261119224701';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119224701';
+import { startWarrantyJob } from './bookin.js?v=20261119224701';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119224701';
+import { openWhatsApp } from '../messages.js?v=20261119224701';
+import { go } from '../app.js?v=20261119224701';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119224701';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -32,8 +32,37 @@ export async function renderJobs(view) {
       <label class="check"><input type="checkbox" id="show-collected"> Show collected</label>
     </div>
     <div id="quote-news"></div>
+    <div id="uncollected"></div>
     <div class="chips" id="filters" style="margin-bottom:14px"></div>
     <div class="board" id="board"></div>`;
+  // Devices waiting 30+ days to be collected (repaired, or quote declined). Reminder emails go out
+  // automatically at 30, 60 and 90 days; after 90 days + a 7-day grace period the device can be sold or recycled.
+  repo.listQuotes().then(quotes => {
+    const box = $('#uncollected', view);
+    if (!box) return;
+    const days = iso => Math.floor((Date.now() - new Date(iso).getTime()) / 864e5);
+    const rows = [];
+    for (const j of jobs.filter(j => !j.demo || !repo.auth.cloud)) {
+      if (j.status === 'ready') rows.push({ j, kind: 'ready', d: days(j.statusAt) });
+      else if (['booked', 'diagnosing', 'approval'].includes(j.status)) {
+        const qs = quotes.filter(q => q.jobId === j.id);
+        if (qs.some(q => q.status === 'accepted')) continue;
+        const dec = qs.filter(q => q.status === 'declined').map(q => q.respondedAt || q.createdAt).sort().pop();
+        if (dec) rows.push({ j, kind: 'declined', d: days(dec) });
+      }
+    }
+    const list = rows.filter(r => r.d >= 30).sort((a, b) => b.d - a.d);
+    if (!list.length) return;
+    const due = list.filter(r => r.d >= 97).length;
+    box.innerHTML = `<div class="card stack" style="margin-bottom:14px;border-color:var(--s-parts)">
+      <div class="row"><h2 style="margin:0">Uncollected devices</h2><span class="spacer"></span>
+        ${due ? `<span class="tag hot">${due} ready to sell / recycle</span>` : ''}</div>
+      <p class="muted" style="margin:0">Customers are emailed automatically at 30, 60 and 90 days. After 90 days plus 7 days' grace, repaired devices may be sold and declined-quote devices recycled (data erased first).</p>
+      <div class="list">${list.map(r => `<a class="list-row" href="#job-${r.j.id}">
+        <span class="grow"><b class="mono">${esc(r.j.jobNo)}</b> · ${esc(r.j.customerName)} · ${esc(r.j.model)}
+          <div class="muted">${r.kind === 'ready' ? 'Repaired, not collected' : 'Quote declined, not collected'} · ${r.d} days</div></span>
+        ${r.d >= 97 ? `<span class="tag hot">${r.kind === 'ready' ? 'Can be sold' : 'Can be recycled'}</span>` : r.d >= 90 ? '<span class="tag">Final notice sent</span>' : `<span class="tag">${r.d >= 60 ? '2nd' : '1st'} reminder</span>`}</a>`).join('')}</div></div>`;
+  }).catch(() => {});
   // Quotes the customer answered online (accepted / declined) since this iPad last looked.
   recentOnlineAnswers().then(list => {
     const box = $('#quote-news', view);

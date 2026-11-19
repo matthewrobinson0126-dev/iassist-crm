@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261119224502';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119224502';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261119224502';
-import { printJobCard, printLabel } from '../print.js?v=20261119224502';
-import { openWhatsApp } from '../messages.js?v=20261119224502';
-import { go } from '../app.js?v=20261119224502';
+import * as repo from '../repo.js?v=20261119224701';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119224701';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261119224701';
+import { printJobCard, printLabel } from '../print.js?v=20261119224701';
+import { openWhatsApp } from '../messages.js?v=20261119224701';
+import { go } from '../app.js?v=20261119224701';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
