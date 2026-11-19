@@ -295,6 +295,15 @@ td.neg { color: var(--danger); }
 
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 
+/* ───── Hand to customer (book-in): menu hidden, bigger fields ───── */
+.kiosk .topbar, .kiosk .demo-banner { display: none; }
+.kiosk-wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 16px; padding-bottom: 24px; }
+.kiosk-wrap input, .kiosk-wrap textarea { font-size: 18px; }
+.kiosk-head { display: flex; gap: 14px; align-items: center; }
+.kiosk-head img { width: 52px; height: 52px; border-radius: 12px; }
+.kiosk-actions { position: sticky; bottom: 0; padding: 12px 0 calc(12px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, var(--bg) 75%, transparent); }
+
 /* ───── Print: job card only ───── */
 #print-area { display: none; }
 @media print {

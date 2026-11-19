@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261114144809';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261114144809';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261114144809';
-import { printJobCard, printLabel } from '../print.js?v=20261114144809';
-import { openWhatsApp } from '../messages.js?v=20261114144809';
-import { go } from '../app.js?v=20261114144809';
+import * as repo from '../repo.js?v=20261119221720';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119221720';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel } from '../devices.js?v=20261119221720';
+import { printJobCard, printLabel } from '../print.js?v=20261119221720';
+import { openWhatsApp } from '../messages.js?v=20261119221720';
+import { go } from '../app.js?v=20261119221720';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -41,9 +41,12 @@ export function startQuoteJob(q, customer) {
 }
 
 function draw(view) {
+  document.body.classList.toggle('kiosk', !!draft.customerMode);
+  if (draft.customerMode) return drawCustomerMode(view);
   view.innerHTML = `
     <div class="wizard">
       <div class="page-head"><h1>Book in a device</h1>${draft.quoteNo ? `<span class="tag">From quote ${esc(draft.quoteNo)}</span>` : ''}<span class="spacer"></span>
+        ${draft.step === 0 ? '<button class="btn small primary" id="to-customer">Hand to customer</button>' : ''}
         <button class="btn small ghost" id="restart">Start over</button></div>
       <ol class="steps">${STEPS.map((s, i) => {
         const reach = i <= (draft.maxStep || 0) && i !== draft.step;
@@ -74,6 +77,7 @@ function draw(view) {
     draft.step = to; draw(view);
   });
   $('#next', view).onclick = () => next(view);
+  $('#to-customer', view)?.addEventListener('click', () => { draft.customerMode = true; draw(view); });
   $('#restart', view).onclick = async () => {
     if (await confirmBox('Clear this booking and start again?', { ok: 'Start over', danger: true })) {
       draft.photos.forEach(p => URL.revokeObjectURL(p.url));
@@ -97,7 +101,7 @@ async function next(view) {
   const btn = $('#next', view);
   btn.disabled = true; btn.textContent = 'Saving…';
   try {
-    const job = await repo.createJob({ ...draft, signature: await pad.toBlob() });
+    const job = await repo.createJob({ ...draft, signature: draft.customerSignature || await pad.toBlob() });
     draft.photos.forEach(p => URL.revokeObjectURL(p.url));
     draft = null;
     done(view, job);
@@ -138,6 +142,87 @@ function bind(root, view) {
     b.classList.toggle('on', draft[b.dataset.seg] === b.dataset.value);
     b.onclick = () => { draft[b.dataset.seg] = b.dataset.value; draw(view); };
   });
+}
+
+// ───────────── Hand to customer ─────────────
+// The customer fills in their own details, passcode and signature on the iPad; the menu is hidden meanwhile.
+// "Done" hands it back to staff, who carry on from the Device step. Nothing is saved until the job is booked in.
+function drawCustomerMode(view) {
+  const c = draft.customer;
+  view.innerHTML = `
+    <div class="kiosk-wrap">
+      <div class="kiosk-head"><img src="icons/icon.svg" alt="">
+        <div><h1 id="k-title" style="margin:0">Welcome</h1>
+          <p class="muted" style="margin:2px 0 0">Please fill in your details, read our terms and sign below. Then hand the iPad back to us.</p></div></div>
+      <div class="card stack"><h2 style="margin:0">Your details</h2>
+        ${c ? `<p style="margin:0">Hi <b>${esc(c.name)}</b>, we already have your details (${esc(c.phone)}).</p>`
+          : `<div class="grid-2">
+          <label class="field">Full name<input type="text" data-bind="newCustomer.name" autocomplete="name" autocapitalize="words"></label>
+          <label class="field">Cell number<input type="tel" data-bind="newCustomer.phone" inputmode="tel" autocomplete="tel" placeholder="082 123 4567"></label>
+          <label class="field">Email <span class="hint">for repair updates</span><input type="email" data-bind="newCustomer.email" autocomplete="email" autocapitalize="off"></label>
+          <label class="field">Suburb <span class="hint">optional</span><input type="text" data-bind="newCustomer.area" autocomplete="address-level2"></label>
+        </div>`}
+      </div>
+      <div class="card stack"><h2 style="margin:0">What’s wrong with your device?</h2>
+        <textarea data-bind="faultNotes" rows="3" placeholder="In your own words: what happened and when it started"></textarea>
+        <label class="field">Device passcode <span class="hint">optional. Only used to test your device, and deleted when you collect it</span>
+          <input type="password" data-bind="passcode" autocomplete="off" inputmode="text"></label>
+      </div>
+      <div class="card stack"><h2 style="margin:0">How did you hear about us? <span class="muted" style="font-weight:400">optional</span></h2>
+        <div class="seg" id="k-ref">${REFERRALS.map(r => `<button type="button" data-ref="${esc(r)}">${esc(r)}</button>`).join('')}</div>
+      </div>
+      <div class="card stack"><h2 style="margin:0">Our terms</h2>
+        <div class="terms" id="k-terms">Loading…</div>
+        <label class="check"><input type="checkbox" data-bind="accepted"> I have read and accept the terms</label>
+        <div class="sig-wrap">
+          <canvas class="sig" id="k-sig" aria-label="Your signature"></canvas>
+          <div class="row"><span class="sig-line">Sign above with your finger</span><span class="spacer"></span>
+            <button class="btn small" type="button" id="k-sig-clear">Clear</button></div>
+        </div>
+      </div>
+      <p class="error-msg" id="k-err" hidden></p>
+      <div class="row kiosk-actions">
+        <button class="btn ghost" type="button" id="k-cancel">Back to staff</button><span class="spacer"></span>
+        <button class="btn primary big" type="button" id="k-done">Done: hand back to staff</button>
+      </div>
+    </div>`;
+  bind(view, view);
+  repo.getSettings().then(s => {
+    const t = $('#k-terms', view); if (t) t.textContent = s.terms;
+    const h = $('#k-title', view); if (h) h.textContent = `Welcome to ${s.shopName}`;
+  });
+  const paintRef = () => $$('[data-ref]', view).forEach(b => b.classList.toggle('on', draft.referral === b.dataset.ref));
+  $$('[data-ref]', view).forEach(b => b.onclick = () => { draft.referral = draft.referral === b.dataset.ref ? '' : b.dataset.ref; paintRef(); });
+  paintRef();
+  let kpad = null;
+  requestAnimationFrame(() => {
+    kpad = signaturePad($('#k-sig', view));
+    $('#k-sig-clear', view).onclick = () => kpad.clear();
+  });
+  const err = msg => { const e = $('#k-err', view); e.textContent = msg; e.hidden = !msg; if (msg) e.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+  $('#k-cancel', view).onclick = () => { draft.customerMode = false; draw(view); };
+  $('#k-done', view).onclick = async () => {
+    err('');
+    const nc = draft.newCustomer;
+    if (!draft.customer) {
+      if (!nc.name.trim()) return err('Please enter your name.');
+      if (repo.digits(nc.phone).length < 9) return err('Please enter your cell number.');
+    }
+    if (!draft.accepted) return err('Please tick the box to accept the terms.');
+    if (!kpad || kpad.isEmpty()) return err('Please sign in the box above.');
+    draft.customerSignature = await kpad.toBlob();
+    let note = 'Customer details saved. Carry on with the device.';
+    if (!draft.customer) {
+      const existing = await repo.findByPhone(nc.phone);
+      if (existing) { draft.customer = existing; note = `Returning customer: ${existing.name}. Carry on with the device.`; }
+    }
+    draft.customerMode = false;
+    draft.step = Math.max(draft.step, 1);
+    draft.maxStep = Math.max(draft.maxStep || 0, draft.step);
+    draw(view);
+    window.scrollTo(0, 0);
+    toast(note);
+  };
 }
 
 const referralCard = () => `
@@ -327,13 +412,23 @@ const STEP_VIEWS = [
       <div class="card stack"><h2>Terms</h2>
         <div class="terms" id="terms">Loading…</div>
         <label class="check"><input type="checkbox" id="accept" data-bind="accepted"> ${esc(c.name)} has read and accepts the terms</label>
-        <div class="sig-wrap">
+        ${draft.customerSignature ? `<div class="row" style="align-items:center">
+            <img class="sig-img" id="sig-done" alt="Customer signature">
+            <div class="stack" style="gap:6px"><b>Signed by the customer on the iPad</b>
+              <button class="btn small" type="button" id="sig-redo">Sign again</button></div></div>`
+          : `<div class="sig-wrap">
           <canvas class="sig" id="sig" aria-label="Customer signature"></canvas>
           <div class="row"><span class="sig-line">Customer signs above with a finger</span><span class="spacer"></span>
             <button class="btn small" type="button" id="sig-clear">Clear signature</button></div>
-        </div>
+        </div>`}
       </div>`;
     repo.getSettings().then(s => { const t = $('#terms', body); if (t) t.textContent = s.terms; });
+    if (draft.customerSignature) {
+      const url = URL.createObjectURL(draft.customerSignature);
+      $('#sig-done', body).src = url;
+      $('#sig-redo', body).onclick = () => { URL.revokeObjectURL(url); draft.customerSignature = null; draw($('#view')); };
+      return;
+    }
     requestAnimationFrame(() => {
       pad = signaturePad($('#sig', body));
       $('#sig-clear', body).onclick = () => pad.clear();
@@ -383,6 +478,7 @@ const STEP_CHECKS = [
     : !draft.accessories.length ? 'Tick what was left with the device. Choose “Nothing” if nothing.' : null,
   async () => (draft.jobType !== 'warranty' && draft.quoteMode === 'fixed' && !(Number(draft.quote) > 0)) ? 'Enter the price, or choose “Quote after assessment”.' : null,
   async () => !draft.accepted ? 'The customer needs to accept the terms.'
+    : draft.customerSignature ? null
     : (!pad || pad.isEmpty()) ? 'The customer needs to sign.' : null,
 ];
 
