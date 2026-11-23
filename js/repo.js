@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123223121';
-import { uid, now } from './ui.js?v=20261123223121';
+import { db, remote } from './db.js?v=20261123223449';
+import { uid, now } from './ui.js?v=20261123223449';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -54,7 +54,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 12. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable. Once we hand your device to an outside courier, loss or damage in transit is covered only up to the courier's own limits, unless you ask for and pay for extra transit insurance beforehand.
 
-13. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then. From the sale we keep the repair cost and reasonable storage, admin and selling costs; any money left over is kept for you to claim. A device that is still locked (Activation Lock or FRP) cannot be resold, so it will be stripped for parts or recycled instead.
+13. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us marking it ready for collection, it will be recycled as e-waste (or stripped for parts to cover our costs), unless you have made other arrangements with us before then. We are a repair shop, not a storage facility.
 
 14. IMPORTANT: QUOTE DECLINED OR NOT REPAIRABLE. If you decline our quote, or we tell you your device cannot be repaired, please collect it. If it is not collected within 90 days of that, it will be recycled as e-waste. We are a repair shop, not a storage facility.
 
