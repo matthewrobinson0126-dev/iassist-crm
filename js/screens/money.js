@@ -1,6 +1,6 @@
 // Money: today's takings by method, the payments list, shop expenses (owner) and the end-of-day cash-up.
-import * as repo from '../repo.js?v=20261123231355';
-import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal } from '../ui.js?v=20261123231355';
+import * as repo from '../repo.js?v=20261123231406';
+import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal } from '../ui.js?v=20261123231406';
 
 let day = null;
 

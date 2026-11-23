@@ -1,9 +1,9 @@
 // Owner reports: takings, profit, turnaround, technicians (with commission), top repairs, where customers come from.
 // Every figure is worked out from the jobs and the payments ledger; demo data is left out.
-import * as repo from '../repo.js?v=20261123231355';
-import { STATUSES } from '../repo.js?v=20261123231355';
-import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123231355';
-import { deviceType } from '../devices.js?v=20261123231355';
+import * as repo from '../repo.js?v=20261123231406';
+import { STATUSES } from '../repo.js?v=20261123231406';
+import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123231406';
+import { deviceType } from '../devices.js?v=20261123231406';
 
 const RANGES = [
   { id: 'week', label: 'Last 7 days', days: 7 },
