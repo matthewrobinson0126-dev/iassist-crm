@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123221236';
-import { uid, now } from './ui.js?v=20261123221236';
+import { db, remote } from './db.js?v=20261123222751';
+import { uid, now } from './ui.js?v=20261123222751';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -48,23 +48,21 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 9. WARRANTY. The parts we fit and our labour are guaranteed from the day you collect your device: 6 months for original parts, and 3 months for high-copy (aftermarket) parts, the minimum under the Consumer Protection Act, section 57. Your job card or invoice shows which part was used and how long your warranty runs. The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
 
-10. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly. If a repair is priced on an exchange basis (the old part is part of the price), we keep the old part.
+10. PAYMENT. Please pay in full before you collect your device. EFT payments must reflect in our account, or you must show us proof of payment, before we can release your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
 
-11. PAYMENT. Please pay in full before you collect your device. EFT payments must reflect in our account, or you must show us proof of payment, before we can release your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
+11. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
 
-12. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
+12. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable. Once we hand your device to an outside courier, loss or damage in transit is covered only up to the courier's own limits, unless you ask for and pay for extra transit insurance beforehand.
 
-13. COLLECTION AND DELIVERY SERVICE. Our Gauteng collection and delivery service costs R300 (R150 to collect, R150 to deliver). Courier delivery outside Gauteng is charged at the courier's rate and is not refundable. Once we hand your device to an outside courier, loss or damage in transit is covered only up to the courier's own limits, unless you ask for and pay for extra transit insurance beforehand.
+13. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then. From the sale we keep the repair cost and reasonable storage, admin and selling costs; any money left over is kept for you to claim. A device that is still locked (Activation Lock or FRP) cannot be resold, so it will be stripped for parts or recycled instead.
 
-14. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then. From the sale we keep the repair cost and reasonable storage, admin and selling costs; any money left over is kept for you to claim. A device that is still locked (Activation Lock or FRP) cannot be resold, so it will be stripped for parts or recycled instead.
+14. IMPORTANT: QUOTE DECLINED OR NOT REPAIRABLE. If you decline our quote, or we tell you your device cannot be repaired, please collect it. If it is not collected within 90 days of that, it will be recycled as e-waste. We are a repair shop, not a storage facility.
 
-15. IMPORTANT: QUOTE DECLINED OR NOT REPAIRABLE. If you decline our quote, or we tell you your device cannot be repaired, please collect it. If it is not collected within 90 days of that, it will be recycled as e-waste. We are a repair shop, not a storage facility.
+15. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
 
-16. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
+16. COMPLAINTS. If you are unhappy with anything, please talk to us first so we can sort it out. Please remember that we cannot take responsibility for the things these terms have already explained to you, such as lost data, liquid damage, hidden faults, faults we could not test without your passcode, or devices that were not collected in time.
 
-17. COMPLAINTS. If you are unhappy with anything, please talk to us first so we can sort it out. Please remember that we cannot take responsibility for the things these terms have already explained to you, such as lost data, liquid damage, hidden faults, faults we could not test without your passcode, or devices that were not collected in time.
-
-18. YOUR RIGHTS. Nothing in these terms takes away your rights under the Consumer Protection Act.`;
+17. YOUR RIGHTS. Nothing in these terms takes away your rights under the Consumer Protection Act.`;
 const DEFAULT_TERMS = RECOMMENDED_TERMS;
 
 const DEFAULT_SETTINGS = {
