@@ -1,7 +1,8 @@
 // Lock screen. Registered shop iPad: tap your name, enter your PIN.
 // Unregistered device (cloud mode): owner signs in with email + password, then can register it.
-import * as repo from '../repo.js?v=20261123231556';
-import { $, $$, esc, initials, toast } from '../ui.js?v=20261123231556';
+import * as repo from '../repo.js?v=20261123232258';
+import { reportError } from '../errors.js?v=20261123232258';
+import { $, $$, esc, initials, toast } from '../ui.js?v=20261123232258';
 
 const brand = name => `<div class="brand"><img src="icons/icon.svg" alt=""><span>${esc(name)} Book-In</span></div>`;
 
@@ -74,7 +75,7 @@ function renderPin(app, onDone, staff) {
       const ok = await repo.auth.unlock(chosen.id, pin);
       if (ok) { document.removeEventListener('keydown', onKey); onDone(); return; }
       wrong();
-    } catch (ex) { wrong(ex.message); }
+    } catch (ex) { wrong(ex.message); reportError(ex); }
     finally { busy = false; }
   }
   $$('.pinpad [data-k]', app).forEach(b => b.onclick = () => press(b.dataset.k));
