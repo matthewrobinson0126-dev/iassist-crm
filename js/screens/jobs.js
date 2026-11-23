@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123224247';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123224247';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123224247';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS } from '../devices.js?v=20261123224247';
-import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261123224247';
-import { startWarrantyJob } from './bookin.js?v=20261123224247';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123224247';
-import { openWhatsApp } from '../messages.js?v=20261123224247';
-import { go } from '../app.js?v=20261123224247';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123224247';
+import * as repo from '../repo.js?v=20261123230544';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123230544';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123230544';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport } from '../devices.js?v=20261123230544';
+import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261123230544';
+import { startWarrantyJob } from './bookin.js?v=20261123230544';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123230544';
+import { openWhatsApp } from '../messages.js?v=20261123230544';
+import { go } from '../app.js?v=20261123230544';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123230544';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -333,7 +333,17 @@ export async function renderJob(view, id) {
   $('#j-label', view).onclick = () => printLabel(job);
   $('#j-report', view).onclick = () => reportModal(job, photos, reload);
   $('#j-report-edit', view)?.addEventListener('click', () => reportModal(job, photos, reload));
-  $('#j-report-print', view)?.addEventListener('click', () => printReport(job, photos));
+  $('#j-report-print', view)?.addEventListener('click', async () => {
+    if (!repo.auth.cloud) return printReport(job, photos);           // demo mode: simple printout
+    const win = window.open('', '_blank');                              // open now so the iPad doesn't block it
+    toast('Making the PDF…');
+    try {
+      const r = await repo.reportPdf(job);
+      const bytes = Uint8Array.from(atob(r.pdf), ch => ch.charCodeAt(0));
+      const url = URL.createObjectURL(new Blob([bytes], { type: 'application/pdf' }));
+      if (win) win.location.href = url; else location.href = url;
+    } catch (ex) { win?.close(); toast(ex.message, 'error'); }
+  });
   $('#j-report-email', view)?.addEventListener('click', async () => {
     const r = await repo.emailReport(job);
     toast(r.sent ? `Report emailed to ${r.to}` : `Not emailed: ${r.skipped || r.error}`, r.sent ? '' : 'error');
@@ -615,7 +625,8 @@ export function closeJobModal(job, after) {
 async function reportModal(job, photos, after) {
   const s = await repo.getSettings();
   const r = job.report || {};
-  const sel = { cause: r.cause || '', findings: [...(r.findings || [])], result: r.result || '' };
+  const sel = { cause: r.cause || '', findings: [...(r.findings || [])], result: r.result || '', tested: [...(r.testedParts || [])] };
+  const tx = r.text || {};
   const repairDefault = r.repairCost ?? (job.lines?.length ? repo.linesTotal(job.lines.filter(l => !/damage report/i.test(l.name))) : job.quote ?? '');
   const m = modal(`
     <h2>${job.reportNo ? `Damage report ${esc(job.reportNo)}` : 'Insurance / damage report'}</h2>
@@ -623,13 +634,23 @@ async function reportModal(job, photos, after) {
     <div class="field">What happened (as the customer told us)<div class="chips" id="r-cause">${REPORT_CAUSES.map(c => `<button type="button" class="chip" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>
     <label class="field">Customer’s statement <span class="hint">optional</span><input type="text" id="r-stmt" value="${esc(r.statement || job.faultNotes || '')}" placeholder="e.g. Phone fell from a table onto tiles on 18 Nov"></label>
     <div class="field">What we found<div class="chips" id="r-find">${REPORT_FINDINGS.map(f => `<button type="button" class="chip" data-f="${esc(f)}">${esc(f)}</button>`).join('')}</div></div>
-    <label class="field">Technician’s notes<textarea id="r-notes" rows="3" placeholder="What you tested and what you found">${esc(r.notes || '')}</textarea></label>
+    <label class="field">Technician’s notes<textarea id="r-notes" rows="3" placeholder="e.g. The device is stuck in a boot loop and does not complete start-up">${esc(r.notes || '')}</textarea></label>
+    <div class="field">Parts swapped in for testing <span class="hint">optional</span><div class="chips" id="r-tested">${REPORT_TESTED.map(t => `<button type="button" class="chip" data-t="${esc(t)}">${esc(t)}</button>`).join('')}</div></div>
     <div class="field">Result<div class="seg" id="r-res"><button type="button" data-r="repairable">Repairable</button><button type="button" data-r="ber">Beyond economical repair</button></div></div>
     <div class="grid-2">
       <label class="field">Repair cost (R)<input type="number" id="r-cost" min="0" inputmode="decimal" value="${esc(repairDefault)}"></label>
       <label class="field">Replacement value (R) <span class="hint">same or similar device</span><input type="number" id="r-repl" min="0" inputmode="decimal" value="${esc(r.replacementValue ?? '')}"></label>
     </div>
+    <label class="field" id="r-repl-item-row">Replacement device to recommend <span class="hint">for beyond economical repair</span><input type="text" id="r-item" value="${esc(r.replacementItem || '')}" placeholder="e.g. Apple Watch SE (3rd generation)"></label>
     <label class="field" id="r-ber-row">Why it’s not worth repairing <span class="hint">for beyond economical repair</span><input type="text" id="r-ber" value="${esc(r.berReason || '')}" placeholder="e.g. Board damage; repair cost exceeds device value"></label>
+    <div class="card stack" style="background:var(--surface-2)"><div class="row"><h3 style="margin:0">Report wording</h3><span class="spacer"></span>
+      <button type="button" class="btn small primary" id="r-draft">Write it for me</button></div>
+      <p class="muted" style="margin:0">Tap <b>Write it for me</b> after the taps above, then change any wording you like.</p>
+      <label class="field">1. Reported damage<textarea id="r-s1" rows="3">${esc(tx.s1 || '')}</textarea></label>
+      <label class="field">2. Technical assessment and diagnostic findings<textarea id="r-s2" rows="4">${esc(tx.s2 || '')}</textarea></label>
+      <label class="field">3. Final assessment<textarea id="r-s3" rows="3">${esc(tx.s3 || '')}</textarea></label>
+      <label class="field">5. Recommendation<textarea id="r-s5" rows="2">${esc(tx.s5 || '')}</textarea></label>
+    </div>
     ${job.reportNo ? '' : `<label class="check"><input type="checkbox" id="r-fee" checked> Add the report fee to the job: <b>${money(s.reportFee ?? 450)}</b></label>`}
     <p class="muted" style="margin:0">${photos.length} photo${photos.length === 1 ? '' : 's'} on this job will be included on the printed report.</p>
     <p class="error-msg" id="r-err" hidden></p>
@@ -639,6 +660,23 @@ async function reportModal(job, photos, after) {
     m.el.querySelectorAll('[data-f]').forEach(b => b.classList.toggle('on', sel.findings.includes(b.dataset.f)));
     m.el.querySelectorAll('[data-r]').forEach(b => b.classList.toggle('on', b.dataset.r === sel.result));
     m.el.querySelector('#r-ber-row').hidden = sel.result !== 'ber';
+    m.el.querySelector('#r-repl-item-row').hidden = sel.result !== 'ber';
+    m.el.querySelectorAll('[data-t]').forEach(b => b.classList.toggle('on', sel.tested.includes(b.dataset.t)));
+  };
+  m.el.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
+    const i = sel.tested.indexOf(b.dataset.t); if (i >= 0) sel.tested.splice(i, 1); else sel.tested.push(b.dataset.t); paint();
+  });
+  const current = () => {
+    const v = q => m.el.querySelector(q)?.value ?? '';
+    return { cause: sel.cause, statement: v('#r-stmt').trim(), findings: sel.findings, notes: v('#r-notes').trim(), testedParts: sel.tested,
+      result: sel.result, repairCost: v('#r-cost') === '' ? null : Number(v('#r-cost')), replacementValue: v('#r-repl') === '' ? null : Number(v('#r-repl')),
+      replacementItem: sel.result === 'ber' ? v('#r-item').trim() : '', berReason: sel.result === 'ber' ? v('#r-ber').trim() : '' };
+  };
+  m.el.querySelector('#r-draft').onclick = () => {
+    const filled = ['#r-s1', '#r-s2', '#r-s3', '#r-s5'].some(q => m.el.querySelector(q).value.trim());
+    const d = draftReport(job, current());
+    if (filled && !confirm('Replace the wording you already have?')) return;
+    m.el.querySelector('#r-s1').value = d.s1; m.el.querySelector('#r-s2').value = d.s2; m.el.querySelector('#r-s3').value = d.s3; m.el.querySelector('#r-s5').value = d.s5;
   };
   m.el.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { sel.cause = b.dataset.c; paint(); });
   m.el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => {
@@ -650,9 +688,10 @@ async function reportModal(job, photos, after) {
     const v = q => m.el.querySelector(q)?.value ?? '';
     const err = m.el.querySelector('#r-err');
     try {
-      await repo.saveReport(job, { ...r, cause: sel.cause, statement: v('#r-stmt').trim(), findings: sel.findings, notes: v('#r-notes').trim(),
-        result: sel.result, repairCost: v('#r-cost') === '' ? null : Number(v('#r-cost')), replacementValue: v('#r-repl') === '' ? null : Number(v('#r-repl')),
-        berReason: sel.result === 'ber' ? v('#r-ber').trim() : '' }, { addFee: !job.reportNo && m.el.querySelector('#r-fee')?.checked });
+      const cur = current();
+      const auto = draftReport(job, cur);
+      const text = { s1: v('#r-s1').trim() || auto.s1, s2: v('#r-s2').trim() || auto.s2, s3: v('#r-s3').trim() || auto.s3, s5: v('#r-s5').trim() || auto.s5 };
+      await repo.saveReport(job, { ...r, ...cur, text }, { addFee: !job.reportNo && m.el.querySelector('#r-fee')?.checked });
       m.close(); toast('Report saved'); after();
     } catch (ex) { err.textContent = ex.message; err.hidden = false; }
   };

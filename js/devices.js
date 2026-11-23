@@ -94,3 +94,30 @@ export const REPORT_CAUSES = ['Dropped', 'Liquid damage', 'Lightning / power sur
 export const REPORT_FINDINGS = ['Cracked screen', 'Display not working', 'Touch not working', 'Cracked back glass', 'Bent frame / housing',
   'Liquid indicators triggered', 'Corrosion on the board', 'Board damage', 'Won’t power on', 'Won’t charge', 'Camera damaged',
   'Face ID / Touch ID not working', 'Speaker / microphone damaged', 'Battery swollen', 'Buttons damaged'];
+export const REPORT_TESTED = ['Battery', 'Display assembly', 'Complete housing / frame', 'Charging port', 'Camera', 'Speaker / microphone',
+  'Face ID / Touch ID module', 'Logic board'];
+
+// Draft the report paragraphs from what the technician tapped. Staff can edit the wording before saving.
+export function draftReport(job, r) {
+  const dev = job.model || 'device';
+  const cause = (r.cause || '').toLowerCase();
+  const causeText = !cause || cause === 'unknown' ? 'reported damage' : cause === 'dropped' ? 'accidental impact damage caused by a drop'
+    : cause.startsWith('liquid') ? 'liquid damage' : cause.startsWith('lightning') ? 'damage from a lightning strike or power surge'
+    : cause.startsWith('accident') ? 'accidental damage (sat on, bent or crushed)' : cause.startsWith('theft') ? 'damage during a theft or attempted theft'
+    : cause.startsWith('fire') ? 'fire or heat damage' : 'damage';
+  const found = (r.findings || []).map(f => f.toLowerCase());
+  const s1 = `The ${dev} was presented for assessment following ${causeText}.${r.statement ? ` The owner reports: "${r.statement}".` : ''}`
+    + (found.length ? `\n\nUpon inspection, the following was observed: ${found.join(', ')}.` : '');
+  const tested = r.testedParts || [];
+  const s2 = [r.notes || '',
+    tested.length ? `As part of the diagnostic process, the following components were replaced for testing and fault isolation:\n${tested.map(t => `* ${t}`).join('\n')}` : '',
+    tested.length && r.result === 'ber' ? 'Despite replacing these components, the fault remained.' : ''].filter(Boolean).join('\n\n');
+  const money = n => 'R' + Number(n || 0).toLocaleString('en-ZA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const s3 = r.result === 'ber'
+    ? `The device is classified as Beyond Economic Repair (BER).${r.berReason ? `\n\n${r.berReason}.` : ''} Considering the nature of the damage and the associated repair costs, repair is not considered economically viable.`
+    : `The device can be repaired.${r.repairCost != null ? ` The estimated repair cost is ${money(r.repairCost)}.` : ''}`;
+  const s5 = r.result === 'ber'
+    ? `We recommend that the insurer considers the device a total loss and authorises replacement with an equivalent ${r.replacementItem || dev}.`
+    : `We recommend that the insurer authorises the repair at the cost quoted in this report.`;
+  return { s1: s1.replace(/\.\./g, '.'), s2, s3: s3.replace(/\.\./g, '.'), s5 };
+}

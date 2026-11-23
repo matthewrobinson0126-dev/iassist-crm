@@ -1,8 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261123224247';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123224247';
-import { go } from '../app.js?v=20261123224247';
-import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123224247';
+import * as repo from '../repo.js?v=20261123230544';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123230544';
+import { go } from '../app.js?v=20261123230544';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123230544';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -28,6 +28,10 @@ export async function renderSettings(view) {
           <label class="field">Default warranty (months)<input type="number" id="sh-war" min="0" value="${esc(s.warrantyMonths)}"></label>
           <label class="field">Assessment fee (R) <span class="hint">charged if the quote is declined or it can’t be repaired</span><input type="number" id="sh-fee" min="0" value="${esc(s.assessmentFee ?? 200)}"></label>
           <label class="field">Insurance report fee (R)<input type="number" id="sh-rfee" min="0" value="${esc(s.reportFee ?? 450)}"></label>
+          <label class="field">Company legal name <span class="hint">on invoices and reports</span><input type="text" id="sh-legal" value="${esc(s.legalName || '')}" placeholder="iAssist Repair (PTY) LTD"></label>
+          <label class="field">Website<input type="text" id="sh-web" value="${esc(s.website || '')}" placeholder="www.iassist.net.za"></label>
+          <label class="field">Contact people <span class="hint">shown on reports, comma between</span><input type="text" id="sh-contacts" value="${esc(s.contacts || '')}" placeholder="Matthew – 078 742 4769, Roxanne – 071 534 6609"></label>
+          <label class="field">Bank details <span class="hint">printed on reports for EFT</span><textarea id="sh-bank" rows="2">${esc(s.bankDetails || '')}</textarea></label>
           <label class="field">Company registration no. <span class="hint">printed on insurance reports</span><input type="text" id="sh-reg" value="${esc(s.companyReg || '')}" placeholder="e.g. 2015/123456/07"></label>
           <label class="field">Quotes valid for (days)<input type="number" id="sh-qdays" min="1" max="90" value="${esc(s.quoteValidDays ?? 7)}"></label>
           <label class="field">VAT number <span class="hint">only if VAT registered: quotes then show 15% VAT</span><input type="text" id="sh-vat" value="${esc(s.vatNumber || '')}" inputmode="numeric" placeholder="Leave empty if not registered"></label>
@@ -83,7 +87,7 @@ export async function renderSettings(view) {
     e.preventDefault();
     const v = q => $(q, view).value;
     await repo.saveSettings({ shopName: v('#sh-name'), address: v('#sh-addr'), phone: v('#sh-phone'), email: v('#sh-email'),
-      warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), assessmentFee: Math.max(0, Number(v('#sh-fee')) || 0), reportFee: Math.max(0, Number(v('#sh-rfee')) || 0), companyReg: v('#sh-reg').trim(), quoteValidDays: Math.min(90, Math.max(1, Number(v('#sh-qdays')) || 7)), vatNumber: v('#sh-vat').trim(), googleReviewUrl: v('#sh-review').trim(),
+      warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), assessmentFee: Math.max(0, Number(v('#sh-fee')) || 0), reportFee: Math.max(0, Number(v('#sh-rfee')) || 0), companyReg: v('#sh-reg').trim(), legalName: v('#sh-legal').trim(), website: v('#sh-web').trim(), contacts: v('#sh-contacts').trim(), bankDetails: v('#sh-bank').trim(), quoteValidDays: Math.min(90, Math.max(1, Number(v('#sh-qdays')) || 7)), vatNumber: v('#sh-vat').trim(), googleReviewUrl: v('#sh-review').trim(),
       emailEnabled: $('#sh-email-on', view).checked, smsEnabled: $('#sh-sms-on', view).checked, idleLockMinutes: Math.max(1, Number(v('#sh-idle')) || 10), terms: v('#sh-terms') });
     toast('Shop details saved');
   };

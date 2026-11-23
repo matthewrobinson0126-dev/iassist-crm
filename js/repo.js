@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123224247';
-import { uid, now } from './ui.js?v=20261123224247';
+import { db, remote } from './db.js?v=20261123230544';
+import { uid, now } from './ui.js?v=20261123230544';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -1008,6 +1008,12 @@ export async function saveReport(job, report, { addFee = true } = {}) {
   }
   await logEvent(job, 'report', `Damage report ${reportNo} ${job.reportNo ? 'updated' : 'created'}: ${rec.result === 'ber' ? 'beyond economical repair' : 'repairable'}`);
   return next;
+}
+// The finished damage report PDF (same file the customer gets by email). Cloud only.
+export async function reportPdf(job) {
+  requireUser();
+  if (!remote) return null;
+  return remote.notify(job.id, 'report-pdf', '');
 }
 export async function emailReport(job) {
   requireUser();
