@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123222751';
-import { uid, now } from './ui.js?v=20261123222751';
+import { db, remote } from './db.js?v=20261123222825';
+import { uid, now } from './ui.js?v=20261123222825';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -60,9 +60,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 15. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
 
-16. COMPLAINTS. If you are unhappy with anything, please talk to us first so we can sort it out. Please remember that we cannot take responsibility for the things these terms have already explained to you, such as lost data, liquid damage, hidden faults, faults we could not test without your passcode, or devices that were not collected in time.
-
-17. YOUR RIGHTS. Nothing in these terms takes away your rights under the Consumer Protection Act.`;
+16. COMPLAINTS. If you are unhappy with anything, please talk to us first so we can sort it out. Please remember that we cannot take responsibility for the things these terms have already explained to you, such as lost data, liquid damage, hidden faults, faults we could not test without your passcode, or devices that were not collected in time.`;
 const DEFAULT_TERMS = RECOMMENDED_TERMS;
 
 const DEFAULT_SETTINGS = {
