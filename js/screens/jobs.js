@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123223449';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123223449';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123223449';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123223449';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123223449';
-import { startWarrantyJob } from './bookin.js?v=20261123223449';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123223449';
-import { openWhatsApp } from '../messages.js?v=20261123223449';
-import { go } from '../app.js?v=20261123223449';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123223449';
+import * as repo from '../repo.js?v=20261123223456';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123223456';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123223456';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123223456';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123223456';
+import { startWarrantyJob } from './bookin.js?v=20261123223456';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123223456';
+import { openWhatsApp } from '../messages.js?v=20261123223456';
+import { go } from '../app.js?v=20261123223456';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123223456';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -58,7 +58,7 @@ export async function renderJobs(view) {
     box.innerHTML = `<div class="card stack" style="margin-bottom:14px;border-color:var(--s-parts)">
       <div class="row"><h2 style="margin:0">Uncollected devices</h2><span class="spacer"></span>
         ${due ? `<span class="tag hot">${due} ready to sell / recycle</span>` : ''}</div>
-      <p class="muted" style="margin:0">Customers are emailed automatically at 30, 60 and 90 days. After 90 days plus 7 days' grace, repaired and declined-quote devices recycled (data erased first).</p>
+      <p class="muted" style="margin:0">Customers are emailed automatically at 30, 60 and 90 days. After 90 days plus 7 days' grace, repaired and declined-quote devices can be recycled (data erased first).</p>
       <div class="list">${list.map(r => `<a class="list-row" href="#job-${r.j.id}">
         <span class="grow"><b class="mono">${esc(r.j.jobNo)}</b> · ${esc(r.j.customerName)} · ${esc(r.j.model)}
           <div class="muted">${r.kind === 'ready' ? 'Repaired, not collected' : r.kind === 'unfixed' ? 'Not fixed, not collected' : 'Quote declined, not collected'} · ${r.d} days</div></span>
