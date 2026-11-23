@@ -1,18 +1,18 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261123202438';
-import { db } from './db.js?v=20261123202438';
-import { $, esc, initials, toast } from './ui.js?v=20261123202438';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123202438';
-import { renderBookIn } from './screens/bookin.js?v=20261123202438';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261123202438';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123202438';
-import { renderSettings } from './screens/settings.js?v=20261123202438';
-import { renderMoney } from './screens/money.js?v=20261123202438';
-import { renderTasks } from './screens/tasks.js?v=20261123202438';
-import { renderReports } from './screens/reports.js?v=20261123202438';
-import { renderStock } from './screens/stock.js?v=20261123202438';
-import { renderSell } from './screens/sell.js?v=20261123202438';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123202438';
+import * as repo from './repo.js?v=20261123202723';
+import { db } from './db.js?v=20261123202723';
+import { $, esc, initials, toast } from './ui.js?v=20261123202723';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123202723';
+import { renderBookIn } from './screens/bookin.js?v=20261123202723';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261123202723';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123202723';
+import { renderSettings } from './screens/settings.js?v=20261123202723';
+import { renderMoney } from './screens/money.js?v=20261123202723';
+import { renderTasks } from './screens/tasks.js?v=20261123202723';
+import { renderReports } from './screens/reports.js?v=20261123202723';
+import { renderStock } from './screens/stock.js?v=20261123202723';
+import { renderSell } from './screens/sell.js?v=20261123202723';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123202723';
 
 const routes = {
   bookin: renderBookIn,
@@ -56,6 +56,7 @@ function shell() {
         ${repo.auth.isOwner() ? '<a href="#reports" data-nav="reports">Reports</a><a href="#settings" data-nav="settings">Settings</a>' : ''}
       </nav>
       <span class="spacer"></span>
+      <button class="btn small ghost" id="refresh-btn" title="Reload the app if it freezes" aria-label="Refresh">↻ Refresh</button>
       <button class="user-chip" id="lock-btn" title="Switch user / lock">
         <span class="avatar">${esc(initials(u.name))}</span>
         <span>${esc(u.name)} <span class="role-tag">${u.role}</span></span>
@@ -65,6 +66,12 @@ function shell() {
     ${db.mode === 'demo' ? '<div class="demo-banner">Demo mode: jobs are saved on this device only. Real staff data moves to the cloud database once Supabase is connected.</div>' : ''}
     <main id="view"></main>`;
   $('#lock-btn').onclick = () => { repo.auth.lock(); route(); };
+  // Reload the whole app (a fresh copy, never a stale saved one). You stay signed in.
+  $('#refresh-btn').onclick = () => {
+    if (location.hash.startsWith('#bookin') && !confirm('Refresh now? Anything typed in this booking will be lost.')) return;
+    repo.auth.touch();
+    location.replace(location.pathname + '?r=' + Date.now() + location.hash);
+  };
 }
 
 let shellFor = null;
