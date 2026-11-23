@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123204400';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123204400';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123204400';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123204400';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123204400';
-import { startWarrantyJob } from './bookin.js?v=20261123204400';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123204400';
-import { openWhatsApp } from '../messages.js?v=20261123204400';
-import { go } from '../app.js?v=20261123204400';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123204400';
+import * as repo from '../repo.js?v=20261123205119';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123205119';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123205119';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123205119';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123205119';
+import { startWarrantyJob } from './bookin.js?v=20261123205119';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123205119';
+import { openWhatsApp } from '../messages.js?v=20261123205119';
+import { go } from '../app.js?v=20261123205119';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123205119';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -498,7 +498,7 @@ function paymentModal(job, kind, m$, after) {
 }
 
 // ───────────── Hand back ─────────────
-async function handBack(job, after) {
+export async function handBack(job, after) {
   const s = await repo.getSettings();
   const m$ = repo.jobMoney(job, await repo.jobPayments(job.id));
   const balance = job.quote === null && job.jobType !== 'warranty' ? '' : m$.due;
@@ -551,7 +551,7 @@ async function handBack(job, after) {
 }
 
 // ───────────── Close a job without handing it back ─────────────
-function closeJobModal(job, after) {
+export function closeJobModal(job, after) {
   let outcome = '';
   const m = modal(`
     <h2>Close ${esc(job.jobNo)}</h2>

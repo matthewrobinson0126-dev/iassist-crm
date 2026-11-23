@@ -217,6 +217,10 @@ canvas.sig { width: 100%; height: 200px; background: #fff; border: 2px solid var
 /* Long links or numbers (tracking URLs, IMEIs) wrap instead of pushing cards off the screen. */
 .card, .timeline li, .kv dd, .list-row, .note-box { min-width: 0; overflow-wrap: anywhere; }
 .job-layout > .stack { min-width: 0; }
+.collect-list { display: grid; gap: 12px; }
+.collect-row { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; border-left: 6px solid var(--sc); }
+.collect-row .grow { flex: 1; min-width: 220px; }
+.collect-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .job-layout { display: grid; gap: 18px; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; }
 @media (max-width: 900px) { .job-layout { grid-template-columns: minmax(0, 1fr); } }
 .status-row { display: flex; gap: 8px; flex-wrap: wrap; }
