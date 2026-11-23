@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123223456';
-import { uid, now } from './ui.js?v=20261123223456';
+import { db, remote } from './db.js?v=20261123223552';
+import { uid, now } from './ui.js?v=20261123223552';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -58,7 +58,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 14. IMPORTANT: QUOTE DECLINED OR NOT REPAIRABLE. If you decline our quote, or we tell you your device cannot be repaired, please collect it. If it is not collected within 90 days of that, it will be recycled as e-waste. We are a repair shop, not a storage facility.
 
-15. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
+15. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, and also send an SMS at 60 and 90 days, using the email address and cell number on your job card. All data on the device is erased before it is recycled or stripped for parts. Please tell us if your email address or number changes.
 
 16. COMPLAINTS. If you are unhappy with anything, please talk to us first so we can sort it out. Please remember that we cannot take responsibility for the things these terms have already explained to you, such as lost data, liquid damage, hidden faults, faults we could not test without your passcode, or devices that were not collected in time.`;
 const DEFAULT_TERMS = RECOMMENDED_TERMS;
