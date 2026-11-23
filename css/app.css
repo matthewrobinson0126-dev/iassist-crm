@@ -348,3 +348,5 @@ td.neg { color: var(--danger); }
   .lb-f { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .lb-qr { flex: none; } .lb-qr svg { width: 100%; height: 100%; display: block; }
 }
+
+.nav .book-ins { background: var(--s-unfixed); border-color: var(--s-unfixed); }
