@@ -1,7 +1,7 @@
 // Counter sales: sell accessories or a quick service without booking in a device. Stock comes off automatically.
-import * as repo from '../repo.js?v=20261123222825';
-import { $, $$, esc, money, fmtDateTime, toast, modal } from '../ui.js?v=20261123222825';
-import { printReceipt } from '../print.js?v=20261123222825';
+import * as repo from '../repo.js?v=20261123223121';
+import { $, $$, esc, money, fmtDateTime, toast, modal } from '../ui.js?v=20261123223121';
+import { printReceipt } from '../print.js?v=20261123223121';
 
 let cart = [], customer = null, customerName = '', discount = '', method = '';
 const norm = s => String(s || '').toLowerCase();

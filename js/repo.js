@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123222825';
-import { uid, now } from './ui.js?v=20261123222825';
+import { db, remote } from './db.js?v=20261123223121';
+import { uid, now } from './ui.js?v=20261123223121';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -32,7 +32,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 1. YOUR DEVICE. You confirm the device is yours, or that the owner has allowed you to hand it in. Please remove SIM cards, memory cards and cases. Anything not written on your job card is your responsibility.
 
-2. IMPORTANT: YOUR DATA. Back up your device before you hand it in. Repairs and tests can sometimes erase data, and some repairs need a factory reset. We are not responsible for lost data, unless we caused the loss through gross negligence. After a reset you will need your Apple ID or Google account password to use the device again. We cannot remove Activation Lock (Find My), Google account locks (FRP) or company device management (MDM), and unlocking the device remains your responsibility.
+2. IMPORTANT: YOUR DATA. Back up your device before you hand it in. Repairs and tests can sometimes erase data, and some repairs need a factory reset. We are not responsible for lost data. After a reset you will need your Apple ID or Google account password to use the device again. We cannot remove Activation Lock (Find My), Google account locks (FRP) or company device management (MDM), and unlocking the device remains your responsibility.
 
 3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. If your device has private information and you choose not to give us your passcode, we understand, but we cannot fully test or quality-check the device, and we are not responsible for faults we were unable to test. We keep your name, number and email to manage your repair and send you updates (POPIA). We only contact you about your repair: we will not send you marketing unless you separately agree to it. We never sell your details. Ask us at any time to see or delete them.
 
@@ -40,7 +40,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 5. CONDITION. The damage and faults recorded on your job card were already on the device when you handed it in.
 
-6. IMPORTANT: RISKS DURING REPAIR. Devices that have been dropped, bent, exposed to liquid or repaired before can have hidden damage. Opening them can reveal more faults and, in rare cases, the device can stop working completely. Board-level repairs (micro-soldering) need high heat on delicate parts, and chips that were already stressed or damaged can fail during heating. Separating glass from a screen, or moving a battery's circuit board onto new cells, carries a small risk of damaging the display or connector underneath. If any of this happens, we will contact you before going further and tell you about any extra cost. We are not liable for faults that were already there, unless we were grossly negligent.
+6. IMPORTANT: RISKS DURING REPAIR. Devices that have been dropped, bent, exposed to liquid or repaired before can have hidden damage. Opening them can reveal more faults and, in rare cases, the device can stop working completely. Board-level repairs (micro-soldering) need high heat on delicate parts, and chips that were already stressed or damaged can fail during heating. Separating glass from a screen, or moving a battery's circuit board onto new cells, carries a small risk of damaging the display or connector underneath. If any of this happens, we will contact you before going further and tell you about any extra cost. We are not liable for faults that were already there.
 
 7. IMPORTANT: LIQUID DAMAGE. Liquid damage keeps spreading after a repair. We will do our best, but we cannot guarantee that a liquid-damaged device will work or keep working. Liquid-damage repairs carry no warranty unless we say so in writing.
 

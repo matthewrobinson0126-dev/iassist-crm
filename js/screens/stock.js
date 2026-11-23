@@ -1,7 +1,7 @@
 // Stock: parts and accessories on the shelf, low-stock alerts, supplier orders, suppliers and stocktake.
 // Staff see what's in stock and the sell price; costs, orders, suppliers and stocktake are owner-only.
-import * as repo from '../repo.js?v=20261123222825';
-import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal, confirmBox } from '../ui.js?v=20261123222825';
+import * as repo from '../repo.js?v=20261123223121';
+import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal, confirmBox } from '../ui.js?v=20261123223121';
 
 let tab = 'parts', q = '', lowOnly = false;
 const norm = s => String(s || '').toLowerCase();
