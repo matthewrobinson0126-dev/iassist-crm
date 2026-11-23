@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123223552';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123223552';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123223552';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123223552';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123223552';
-import { startWarrantyJob } from './bookin.js?v=20261123223552';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123223552';
-import { openWhatsApp } from '../messages.js?v=20261123223552';
-import { go } from '../app.js?v=20261123223552';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123223552';
+import * as repo from '../repo.js?v=20261123224247';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123224247';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123224247';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS } from '../devices.js?v=20261123224247';
+import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261123224247';
+import { startWarrantyJob } from './bookin.js?v=20261123224247';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123224247';
+import { openWhatsApp } from '../messages.js?v=20261123224247';
+import { go } from '../app.js?v=20261123224247';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123224247';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -143,6 +143,7 @@ export async function renderJob(view, id) {
       <span class="muted">in for ${ageText(job.createdAt)}</span>
       <span class="spacer"></span>
       <button class="btn" id="j-wa">WhatsApp</button>
+      <button class="btn ${job.jobType === 'insurance' && !job.reportNo ? 'primary' : ''}" id="j-report">${job.reportNo ? `Report ${esc(job.reportNo)}` : 'Damage report'}</button>
       <button class="btn" id="j-label">Print label</button>
       <button class="btn" id="j-print">Print job card</button>
       ${job.status === 'ready' || (job.status === 'collected' && (job.outcome || 'repaired') === 'repaired') ? '<button class="btn" id="j-cert">Certificate of completion</button>' : ''}
@@ -208,6 +209,13 @@ export async function renderJob(view, id) {
         </div></div>
       </div>
       <div class="stack">
+        ${job.reportNo ? `<div class="card stack"><div class="row"><h2 style="margin:0">Damage report ${esc(job.reportNo)}</h2><span class="spacer"></span>
+          <span class="tag ${job.report?.result === 'ber' ? 'hot' : ''}">${job.report?.result === 'ber' ? 'Beyond economical repair' : 'Repairable'}</span></div>
+          <dl class="kv"><dt>Cause</dt><dd>${esc(job.report?.cause || '—')}</dd><dt>Found</dt><dd>${esc((job.report?.findings || []).join(', ') || '—')}</dd>
+            <dt>${job.report?.result === 'ber' ? 'Replacement' : 'Repair cost'}</dt><dd class="num">${money(job.report?.result === 'ber' ? job.report?.replacementValue : job.report?.repairCost)}</dd>
+            <dt>Assessed</dt><dd>${fmtDate(job.report?.assessedAt)} by ${esc(job.report?.technician || '')}</dd></dl>
+          <div class="row"><button class="btn small" id="j-report-print">Print / PDF</button><button class="btn small" id="j-report-email">Email to customer</button><button class="btn small ghost" id="j-report-edit">Edit</button></div>
+        </div>` : ''}
         <div class="card"><div class="row"><h2 style="margin:0">Money</h2><span class="spacer"></span>
           ${!collected ? '<button class="btn small" id="j-quote">Change quote</button>' : ''}</div>
           <dl class="kv num" style="margin-top:12px">
@@ -323,6 +331,14 @@ export async function renderJob(view, id) {
   $('#j-wa', view).onclick = () => openWhatsApp(job);
   $('#j-print', view).onclick = () => printJobCard(job);
   $('#j-label', view).onclick = () => printLabel(job);
+  $('#j-report', view).onclick = () => reportModal(job, photos, reload);
+  $('#j-report-edit', view)?.addEventListener('click', () => reportModal(job, photos, reload));
+  $('#j-report-print', view)?.addEventListener('click', () => printReport(job, photos));
+  $('#j-report-email', view)?.addEventListener('click', async () => {
+    const r = await repo.emailReport(job);
+    toast(r.sent ? `Report emailed to ${r.to}` : `Not emailed: ${r.skipped || r.error}`, r.sent ? '' : 'error');
+    if (r.sent) reload();
+  });
   $('#j-hand', view)?.addEventListener('click', () => handBack(job, reload));
   $('#j-close', view)?.addEventListener('click', () => closeJobModal(job, reload));
   $('#j-pass', view)?.addEventListener('click', async () => {
@@ -591,6 +607,53 @@ export function closeJobModal(job, after) {
       await repo.closeJob(job, { outcome, note: m.el.querySelector('#c-note').value, amount: m.el.querySelector('#c-amt').value,
         method: m.el.querySelector('#c-method').value });
       m.close(); toast(`${job.jobNo} closed`); after();
+    } catch (ex) { err.textContent = ex.message; err.hidden = false; }
+  };
+}
+
+// ───────────── Insurance / damage report ─────────────
+async function reportModal(job, photos, after) {
+  const s = await repo.getSettings();
+  const r = job.report || {};
+  const sel = { cause: r.cause || '', findings: [...(r.findings || [])], result: r.result || '' };
+  const repairDefault = r.repairCost ?? (job.lines?.length ? repo.linesTotal(job.lines.filter(l => !/damage report/i.test(l.name))) : job.quote ?? '');
+  const m = modal(`
+    <h2>${job.reportNo ? `Damage report ${esc(job.reportNo)}` : 'Insurance / damage report'}</h2>
+    <p class="muted" style="margin:0">For the customer’s insurance claim. ${esc(job.model)}${job.serial ? ` · IMEI/serial ${esc(job.serial)}` : ' · add the IMEI/serial on the job first, insurers need it'}.</p>
+    <div class="field">What happened (as the customer told us)<div class="chips" id="r-cause">${REPORT_CAUSES.map(c => `<button type="button" class="chip" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div></div>
+    <label class="field">Customer’s statement <span class="hint">optional</span><input type="text" id="r-stmt" value="${esc(r.statement || job.faultNotes || '')}" placeholder="e.g. Phone fell from a table onto tiles on 18 Nov"></label>
+    <div class="field">What we found<div class="chips" id="r-find">${REPORT_FINDINGS.map(f => `<button type="button" class="chip" data-f="${esc(f)}">${esc(f)}</button>`).join('')}</div></div>
+    <label class="field">Technician’s notes<textarea id="r-notes" rows="3" placeholder="What you tested and what you found">${esc(r.notes || '')}</textarea></label>
+    <div class="field">Result<div class="seg" id="r-res"><button type="button" data-r="repairable">Repairable</button><button type="button" data-r="ber">Beyond economical repair</button></div></div>
+    <div class="grid-2">
+      <label class="field">Repair cost (R)<input type="number" id="r-cost" min="0" inputmode="decimal" value="${esc(repairDefault)}"></label>
+      <label class="field">Replacement value (R) <span class="hint">same or similar device</span><input type="number" id="r-repl" min="0" inputmode="decimal" value="${esc(r.replacementValue ?? '')}"></label>
+    </div>
+    <label class="field" id="r-ber-row">Why it’s not worth repairing <span class="hint">for beyond economical repair</span><input type="text" id="r-ber" value="${esc(r.berReason || '')}" placeholder="e.g. Board damage; repair cost exceeds device value"></label>
+    ${job.reportNo ? '' : `<label class="check"><input type="checkbox" id="r-fee" checked> Add the report fee to the job: <b>${money(s.reportFee ?? 450)}</b></label>`}
+    <p class="muted" style="margin:0">${photos.length} photo${photos.length === 1 ? '' : 's'} on this job will be included on the printed report.</p>
+    <p class="error-msg" id="r-err" hidden></p>
+    <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="r-ok">Save report</button></div>`, { wide: true });
+  const paint = () => {
+    m.el.querySelectorAll('[data-c]').forEach(b => b.classList.toggle('on', b.dataset.c === sel.cause));
+    m.el.querySelectorAll('[data-f]').forEach(b => b.classList.toggle('on', sel.findings.includes(b.dataset.f)));
+    m.el.querySelectorAll('[data-r]').forEach(b => b.classList.toggle('on', b.dataset.r === sel.result));
+    m.el.querySelector('#r-ber-row').hidden = sel.result !== 'ber';
+  };
+  m.el.querySelectorAll('[data-c]').forEach(b => b.onclick = () => { sel.cause = b.dataset.c; paint(); });
+  m.el.querySelectorAll('[data-f]').forEach(b => b.onclick = () => {
+    const i = sel.findings.indexOf(b.dataset.f); if (i >= 0) sel.findings.splice(i, 1); else sel.findings.push(b.dataset.f); paint();
+  });
+  m.el.querySelectorAll('[data-r]').forEach(b => b.onclick = () => { sel.result = b.dataset.r; paint(); });
+  paint();
+  m.el.querySelector('#r-ok').onclick = async () => {
+    const v = q => m.el.querySelector(q)?.value ?? '';
+    const err = m.el.querySelector('#r-err');
+    try {
+      await repo.saveReport(job, { ...r, cause: sel.cause, statement: v('#r-stmt').trim(), findings: sel.findings, notes: v('#r-notes').trim(),
+        result: sel.result, repairCost: v('#r-cost') === '' ? null : Number(v('#r-cost')), replacementValue: v('#r-repl') === '' ? null : Number(v('#r-repl')),
+        berReason: sel.result === 'ber' ? v('#r-ber').trim() : '' }, { addFee: !job.reportNo && m.el.querySelector('#r-fee')?.checked });
+      m.close(); toast('Report saved'); after();
     } catch (ex) { err.textContent = ex.message; err.hidden = false; }
   };
 }

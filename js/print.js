@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261123223552';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261123223552';
-import { deviceType, collectionLabel } from './devices.js?v=20261123223552';
+import * as repo from './repo.js?v=20261123224247';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261123224247';
+import { deviceType, collectionLabel } from './devices.js?v=20261123224247';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {
@@ -244,4 +244,50 @@ export async function printLabel(job, { copies } = {}) {
 export function printTestLabel() {
   return printLabel({ id: 'test', jobNo: 'IA-0123', customerName: 'Test Customer', model: 'iPhone 13 Pro',
     faults: ['Screen', 'Battery'], createdAt: new Date().toISOString() }, { copies: 1 });
+}
+
+// Insurance / damage report on the shop's letterhead, with the damage photos.
+export async function printReport(job, photos = []) {
+  setPageSize('');
+  const settings = await repo.getSettings();
+  const customer = await repo.getCustomer(job.customerId);
+  const r = job.report || {};
+  const urls = (await Promise.all(photos.slice(0, 6).map(p => repo.fileUrl(p.fileId)))).filter(Boolean);
+  const ber = r.result === 'ber';
+  $('#print-area').innerHTML = `
+    <div class="pc">
+      <div class="pc-head">
+        <div><h1>${esc(settings.shopName)}</h1><div>${esc(settings.address)}</div>
+          <div>${esc([settings.phone, settings.email].filter(Boolean).join(' · '))}</div>
+          ${settings.companyReg ? `<div>Reg. no. ${esc(settings.companyReg)}</div>` : ''}${settings.vatNumber ? `<div>VAT no. ${esc(settings.vatNumber)}</div>` : ''}</div>
+        <div><div class="pc-no">${esc(job.reportNo || '')}</div><div>Damage assessment report</div><div>${fmtDate(r.assessedAt)}</div><div>Job ${esc(job.jobNo)}</div></div>
+      </div>
+      <p>To whom it may concern,</p>
+      <p>We confirm that the device below was assessed at ${esc(settings.shopName)} on ${fmtDate(r.assessedAt)}. Our findings are set out in this report.</p>
+      <div class="pc-grid">
+        <div><h3>Owner</h3><dl><dt>Name</dt><dd>${esc(customer?.name || job.customerName)}</dd>
+          ${customer?.type === 'business' && customer.companyName ? `<dt>Company</dt><dd>${esc(customer.companyName)}</dd>` : ''}
+          <dt>Phone</dt><dd>${esc(customer?.phone || job.customerPhone)}</dd>${customer?.email ? `<dt>Email</dt><dd>${esc(customer.email)}</dd>` : ''}</dl></div>
+        <div><h3>Device</h3><dl><dt>Device</dt><dd>${esc(job.model)}${job.colour ? `, ${esc(job.colour)}` : ''}</dd>
+          <dt>IMEI / serial</dt><dd>${esc(job.serial || 'Not recorded')}</dd><dt>Booked in</dt><dd>${fmtDate(job.createdAt)}</dd></dl></div>
+      </div>
+      <h3>Cause of damage (as reported by the owner)</h3>
+      <div>${esc(r.cause || 'Not stated')}${r.statement ? `: ${esc(r.statement)}` : ''}</div>
+      <h3>Findings</h3>
+      <div>${esc((r.findings || []).join(', ') || '—')}</div>
+      ${r.notes ? `<div style="margin-top:4px;white-space:pre-line">${esc(r.notes)}</div>` : ''}
+      <h3>Outcome</h3>
+      <div style="font-size:13pt"><b>${ber ? 'Beyond economical repair' : 'Repairable'}</b></div>
+      ${ber && r.berReason ? `<div>${esc(r.berReason)}</div>` : ''}
+      <dl style="margin-top:6px">
+        ${r.repairCost != null ? `<dt>Estimated repair cost</dt><dd>${money(r.repairCost)}${settings.vatNumber ? ' incl. VAT' : ''}</dd>` : ''}
+        ${r.replacementValue != null ? `<dt>Replacement value</dt><dd>${money(r.replacementValue)}${settings.vatNumber ? ' incl. VAT' : ''}</dd>` : ''}
+      </dl>
+      ${urls.length ? `<h3>Photos</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">${urls.map(u => `<img src="${u}" style="width:100%;height:120px;object-fit:cover;border:1px solid #ccc">`).join('')}</div>` : ''}
+      <p style="margin-top:12px">This report reflects the condition of the device at the time of assessment.</p>
+      <div class="pc-sig"><div><div style="height:50px;border-bottom:1px solid #000;width:240px"></div>
+        <div>Assessed by: ${esc(r.technician || '')}, ${esc(settings.shopName)}</div></div></div>
+    </div>`;
+  await Promise.all([...document.querySelectorAll('#print-area img')].map(i => i.decode().catch(() => {})));
+  window.print();
 }

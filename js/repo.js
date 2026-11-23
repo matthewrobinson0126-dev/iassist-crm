@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123223552';
-import { uid, now } from './ui.js?v=20261123223552';
+import { db, remote } from './db.js?v=20261123224247';
+import { uid, now } from './ui.js?v=20261123224247';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -75,6 +75,8 @@ const DEFAULT_SETTINGS = {
   nextJobNo: 1,
   quoteValidDays: 7,
   assessmentFee: 200,
+  reportFee: 450,
+  companyReg: '',
   vatNumber: '',
 };
 
@@ -987,3 +989,28 @@ async function linkQuoteToJob(quoteId, job) {
 }
 
 export async function deleteQuote(q) { requireOwner(); await db.remove('quotes', q.id); }
+
+// ───────────── Insurance / damage reports (DR-0001…) ─────────────
+// The report is saved on the job; the first save gives it a number and (optionally) adds the report fee.
+export async function saveReport(job, report, { addFee = true } = {}) {
+  requireUser();
+  if (!report.findings?.length && !report.notes?.trim()) throw new Error('Add what you found (tick at least one finding, or write notes).');
+  if (!report.result) throw new Error('Choose: repairable, or beyond economical repair.');
+  const settings = await getSettings();
+  let reportNo = job.reportNo;
+  if (!reportNo) reportNo = remote ? await remote.rpc('next_report_no', {}) : await nextNo('nextReportNo', 'DR-');
+  const rec = { ...report, assessedAt: report.assessedAt || now(), technician: report.technician || me.name };
+  let next = await saveJob(job, { report: rec, reportNo });
+  const fee = Number(settings.reportFee) || 0;
+  const hasFee = (next.lines || []).some(l => /damage report/i.test(l.name));
+  if (addFee && fee > 0 && !hasFee) {
+    next = await setLines(next, [...(next.lines || []), { name: `Insurance damage report ${reportNo}`, qty: 1, price: fee }], `Added damage report fee R${fee}`);
+  }
+  await logEvent(job, 'report', `Damage report ${reportNo} ${job.reportNo ? 'updated' : 'created'}: ${rec.result === 'ber' ? 'beyond economical repair' : 'repairable'}`);
+  return next;
+}
+export async function emailReport(job) {
+  requireUser();
+  if (!remote || job.demo) return { skipped: 'Demo mode' };
+  try { return await remote.notify(job.id, 'report', ''); } catch (ex) { return { error: ex.message }; }
+}

@@ -1,8 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261123223552';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123223552';
-import { go } from '../app.js?v=20261123223552';
-import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123223552';
+import * as repo from '../repo.js?v=20261123224247';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123224247';
+import { go } from '../app.js?v=20261123224247';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123224247';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -27,6 +27,8 @@ export async function renderSettings(view) {
           <label class="field">Google review link <span class="hint">for the WhatsApp “Ask for a Google review” message</span><input type="url" id="sh-review" value="${esc(s.googleReviewUrl || '')}" placeholder="https://g.page/r/…/review"></label>
           <label class="field">Default warranty (months)<input type="number" id="sh-war" min="0" value="${esc(s.warrantyMonths)}"></label>
           <label class="field">Assessment fee (R) <span class="hint">charged if the quote is declined or it can’t be repaired</span><input type="number" id="sh-fee" min="0" value="${esc(s.assessmentFee ?? 200)}"></label>
+          <label class="field">Insurance report fee (R)<input type="number" id="sh-rfee" min="0" value="${esc(s.reportFee ?? 450)}"></label>
+          <label class="field">Company registration no. <span class="hint">printed on insurance reports</span><input type="text" id="sh-reg" value="${esc(s.companyReg || '')}" placeholder="e.g. 2015/123456/07"></label>
           <label class="field">Quotes valid for (days)<input type="number" id="sh-qdays" min="1" max="90" value="${esc(s.quoteValidDays ?? 7)}"></label>
           <label class="field">VAT number <span class="hint">only if VAT registered: quotes then show 15% VAT</span><input type="text" id="sh-vat" value="${esc(s.vatNumber || '')}" inputmode="numeric" placeholder="Leave empty if not registered"></label>
           <label class="field">Auto-lock after (minutes)<input type="number" id="sh-idle" min="1" max="120" value="${esc(s.idleLockMinutes)}"></label>
@@ -81,7 +83,7 @@ export async function renderSettings(view) {
     e.preventDefault();
     const v = q => $(q, view).value;
     await repo.saveSettings({ shopName: v('#sh-name'), address: v('#sh-addr'), phone: v('#sh-phone'), email: v('#sh-email'),
-      warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), assessmentFee: Math.max(0, Number(v('#sh-fee')) || 0), quoteValidDays: Math.min(90, Math.max(1, Number(v('#sh-qdays')) || 7)), vatNumber: v('#sh-vat').trim(), googleReviewUrl: v('#sh-review').trim(),
+      warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), assessmentFee: Math.max(0, Number(v('#sh-fee')) || 0), reportFee: Math.max(0, Number(v('#sh-rfee')) || 0), companyReg: v('#sh-reg').trim(), quoteValidDays: Math.min(90, Math.max(1, Number(v('#sh-qdays')) || 7)), vatNumber: v('#sh-vat').trim(), googleReviewUrl: v('#sh-review').trim(),
       emailEnabled: $('#sh-email-on', view).checked, smsEnabled: $('#sh-sms-on', view).checked, idleLockMinutes: Math.max(1, Number(v('#sh-idle')) || 10), terms: v('#sh-terms') });
     toast('Shop details saved');
   };

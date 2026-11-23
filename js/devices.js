@@ -76,6 +76,7 @@ export const JOB_TYPES = [
   { id: 'paid', label: 'Paid repair' },
   { id: 'offsite', label: 'Off-site / call-out' },
   { id: 'warranty', label: 'Warranty return' },
+  { id: 'insurance', label: 'Insurance report' },
 ];
 export const jobTypeLabel = id => JOB_TYPES.find(t => t.id === id)?.label || 'Paid repair';
 
@@ -86,3 +87,10 @@ export const HISTORY = ['Dropped', 'Liquid exposure', 'Died suddenly', 'Lightnin
 // How the customer wants to be contacted.
 export const CONTACT_PREFS = [{ id: 'whatsapp', label: 'WhatsApp' }, { id: 'call', label: 'Phone call' }, { id: 'email', label: 'Email' }];
 export const contactPrefLabel = id => CONTACT_PREFS.find(p => p.id === id)?.label || '';
+
+// Insurance / damage reports.
+export const REPORT_CAUSES = ['Dropped', 'Liquid damage', 'Lightning / power surge', 'Accident (sat on, bent, crushed)',
+  'Theft / attempted theft', 'Fire / heat', 'Unknown', 'Other'];
+export const REPORT_FINDINGS = ['Cracked screen', 'Display not working', 'Touch not working', 'Cracked back glass', 'Bent frame / housing',
+  'Liquid indicators triggered', 'Corrosion on the board', 'Board damage', 'Won’t power on', 'Won’t charge', 'Camera damaged',
+  'Face ID / Touch ID not working', 'Speaker / microphone damaged', 'Battery swollen', 'Buttons damaged'];
