@@ -349,4 +349,4 @@ td.neg { color: var(--danger); }
   .lb-qr { flex: none; } .lb-qr svg { width: 100%; height: 100%; display: block; }
 }
 
-.nav a.book.book-ins { background: var(--s-unfixed); color: #fff; }
+.nav a.book.book-ins { background: #a3402f; color: #fff; }
