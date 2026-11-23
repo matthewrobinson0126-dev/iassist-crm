@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123205119';
-import { uid, now } from './ui.js?v=20261123205119';
+import { db, remote } from './db.js?v=20261123205659';
+import { uid, now } from './ui.js?v=20261123205659';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -19,7 +19,8 @@ export const HANDBACK_OUTCOMES = [
   { id: 'repaired', label: 'Repaired' }, { id: 'unrepairable', label: 'Couldn’t be repaired' },
   { id: 'declined', label: 'Quote declined' }, { id: 'cancelled', label: 'Cancelled by customer' }];
 export const CLOSE_OUTCOMES = [
-  { id: 'sold', label: 'Sold to cover costs (uncollected)' }, { id: 'recycled', label: 'Recycled as e-waste (uncollected)' },
+  { id: 'sold', label: 'Sold to cover costs (uncollected)' }, { id: 'stripped', label: 'Stripped for parts (uncollected)' },
+  { id: 'recycled', label: 'Recycled as e-waste (uncollected)' },
   { id: 'abandoned', label: 'Closed: other reason' }];
 export const outcomeLabel = id => [...HANDBACK_OUTCOMES, ...CLOSE_OUTCOMES].find(o => o.id === id)?.label || '';
 export const isClosed = j => j.status === 'collected' || j.status === 'closed';
@@ -516,6 +517,8 @@ export async function closeJob(job, { outcome, note = '', amount = '', method = 
   const next = await saveJob(job, { status: 'closed', statusAt: t, outcome, closedAt: t, closeNote: note.trim() });
   await db.remove('job_secrets', job.id);
   if (outcome === 'sold' && num(amount) > 0) await addPayment({ job: next, kind: 'payment', method, amount, note: 'Sale of uncollected device' });
+  // The customer is told by email what happened to their uncollected device.
+  if (!job.demo && ['sold', 'stripped', 'recycled'].includes(outcome)) notify(next, 'closed');
   await logEvent(job, 'closed', `Job closed: ${outcomeLabel(outcome)}${note.trim() ? ` · ${note.trim()}` : ''}${outcome === 'sold' && num(amount) > 0 ? ` · sold for R${num(amount)}` : ''}. Passcode deleted.`);
   return next;
 }

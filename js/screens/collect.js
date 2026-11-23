@@ -1,16 +1,15 @@
 // Collection: every device waiting to go back to the customer, with one-tap Hand back / Close job.
-import * as repo from '../repo.js?v=20261123205119';
-import { statusLabel } from '../repo.js?v=20261123205119';
-import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123205119';
-import { handBack, closeJobModal } from './jobs.js?v=20261123205119';
-import { go } from '../app.js?v=20261123205119';
+import * as repo from '../repo.js?v=20261123205659';
+import { statusLabel } from '../repo.js?v=20261123205659';
+import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123205659';
+import { handBack, closeJobModal } from './jobs.js?v=20261123205659';
+import { go } from '../app.js?v=20261123205659';
 
 let q = '';
 const days = iso => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 864e5));
 
-export async function renderCollect(view) {
-  const [jobs, quotes, payments] = await Promise.all([repo.listJobs(), repo.listQuotes(), repo.listPayments()]);
-  // Waiting to be collected: Ready – fixed, Ready – not fixed, and quote declined (device still here).
+// Waiting to be collected: Ready – fixed, Ready – not fixed, and quote declined (device still here). Oldest first.
+export function waitingRows(jobs, quotes) {
   const rows = [];
   for (const j of jobs.filter(j => !repo.isClosed(j))) {
     if (j.status === 'ready' || j.status === 'unfixed') { rows.push({ j, why: statusLabel(j.status), since: j.statusAt }); continue; }
@@ -18,7 +17,12 @@ export async function renderCollect(view) {
     const dec = qs.filter(x => x.status === 'declined').map(x => x.respondedAt || x.createdAt).sort().pop();
     if (dec && !qs.some(x => x.status === 'accepted')) rows.push({ j, why: 'Quote declined', since: dec });
   }
-  rows.sort((a, b) => a.since.localeCompare(b.since));
+  return rows.sort((a, b) => a.since.localeCompare(b.since)).map(r => ({ ...r, days: days(r.since) }));
+}
+
+export async function renderCollect(view) {
+  const [jobs, quotes, payments] = await Promise.all([repo.listJobs(), repo.listQuotes(), repo.listPayments()]);
+  const rows = waitingRows(jobs, quotes);
   view.innerHTML = `
     <div class="page-head"><h1>Collection</h1><span class="muted">${rows.length} waiting</span><span class="spacer"></span>
       <input type="search" id="col-q" placeholder="Search job no, name, phone, model" style="max-width:380px" autocomplete="off"></div>

@@ -1,19 +1,20 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261123205119';
-import { db } from './db.js?v=20261123205119';
-import { $, esc, initials, toast } from './ui.js?v=20261123205119';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123205119';
-import { renderBookIn } from './screens/bookin.js?v=20261123205119';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261123205119';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123205119';
-import { renderSettings } from './screens/settings.js?v=20261123205119';
-import { renderMoney } from './screens/money.js?v=20261123205119';
-import { renderTasks } from './screens/tasks.js?v=20261123205119';
-import { renderReports } from './screens/reports.js?v=20261123205119';
-import { renderStock } from './screens/stock.js?v=20261123205119';
-import { renderSell } from './screens/sell.js?v=20261123205119';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123205119';
-import { renderCollect } from './screens/collect.js?v=20261123205119';
+import * as repo from './repo.js?v=20261123205659';
+import { db } from './db.js?v=20261123205659';
+import { $, esc, initials, toast } from './ui.js?v=20261123205659';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123205659';
+import { renderBookIn } from './screens/bookin.js?v=20261123205659';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261123205659';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123205659';
+import { renderSettings } from './screens/settings.js?v=20261123205659';
+import { renderMoney } from './screens/money.js?v=20261123205659';
+import { renderTasks } from './screens/tasks.js?v=20261123205659';
+import { renderReports } from './screens/reports.js?v=20261123205659';
+import { renderStock } from './screens/stock.js?v=20261123205659';
+import { renderSell } from './screens/sell.js?v=20261123205659';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123205659';
+import { renderCollect } from './screens/collect.js?v=20261123205659';
+import { renderOverdue } from './screens/overdue.js?v=20261123205659';
 
 const routes = {
   bookin: renderBookIn,
@@ -30,6 +31,7 @@ const routes = {
   quotes: renderQuotes,
   quote: renderQuote,
   collect: renderCollect,
+  overdue: renderOverdue,
 };
 
 export const go = hash => { if (location.hash === '#' + hash) route(); else location.hash = hash; };
@@ -51,6 +53,7 @@ function shell() {
         <a href="#sell" data-nav="sell">Sell</a>
         <a href="#jobs" data-nav="jobs">Jobs</a>
         <a href="#collect" data-nav="collect">Collection</a>
+        <a href="#overdue" data-nav="overdue">Overdue</a>
         <a href="#quotes" data-nav="quotes">Quotes</a>
         <a href="#customers" data-nav="customers">Customers</a>
         <a href="#tasks" data-nav="tasks">Tasks</a>
