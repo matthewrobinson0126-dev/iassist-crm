@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123203910';
-import { uid, now } from './ui.js?v=20261123203910';
+import { db, remote } from './db.js?v=20261123204400';
+import { uid, now } from './ui.js?v=20261123204400';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -11,8 +11,19 @@ export const STATUSES = [
   { id: 'ready', label: 'Ready – fixed' },
   { id: 'unfixed', label: 'Ready – not fixed' },
   { id: 'collected', label: 'Collected' },
+  { id: 'closed', label: 'Closed' },
 ];
 export const statusLabel = id => STATUSES.find(s => s.id === id)?.label || id;
+// How a job ended. Handed back to the customer, or closed without them collecting it.
+export const HANDBACK_OUTCOMES = [
+  { id: 'repaired', label: 'Repaired' }, { id: 'unrepairable', label: 'Couldn’t be repaired' },
+  { id: 'declined', label: 'Quote declined' }, { id: 'cancelled', label: 'Cancelled by customer' }];
+export const CLOSE_OUTCOMES = [
+  { id: 'sold', label: 'Sold to cover costs (uncollected)' }, { id: 'recycled', label: 'Recycled as e-waste (uncollected)' },
+  { id: 'abandoned', label: 'Closed: other reason' }];
+export const outcomeLabel = id => [...HANDBACK_OUTCOMES, ...CLOSE_OUTCOMES].find(o => o.id === id)?.label || '';
+export const isClosed = j => j.status === 'collected' || j.status === 'closed';
+export const OPEN_STATUSES = ['booked', 'diagnosing', 'approval', 'parts', 'repairing', 'ready', 'unfixed'];
 
 // Recommended terms (researched 2026-11-19 against the Consumer Protection Act ss 15, 49, 57, 65, 67). Get a lawyer to check them.
 export const RECOMMENDED_TERMS = `IASSIST REPAIR TERMS AND CONDITIONS
@@ -429,7 +440,7 @@ async function saveJob(job, patch) {
 export async function setStatus(job, status) {
   requireUser();
   if (status === job.status) return job;
-  if (status === 'collected') throw new Error('Use Hand back to mark a device collected.');
+  if (status === 'collected' || status === 'closed') throw new Error('Use Hand back or Close job to finish a job.');
   const next = await saveJob(job, { status, statusAt: now() });
   await logEvent(job, 'status', `${statusLabel(job.status)} → ${statusLabel(status)}`);
   if (['approval', 'parts', 'ready', 'unfixed'].includes(status) && !job.demo) {
@@ -475,24 +486,37 @@ export async function getPasscode(job) {
   return s?.passcode || null;
 }
 
-export async function handBack(job, { method, amount, warrantyMonths, signature }) {
+export async function handBack(job, { method, amount, warrantyMonths, signature, outcome = 'repaired', note = '' }) {
   requireUser();
   const t = now();
   let warrantyUntil = '';
   const months = Number(warrantyMonths);
-  if (months > 0) {
+  if (months > 0 && outcome === 'repaired') {
     const d = new Date(); d.setMonth(d.getMonth() + months);
     warrantyUntil = d.toISOString().slice(0, 10);
   }
   const next = await saveJob(job, {
     status: 'collected', statusAt: t, paidMethod: method, paidAmount: num(amount), warrantyUntil,
     signatureOut: signature ? await saveFile(signature, 'signature') : null,
-    collectedAt: t, collectedBy: me.id, collectedByName: me.name,
+    collectedAt: t, collectedBy: me.id, collectedByName: me.name, outcome, closedAt: t, closeNote: note || '',
   });
   await db.remove('job_secrets', job.id); // POPIA: passcode gone once collected
   if (num(amount) > 0 && method && method !== 'No charge') await addPayment({ job: next, kind: 'payment', method, amount });
-  if (!job.demo) notify(next, 'review');
-  await logEvent(job, 'collected', `Handed back by ${me.name}${method ? ` · paid ${method}${num(amount) !== null ? ` R${num(amount)}` : ''}` : ''}${warrantyUntil ? ` · warranty to ${warrantyUntil}` : ''}. Passcode deleted.`);
+  if (!job.demo && outcome === 'repaired') notify(next, 'review');
+  await logEvent(job, 'collected', `Handed back (${outcomeLabel(outcome)}) by ${me.name}${note ? ` · ${note}` : ''}${method ? ` · paid ${method}${num(amount) !== null ? ` R${num(amount)}` : ''}` : ''}${warrantyUntil ? ` · warranty to ${warrantyUntil}` : ''}. Passcode deleted.`);
+  return next;
+}
+
+// Close a job the customer never collected (sold or recycled after the 90-day notices), or for another reason.
+export async function closeJob(job, { outcome, note = '', amount = '', method = 'Cash' }) {
+  requireUser();
+  if (!CLOSE_OUTCOMES.some(o => o.id === outcome)) throw new Error('Choose why the job is being closed.');
+  if (outcome === 'abandoned' && !note.trim()) throw new Error('Add a short note saying why.');
+  const t = now();
+  const next = await saveJob(job, { status: 'closed', statusAt: t, outcome, closedAt: t, closeNote: note.trim() });
+  await db.remove('job_secrets', job.id);
+  if (outcome === 'sold' && num(amount) > 0) await addPayment({ job: next, kind: 'payment', method, amount, note: 'Sale of uncollected device' });
+  await logEvent(job, 'closed', `Job closed: ${outcomeLabel(outcome)}${note.trim() ? ` · ${note.trim()}` : ''}${outcome === 'sold' && num(amount) > 0 ? ` · sold for R${num(amount)}` : ''}. Passcode deleted.`);
   return next;
 }
 

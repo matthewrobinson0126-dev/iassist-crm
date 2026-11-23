@@ -24,6 +24,7 @@
   --s-ready: #1f7a3f;
   --s-unfixed: #a3402f;
   --s-collected: #7a8587;
+  --s-closed: #5d6668;
   --radius: 12px;
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -35,7 +36,7 @@
     --line: #2c3d41; --accent: #4fb8b4; --accent-ink: #07211f; --accent-soft: #163b3c;
     --danger: #ff8a80; --danger-soft: #3b1d1b; --warn: #f2b65c; --warn-soft: #3a2c14; --ok: #74d39a; --ok-soft: #173525;
     --s-booked: #9fb2b8; --s-diagnosing: #9fa3ff; --s-approval: #f2b65c; --s-parts: #ff9a73;
-    --s-repairing: #4fb8b4; --s-ready: #74d39a; --s-unfixed: #ff9e8c; --s-collected: #7f8b8d;
+    --s-repairing: #4fb8b4; --s-ready: #74d39a; --s-unfixed: #ff9e8c; --s-collected: #7f8b8d; --s-closed: #6a7476;
     color-scheme: dark;
   }
 }

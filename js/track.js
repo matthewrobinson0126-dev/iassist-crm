@@ -1,10 +1,10 @@
 // Public tracking page: reads the job status through the "track" server function (no login).
-import { CONFIG } from './config.js?v=20261123203910';
-import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261123203910';
+import { CONFIG } from './config.js?v=20261123204400';
+import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261123204400';
 
 const app = document.getElementById('app');
 const ORDER = ['Booked in', 'Being checked', 'Being repaired', 'Ready to collect', 'Collected'];
-const STAGE = { booked: 0, diagnosing: 1, approval: 1, parts: 1, repairing: 2, ready: 3, unfixed: 3, collected: 4 };
+const STAGE = { booked: 0, diagnosing: 1, approval: 1, parts: 1, repairing: 2, ready: 3, unfixed: 3, collected: 4, closed: 4 };
 
 async function load() {
   const token = new URLSearchParams(location.search).get('t');

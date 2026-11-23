@@ -1,20 +1,20 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123203910';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123203910';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123203910';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123203910';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123203910';
-import { startWarrantyJob } from './bookin.js?v=20261123203910';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123203910';
-import { openWhatsApp } from '../messages.js?v=20261123203910';
-import { go } from '../app.js?v=20261123203910';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123203910';
+import * as repo from '../repo.js?v=20261123204400';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123204400';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123204400';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123204400';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123204400';
+import { startWarrantyJob } from './bookin.js?v=20261123204400';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123204400';
+import { openWhatsApp } from '../messages.js?v=20261123204400';
+import { go } from '../app.js?v=20261123204400';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123204400';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
 
 const today = () => new Date().toISOString().slice(0, 10);
-const isLate = j => j.dueDate && j.dueDate < today() && !['ready', 'unfixed', 'collected'].includes(j.status);
+const isLate = j => j.dueDate && j.dueDate < today() && !['ready', 'unfixed'].includes(j.status) && !repo.isClosed(j);
 const FILTERS = [
   { id: 'all', label: 'All', test: () => true },
   { id: 'mine', label: 'Mine', test: j => j.technicianId === repo.auth.user?.id },
@@ -29,7 +29,7 @@ export async function renderJobs(view) {
   view.innerHTML = `
     <div class="page-head"><h1>Jobs</h1><span class="spacer"></span>
       <input type="search" id="job-search" placeholder="Search job no, name, phone, model, IMEI" style="max-width:420px" autocomplete="off">
-      <label class="check"><input type="checkbox" id="show-collected"> Show collected</label>
+      <label class="check"><input type="checkbox" id="show-collected"> Show finished jobs</label>
     </div>
     <div id="quote-news"></div>
     <div id="uncollected"></div>
@@ -81,15 +81,15 @@ export async function renderJobs(view) {
   const draw = () => {
     const q = boardState.q.trim().toLowerCase(), qd = repo.digits(q);
     const filter = FILTERS.find(f => f.id === boardState.filter) || FILTERS[0];
-    const open = jobs.filter(j => j.status !== 'collected');
+    const open = jobs.filter(j => !repo.isClosed(j));
     $('#filters', view).innerHTML = FILTERS.map(f => `<button class="chip ${f.id === filter.id ? 'on' : ''}" data-f="${f.id}">${esc(f.label)} <span class="num">${open.filter(f.test).length}</span></button>`).join('');
     $$('[data-f]', view).forEach(b => b.onclick = () => { boardState.filter = b.dataset.f; draw(); });
     const match = j => filter.test(j) && (!q || [j.jobNo, j.customerName, j.model, j.serial, j.technicianName].some(v => (v || '').toLowerCase().includes(q))
       || (qd.length >= 3 && repo.digits(j.customerPhone).includes(qd)));
-    const cols = STATUSES.filter(s => s.id !== 'collected' || boardState.showCollected);
+    const cols = STATUSES.filter(s => !['collected', 'closed'].includes(s.id) || boardState.showCollected);
     $('#board', view).innerHTML = cols.map(s => {
       let list = jobs.filter(j => j.status === s.id && match(j)).sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
-      if (s.id === 'collected') list = list.sort((a, b) => b.collectedAt.localeCompare(a.collectedAt)).slice(0, 40);
+      if (['collected', 'closed'].includes(s.id)) list = list.sort((a, b) => (b.closedAt || b.collectedAt || '').localeCompare(a.closedAt || a.collectedAt || '')).slice(0, 40);
       return `<section class="col" aria-label="${esc(s.label)}">
         <div class="col-head"><span class="dot" style="background:${sc(s.id)}"></span>${esc(s.label)}<span class="count">${list.length}</span></div>
         ${list.map(card).join('') || '<div class="col-empty">No jobs</div>'}
@@ -109,7 +109,8 @@ export async function renderJobs(view) {
 function card(j) {
   const late = isLate(j);
   return `<button class="job-card ${j.urgent ? 'urgent' : ''}" data-id="${j.id}" style="--sc:${sc(j.status)}">
-    <div class="top"><span class="jn">${esc(j.jobNo)}</span><span>${j.status === 'collected' ? fmtDate(j.collectedAt) : ageText(j.createdAt)}</span></div>
+    <div class="top"><span class="jn">${esc(j.jobNo)}</span><span>${repo.isClosed(j) ? fmtDate(j.closedAt || j.collectedAt) : ageText(j.createdAt)}</span></div>
+    ${j.outcome ? `<div class="muted" style="font-size:.82rem">${esc(repo.outcomeLabel(j.outcome))}</div>` : ''}
     ${j.urgent || j.jobType === 'warranty' ? `<div class="tag-list">${j.urgent ? '<span class="tag hot">Urgent</span>' : ''}${j.jobType === 'warranty' ? '<span class="tag">Warranty</span>' : ''}</div>` : ''}
     <div class="name">${esc(j.customerName)}</div>
     <div class="dev">${esc(j.model)}</div>
@@ -128,7 +129,7 @@ export async function renderJob(view, id) {
   const m$ = repo.jobMoney(job, payments);
   const photoUrls = await Promise.all(photos.map(p => repo.fileUrl(p.fileId)));
   const sigIn = await repo.fileUrl(job.signatureIn), sigOut = await repo.fileUrl(job.signatureOut);
-  const collected = job.status === 'collected';
+  const collected = repo.isClosed(job);
   const list = a => a && a.length ? `<div class="tag-list">${a.map(x => `<span class="tag">${esc(x)}</span>`).join('')}</div>` : '—';
 
   view.innerHTML = `
@@ -136,6 +137,7 @@ export async function renderJob(view, id) {
       <a href="#jobs" class="btn small ghost">← Jobs</a>
       <h1 class="mono">${esc(job.jobNo)}</h1>
       <span class="pill" style="--sc:${sc(job.status)}">${esc(statusLabel(job.status))}</span>
+      ${job.outcome ? `<span class="tag">${esc(repo.outcomeLabel(job.outcome))}</span>` : ''}
       ${job.urgent ? '<span class="tag hot">Urgent</span>' : ''}
       ${job.jobType && job.jobType !== 'paid' ? `<span class="tag">${esc(jobTypeLabel(job.jobType))}${job.warrantyOf ? ` for <a href="#job-${job.warrantyOf}">${esc(job.warrantyOfNo || 'original job')}</a>` : ''}</span>` : ''}
       <span class="muted">in for ${ageText(job.createdAt)}</span>
@@ -143,16 +145,16 @@ export async function renderJob(view, id) {
       <button class="btn" id="j-wa">WhatsApp</button>
       <button class="btn" id="j-label">Print label</button>
       <button class="btn" id="j-print">Print job card</button>
-      ${['ready', 'collected'].includes(job.status) ? '<button class="btn" id="j-cert">Certificate of completion</button>' : ''}
-      ${collected ? '<button class="btn" id="j-warranty">Warranty return</button>' : ''}
-      ${!collected ? `<button class="btn ${['ready', 'unfixed'].includes(job.status) ? 'primary' : ''}" id="j-hand">Hand back</button>` : ''}
+      ${job.status === 'ready' || (job.status === 'collected' && (job.outcome || 'repaired') === 'repaired') ? '<button class="btn" id="j-cert">Certificate of completion</button>' : ''}
+      ${job.status === 'collected' && (job.outcome || 'repaired') === 'repaired' ? '<button class="btn" id="j-warranty">Warranty return</button>' : ''}
+      ${!collected ? `<button class="btn" id="j-close">Close job</button><button class="btn ${['ready', 'unfixed'].includes(job.status) ? 'primary' : ''}" id="j-hand">Hand back</button>` : ''}
     </div>
     ${!collected ? `<div class="card" style="margin-bottom:18px"><div class="row">
       <label class="field" style="min-width:220px;flex:1">Technician<select id="j-tech"><option value="">Not assigned</option></select></label>
       <label class="check"><input type="checkbox" id="j-urgent" ${job.urgent ? 'checked' : ''}> Urgent</label>
     </div></div>` : ''}
     ${!collected ? `<div class="card stack" style="margin-bottom:18px"><h2 style="margin:0">Move to</h2>
-      <div class="status-row">${STATUSES.filter(s => s.id !== 'collected').map(s =>
+      <div class="status-row">${STATUSES.filter(s => !['collected', 'closed'].includes(s.id)).map(s =>
         `<button class="status-btn ${s.id === job.status ? 'on' : ''}" data-s="${s.id}" style="--sc:${sc(s.id)}"><span class="dot"></span>${esc(s.label)}</button>`).join('')}</div></div>` : ''}
     <div class="job-layout">
       <div class="stack">
@@ -213,7 +215,8 @@ export async function renderJob(view, id) {
             <dt>Paid so far</dt><dd>${money(m$.paid)}</dd>
             ${!collected ? `<dt>Still to pay</dt><dd><b>${job.quote === null && job.jobType !== 'warranty' ? '—' : money(m$.due)}</b></dd>` : ''}
             ${repo.auth.isOwner() && m$.costs ? `<dt>Costs <span class="badge owner">owner</span></dt><dd>${money(m$.costs)} · profit ${money(m$.paid - m$.costs)}</dd>` : ''}
-            ${collected ? `<dt>Warranty to</dt><dd>${job.warrantyUntil ? fmtDate(job.warrantyUntil) : '—'}</dd>
+            ${job.outcome ? `<dt>Outcome</dt><dd><b>${esc(repo.outcomeLabel(job.outcome))}</b>${job.closeNote ? ` · ${esc(job.closeNote)}` : ''}</dd>` : ''}
+            ${job.status === 'collected' ? `<dt>Warranty to</dt><dd>${job.warrantyUntil ? fmtDate(job.warrantyUntil) : '—'}</dd>
               <dt>Handed back</dt><dd>${fmtDateTime(job.collectedAt)} by ${esc(job.collectedByName || '')}</dd>` : ''}
             <dt>Ready by</dt><dd>${job.dueDate ? fmtDate(job.dueDate) : '—'}</dd>
             <dt>Return</dt><dd>${esc(collectionLabel(job.collection))}</dd>
@@ -321,6 +324,7 @@ export async function renderJob(view, id) {
   $('#j-print', view).onclick = () => printJobCard(job);
   $('#j-label', view).onclick = () => printLabel(job);
   $('#j-hand', view)?.addEventListener('click', () => handBack(job, reload));
+  $('#j-close', view)?.addEventListener('click', () => closeJobModal(job, reload));
   $('#j-pass', view)?.addEventListener('click', async () => {
     const code = await repo.getPasscode(job);
     const m = modal(`<h2>Passcode for ${esc(job.jobNo)}</h2>
@@ -499,8 +503,13 @@ async function handBack(job, after) {
   const m$ = repo.jobMoney(job, await repo.jobPayments(job.id));
   const balance = job.quote === null && job.jobType !== 'warranty' ? '' : m$.due;
   let method = '';
+  const quotes = await repo.quotesForJob(job.id);
+  let outcome = job.status === 'ready' ? 'repaired' : job.status === 'unfixed' ? 'unrepairable'
+    : quotes.some(q => q.status === 'declined') && !quotes.some(q => q.status === 'accepted') ? 'declined' : 'repaired';
   const m = modal(`
     <h2>Hand back ${esc(job.jobNo)}</h2>
+    <div class="field">What happened?<div class="seg" id="h-out">${repo.HANDBACK_OUTCOMES.map(o => `<button type="button" data-o="${o.id}">${esc(o.label)}</button>`).join('')}</div></div>
+    <label class="field">Note <span class="hint">optional</span><input type="text" id="h-note" placeholder="e.g. Board damage, no parts available"></label>
     ${!['ready', 'unfixed'].includes(job.status) ? `<p class="error-msg" style="margin:0">This job is still “${esc(statusLabel(job.status))}”. Only hand it back if the customer is collecting anyway.</p>` : ''}
     <dl class="kv num"><dt>Quote</dt><dd>${job.quote === null ? 'Not set' : money(job.quote)}</dd>
       <dt>Paid so far</dt><dd>${money(m$.paid)}</dd><dt>Still to pay</dt><dd><b>${balance === '' ? '—' : money(balance)}</b></dd></dl>
@@ -516,6 +525,12 @@ async function handBack(job, after) {
     <p class="error-msg" id="h-err" hidden></p>
     <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary big" id="h-ok">Confirm hand back</button></div>`, { wide: true });
   const pad = signaturePad(m.el.querySelector('#h-sig'));
+  const paintOut = () => {
+    m.el.querySelectorAll('[data-o]').forEach(b => b.classList.toggle('on', b.dataset.o === outcome));
+    m.el.querySelector('#h-war').value = outcome === 'repaired' ? (job.status === 'unfixed' ? 0 : s.warrantyMonths) : 0;
+  };
+  m.el.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { outcome = b.dataset.o; paintOut(); });
+  paintOut();
   m.el.querySelector('#h-clear').onclick = () => pad.clear();
   m.el.querySelectorAll('[data-p]').forEach(b => b.onclick = () => {
     method = b.dataset.p;
@@ -527,9 +542,41 @@ async function handBack(job, after) {
     if (!method) { err.textContent = 'Choose how they paid (or “No charge”).'; err.hidden = false; return; }
     if (pad.isEmpty()) { err.textContent = 'The customer needs to sign for the device.'; err.hidden = false; return; }
     await repo.handBack(job, { method, amount: m.el.querySelector('#h-amt').value,
-      warrantyMonths: m.el.querySelector('#h-war').value, signature: await pad.toBlob() });
+      warrantyMonths: m.el.querySelector('#h-war').value, signature: await pad.toBlob(),
+      outcome, note: m.el.querySelector('#h-note').value.trim() });
     m.close();
     toast(`${job.jobNo} handed back`);
     after();
+  };
+}
+
+// ───────────── Close a job without handing it back ─────────────
+function closeJobModal(job, after) {
+  let outcome = '';
+  const m = modal(`
+    <h2>Close ${esc(job.jobNo)}</h2>
+    <p class="muted" style="margin:0">For a device the customer never collected. If they’re collecting it, use <b>Hand back</b> instead.</p>
+    <div class="field">Why is it being closed?<div class="stack" id="c-out" style="gap:8px">${repo.CLOSE_OUTCOMES.map(o => `<button type="button" class="btn" data-o="${o.id}" style="justify-content:flex-start">${esc(o.label)}</button>`).join('')}</div></div>
+    <div class="grid-2" id="c-sold" hidden>
+      <label class="field">Sold for (R) <span class="hint">optional</span><input type="number" id="c-amt" inputmode="decimal" min="0"></label>
+      <label class="field">Paid by<select id="c-method">${repo.MONEY_METHODS.map(x => `<option>${x}</option>`).join('')}</select></label>
+    </div>
+    <label class="field">Note<input type="text" id="c-note" placeholder="e.g. Final notice sent 3 Feb, no reply"></label>
+    <p class="muted" style="margin:0">Make sure the data is erased before a device is sold or recycled. The passcode is deleted when you confirm.</p>
+    <p class="error-msg" id="c-err" hidden></p>
+    <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="c-ok">Close job</button></div>`, { wide: true });
+  m.el.querySelectorAll('[data-o]').forEach(b => b.onclick = () => {
+    outcome = b.dataset.o;
+    m.el.querySelectorAll('[data-o]').forEach(x => x.classList.toggle('primary', x === b));
+    m.el.querySelector('#c-sold').hidden = outcome !== 'sold';
+  });
+  m.el.querySelector('#c-ok').onclick = async () => {
+    const err = m.el.querySelector('#c-err');
+    if (!outcome) { err.textContent = 'Choose why the job is being closed.'; err.hidden = false; return; }
+    try {
+      await repo.closeJob(job, { outcome, note: m.el.querySelector('#c-note').value, amount: m.el.querySelector('#c-amt').value,
+        method: m.el.querySelector('#c-method').value });
+      m.close(); toast(`${job.jobNo} closed`); after();
+    } catch (ex) { err.textContent = ex.message; err.hidden = false; }
   };
 }

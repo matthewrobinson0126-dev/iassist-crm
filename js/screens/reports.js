@@ -1,9 +1,9 @@
 // Owner reports: takings, profit, turnaround, technicians (with commission), top repairs, where customers come from.
 // Every figure is worked out from the jobs and the payments ledger; demo data is left out.
-import * as repo from '../repo.js?v=20261123203910';
-import { STATUSES } from '../repo.js?v=20261123203910';
-import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123203910';
-import { deviceType } from '../devices.js?v=20261123203910';
+import * as repo from '../repo.js?v=20261123204400';
+import { STATUSES } from '../repo.js?v=20261123204400';
+import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123204400';
+import { deviceType } from '../devices.js?v=20261123204400';
 
 const RANGES = [
   { id: 'week', label: 'Last 7 days', days: 7 },
@@ -66,6 +66,7 @@ export async function renderReports(view) {
   const costs = round(sum(payR.filter(p => p.kind === 'expense'), p => p.amount));
   const booked = jobs.filter(j => inRange(j.createdAt));
   const collected = jobs.filter(j => j.status === 'collected' && inRange(j.collectedAt));
+  const finished = jobs.filter(j => repo.isClosed(j) && inRange(j.closedAt || j.collectedAt));
   const payByJob = new Map();
   for (const p of pay) if (p.jobId) (payByJob.get(p.jobId) || payByJob.set(p.jobId, []).get(p.jobId)).push(p);
   const jobRevenue = j => round(sum((payByJob.get(j.id) || []).filter(p => p.kind !== 'expense'), repo.signed));
@@ -73,7 +74,7 @@ export async function renderReports(view) {
   const paidJobs = collected.filter(j => j.jobType !== 'warranty');
   const avgJob = paidJobs.length ? sum(paidJobs, jobRevenue) / paidJobs.length : 0;
   const turnaround = collected.length ? sum(collected, j => (new Date(j.collectedAt) - new Date(j.createdAt)) / 86400000) / collected.length : 0;
-  const open = jobs.filter(j => j.status !== 'collected');
+  const open = jobs.filter(j => !repo.isClosed(j));
   const late = open.filter(j => j.dueDate && j.dueDate < repo.todayKey() && !['ready', 'unfixed'].includes(j.status));
   const warrantyRate = collected.length ? collected.filter(j => j.jobType === 'warranty').length / collected.length : 0;
 
@@ -121,7 +122,8 @@ export async function renderReports(view) {
           : '<p class="muted" style="margin:0">No collected jobs with a technician in this period.</p>'}
         ${unassigned ? `<p class="muted" style="margin:8px 0 0">${unassigned} collected job${unassigned === 1 ? ' had' : 's had'} no technician assigned.</p>` : ''}
         <p class="muted" style="margin:8px 0 0">Commission = profit (takings − part costs) × each person’s % in Settings.</p></div>
-      <div class="card"><h2>Open jobs by status</h2>${hbars(STATUSES.filter(s => s.id !== 'collected').map(s => [s.label, open.filter(j => j.status === s.id).length]).filter(r => r[1]), v => v, 'No open jobs.')}</div>
+      <div class="card"><h2>Open jobs by status</h2>${hbars(STATUSES.filter(s => !['collected', 'closed'].includes(s.id)).map(s => [s.label, open.filter(j => j.status === s.id).length]).filter(r => r[1]), v => v, 'No open jobs.')}</div>
+      <div class="card"><h2>How jobs ended</h2>${hbars(countBy(finished, j => repo.outcomeLabel(j.outcome || 'repaired')))}</div>
       <div class="card"><h2>Top repairs booked</h2>${hbars(countBy(booked, j => j.faults || []).slice(0, 8))}</div>
       <div class="card"><h2>Devices booked</h2>${hbars(countBy(booked, j => deviceType(j.deviceType)?.label || j.deviceType).slice(0, 9))}</div>
       <div class="card"><h2>Where customers came from</h2>${hbars(countBy(booked, j => j.referral || 'Not asked').slice(0, 8))}</div>
