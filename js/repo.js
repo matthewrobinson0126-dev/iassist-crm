@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123211049';
-import { uid, now } from './ui.js?v=20261123211049';
+import { db, remote } from './db.js?v=20261123211431';
+import { uid, now } from './ui.js?v=20261123211431';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -503,7 +503,7 @@ export async function handBack(job, { method, amount, warrantyMonths, signature,
   });
   await db.remove('job_secrets', job.id); // POPIA: passcode gone once collected
   if (num(amount) > 0 && method && method !== 'No charge') await addPayment({ job: next, kind: 'payment', method, amount });
-  if (!job.demo && outcome === 'repaired') notify(next, 'review');
+  // Google review requests are sent by hand (WhatsApp "Ask for a Google review"), not automatically.
   await logEvent(job, 'collected', `Handed back (${outcomeLabel(outcome)}) by ${me.name}${note ? ` · ${note}` : ''}${method ? ` · paid ${method}${num(amount) !== null ? ` R${num(amount)}` : ''}` : ''}${warrantyUntil ? ` · warranty to ${warrantyUntil}` : ''}. Passcode deleted.`);
   return next;
 }

@@ -1,8 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261123211049';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123211049';
-import { go } from '../app.js?v=20261123211049';
-import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123211049';
+import * as repo from '../repo.js?v=20261123211431';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123211431';
+import { go } from '../app.js?v=20261123211431';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123211431';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -24,13 +24,13 @@ export async function renderSettings(view) {
           <label class="field">Phone<input type="tel" id="sh-phone" value="${esc(s.phone)}"></label>
           <label class="field">Email<input type="email" id="sh-email" value="${esc(s.email)}"></label>
           <label class="field">Opening hours <span class="hint">shown on the tracking page + emails</span><input type="text" id="sh-hours" value="${esc(s.hours || '')}" placeholder="e.g. Mon–Fri 9:00–17:30, Sat 9:00–13:00"></label>
-          <label class="field">Google review link <span class="hint">sent after collection</span><input type="url" id="sh-review" value="${esc(s.googleReviewUrl || '')}" placeholder="https://g.page/r/…/review"></label>
+          <label class="field">Google review link <span class="hint">for the WhatsApp “Ask for a Google review” message</span><input type="url" id="sh-review" value="${esc(s.googleReviewUrl || '')}" placeholder="https://g.page/r/…/review"></label>
           <label class="field">Default warranty (months)<input type="number" id="sh-war" min="0" value="${esc(s.warrantyMonths)}"></label>
           <label class="field">Quotes valid for (days)<input type="number" id="sh-qdays" min="1" max="90" value="${esc(s.quoteValidDays ?? 7)}"></label>
           <label class="field">VAT number <span class="hint">only if VAT registered: quotes then show 15% VAT</span><input type="text" id="sh-vat" value="${esc(s.vatNumber || '')}" inputmode="numeric" placeholder="Leave empty if not registered"></label>
           <label class="field">Auto-lock after (minutes)<input type="number" id="sh-idle" min="1" max="120" value="${esc(s.idleLockMinutes)}"></label>
         </div>
-        <label class="check"><input type="checkbox" id="sh-email-on" ${s.emailEnabled === false ? '' : 'checked'}> Email customers automatically (booked, quotes, waiting for parts, ready, review request)</label>
+        <label class="check"><input type="checkbox" id="sh-email-on" ${s.emailEnabled === false ? '' : 'checked'}> Email customers automatically (booked, quotes, waiting for parts, ready to collect)</label>
         <label class="check"><input type="checkbox" id="sh-sms-on" ${s.smsEnabled === false ? '' : 'checked'}> SMS customers too (booked in, ready to collect, 60-day reminder, 90-day final notice). Works once SMSPortal is connected.</label>
         ${repo.auth.cloud ? `<div class="row"><input type="email" id="sh-test-to" placeholder="Send a test email to…" style="max-width:300px">
           <button class="btn" type="button" id="sh-test">Send test email</button></div>` : ''}

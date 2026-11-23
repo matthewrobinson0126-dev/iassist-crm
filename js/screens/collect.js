@@ -1,9 +1,9 @@
 // Collection: every device waiting to go back to the customer, with one-tap Hand back / Close job.
-import * as repo from '../repo.js?v=20261123211049';
-import { statusLabel } from '../repo.js?v=20261123211049';
-import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123211049';
-import { handBack, closeJobModal } from './jobs.js?v=20261123211049';
-import { go } from '../app.js?v=20261123211049';
+import * as repo from '../repo.js?v=20261123211431';
+import { statusLabel } from '../repo.js?v=20261123211431';
+import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123211431';
+import { handBack, closeJobModal } from './jobs.js?v=20261123211431';
+import { go } from '../app.js?v=20261123211431';
 
 let q = '';
 const days = iso => Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / 864e5));
