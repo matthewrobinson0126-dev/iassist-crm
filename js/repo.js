@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123203615';
-import { uid, now } from './ui.js?v=20261123203615';
+import { db, remote } from './db.js?v=20261123203910';
+import { uid, now } from './ui.js?v=20261123203910';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
