@@ -1,8 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261123205659';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123205659';
-import { go } from '../app.js?v=20261123205659';
-import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123205659';
+import * as repo from '../repo.js?v=20261123211049';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261123211049';
+import { go } from '../app.js?v=20261123211049';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261123211049';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }
@@ -31,6 +31,7 @@ export async function renderSettings(view) {
           <label class="field">Auto-lock after (minutes)<input type="number" id="sh-idle" min="1" max="120" value="${esc(s.idleLockMinutes)}"></label>
         </div>
         <label class="check"><input type="checkbox" id="sh-email-on" ${s.emailEnabled === false ? '' : 'checked'}> Email customers automatically (booked, quotes, waiting for parts, ready, review request)</label>
+        <label class="check"><input type="checkbox" id="sh-sms-on" ${s.smsEnabled === false ? '' : 'checked'}> SMS customers too (booked in, ready to collect, 60-day reminder, 90-day final notice). Works once SMSPortal is connected.</label>
         ${repo.auth.cloud ? `<div class="row"><input type="email" id="sh-test-to" placeholder="Send a test email to…" style="max-width:300px">
           <button class="btn" type="button" id="sh-test">Send test email</button></div>` : ''}
         <label class="field">Terms the customer signs<span class="hint">Shown at book-in and printed on the job card. Each job keeps the version that was signed.</span>
@@ -80,7 +81,7 @@ export async function renderSettings(view) {
     const v = q => $(q, view).value;
     await repo.saveSettings({ shopName: v('#sh-name'), address: v('#sh-addr'), phone: v('#sh-phone'), email: v('#sh-email'),
       warrantyMonths: v('#sh-war'), hours: v('#sh-hours'), quoteValidDays: Math.min(90, Math.max(1, Number(v('#sh-qdays')) || 7)), vatNumber: v('#sh-vat').trim(), googleReviewUrl: v('#sh-review').trim(),
-      emailEnabled: $('#sh-email-on', view).checked, idleLockMinutes: Math.max(1, Number(v('#sh-idle')) || 10), terms: v('#sh-terms') });
+      emailEnabled: $('#sh-email-on', view).checked, smsEnabled: $('#sh-sms-on', view).checked, idleLockMinutes: Math.max(1, Number(v('#sh-idle')) || 10), terms: v('#sh-terms') });
     toast('Shop details saved');
   };
   $('#dev-reg', view)?.addEventListener('click', async () => {
