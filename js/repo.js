@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123220221';
-import { uid, now } from './ui.js?v=20261123220221';
+import { db, remote } from './db.js?v=20261123220959';
+import { uid, now } from './ui.js?v=20261123220959';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -46,11 +46,11 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 8. PARTS AND APPLE MESSAGES. We will tell you which type of part we use. On newer iPhones and iPads, Apple may show a "non-genuine" or "unknown part" message after a part is replaced, and some features (for example True Tone, battery health readings or Face ID on some models) can be affected. A repair by us may affect any Apple warranty or AppleCare you still have.
 
-9. WARRANTY. The parts we fit and our labour are guaranteed for 6 months from the day you collect your device (the Consumer Protection Act, section 57, requires at least 3 months). The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
+9. WARRANTY. The parts we fit and our labour are guaranteed from the day you collect your device: 6 months for original parts, and 3 months for high-copy (aftermarket) parts, the minimum under the Consumer Protection Act, section 57. Your job card or invoice shows which part was used and how long your warranty runs. The warranty does not cover new physical or liquid damage, misuse, normal wear and tear, or a device that someone else has opened or repaired after us. Bring the device and your job number back to us for warranty work.
 
 10. OLD PARTS. You are entitled to the parts we remove. Tell us at book-in if you want them back. If you do not ask for them, you agree that we may recycle them safely: old batteries and screens are e-waste and must be disposed of properly. If a repair is priced on an exchange basis (the old part is part of the price), we keep the old part.
 
-11. PAYMENT. Please pay in full before you collect your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
+11. PAYMENT. Please pay in full before you collect your device. EFT payments must reflect in our account, or you must show us proof of payment, before we can release your device. Deposits go towards your repair. If we order a part specially for you and you then cancel, the deposit may be used to cover the cost of that part.
 
 12. COLLECTION. Bring your job card or job number, and ID if we ask for it. Someone else may only collect your device with your permission. Please check your device before you leave.
 

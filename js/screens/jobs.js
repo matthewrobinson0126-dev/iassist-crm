@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123220221';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123220221';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123220221';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123220221';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123220221';
-import { startWarrantyJob } from './bookin.js?v=20261123220221';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123220221';
-import { openWhatsApp } from '../messages.js?v=20261123220221';
-import { go } from '../app.js?v=20261123220221';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123220221';
+import * as repo from '../repo.js?v=20261123220959';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123220959';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123220959';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123220959';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123220959';
+import { startWarrantyJob } from './bookin.js?v=20261123220959';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123220959';
+import { openWhatsApp } from '../messages.js?v=20261123220959';
+import { go } from '../app.js?v=20261123220959';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123220959';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -514,9 +514,11 @@ export async function handBack(job, after) {
     <dl class="kv num"><dt>Quote</dt><dd>${job.quote === null ? 'Not set' : money(job.quote)}</dd>
       <dt>Paid so far</dt><dd>${money(m$.paid)}</dd><dt>Still to pay</dt><dd><b>${balance === '' ? '—' : money(balance)}</b></dd></dl>
     <div class="field">Payment<div class="chips" id="pay">${PAY_METHODS.map(p => `<button class="chip" data-p="${p}">${p}</button>`).join('')}</div></div>
+    <p class="note-box" id="h-eft" hidden>EFT: only release the device once the money reflects in the account, or the customer shows proof of payment.</p>
     <div class="grid-2">
       <label class="field">Amount paid now (R)<input type="number" id="h-amt" inputmode="decimal" min="0" value="${balance}"></label>
-      <label class="field">Warranty (months)<input type="number" id="h-war" inputmode="numeric" min="0" value="${job.status === 'unfixed' ? 0 : esc(s.warrantyMonths)}"></label>
+      <div class="field">Warranty (months)<input type="number" id="h-war" inputmode="numeric" min="0" value="${job.status === 'unfixed' ? 0 : esc(s.warrantyMonths)}">
+        <div class="chips" style="margin-top:6px"><button type="button" class="chip" data-w="6">6 months: original part</button><button type="button" class="chip" data-w="3">3 months: high copy</button></div></div>
     </div>
     <div class="sig-wrap"><canvas class="sig" id="h-sig" aria-label="Collection signature"></canvas>
       <div class="row"><span class="sig-line">${esc(job.customerName)} signs to confirm they got the device back</span><span class="spacer"></span>
@@ -530,12 +532,14 @@ export async function handBack(job, after) {
     m.el.querySelector('#h-war').value = outcome === 'repaired' ? (job.status === 'unfixed' ? 0 : s.warrantyMonths) : 0;
   };
   m.el.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { outcome = b.dataset.o; paintOut(); });
+  m.el.querySelectorAll('[data-w]').forEach(b => b.onclick = () => { m.el.querySelector('#h-war').value = b.dataset.w; });
   paintOut();
   m.el.querySelector('#h-clear').onclick = () => pad.clear();
   m.el.querySelectorAll('[data-p]').forEach(b => b.onclick = () => {
     method = b.dataset.p;
     m.el.querySelectorAll('[data-p]').forEach(x => x.classList.toggle('on', x === b));
     if (method === 'No charge') m.el.querySelector('#h-amt').value = 0;
+    m.el.querySelector('#h-eft').hidden = method !== 'EFT';
   });
   m.el.querySelector('#h-ok').onclick = async () => {
     const err = m.el.querySelector('#h-err');
