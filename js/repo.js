@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261123220959';
-import { uid, now } from './ui.js?v=20261123220959';
+import { db, remote } from './db.js?v=20261123221236';
+import { uid, now } from './ui.js?v=20261123221236';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -36,7 +36,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 3. PASSCODE AND PRIVACY. We only use your passcode to test the device before and after the repair. We do not look through your photos, messages or files. Your passcode is deleted when you collect the device. If your device has private information and you choose not to give us your passcode, we understand, but we cannot fully test or quality-check the device, and we are not responsible for faults we were unable to test. We keep your name, number and email to manage your repair and send you updates (POPIA). We only contact you about your repair: we will not send you marketing unless you separately agree to it. We never sell your details. Ask us at any time to see or delete them.
 
-4. ASSESSMENT AND QUOTES. Checking your device and giving you a quote is free, unless we tell you about an assessment fee before we start and you agree to it. We will not do extra work or charge more than the quote unless you approve the extra cost first. A quote is valid for the number of days shown on it, or 7 days if no period is stated, because part prices change quickly.
+4. IMPORTANT: ASSESSMENT FEE AND QUOTES. Checking your device and giving you a quote costs R200 (our assessment fee for the time it takes). You only pay it if you decline the quote or your device cannot be repaired. If you go ahead with the repair, the assessment is free. We will not do extra work or charge more than the quote unless you approve the extra cost first. A quote is valid for the number of days shown on it, or 7 days if no period is stated, because part prices change quickly.
 
 5. CONDITION. The damage and faults recorded on your job card were already on the device when you handed it in.
 
@@ -78,6 +78,7 @@ const DEFAULT_SETTINGS = {
   terms: DEFAULT_TERMS,
   nextJobNo: 1,
   quoteValidDays: 7,
+  assessmentFee: 200,
   vatNumber: '',
 };
 
@@ -487,7 +488,7 @@ export async function getPasscode(job) {
   return s?.passcode || null;
 }
 
-export async function handBack(job, { method, amount, warrantyMonths, signature, outcome = 'repaired', note = '' }) {
+export async function handBack(job, { method, amount, warrantyMonths, signature, outcome = 'repaired', note = '', assessmentFee = 0 }) {
   requireUser();
   const t = now();
   let warrantyUntil = '';
@@ -495,6 +496,13 @@ export async function handBack(job, { method, amount, warrantyMonths, signature,
   if (months > 0 && outcome === 'repaired') {
     const d = new Date(); d.setMonth(d.getMonth() + months);
     warrantyUntil = d.toISOString().slice(0, 10);
+  }
+  // Declined / couldn't be repaired: the assessment fee becomes the job's only charge.
+  const fee = outcome !== 'repaired' ? num(assessmentFee) : null;
+  if (fee > 0) {
+    const lines = [{ name: 'Assessment fee', qty: 1, price: fee }];
+    job = await saveJob(job, { lines, quote: fee });
+    await logEvent(job, 'lines', `Assessment fee R${fee} charged (${outcomeLabel(outcome)})`);
   }
   const next = await saveJob(job, {
     status: 'collected', statusAt: t, paidMethod: method, paidAmount: num(amount), warrantyUntil,

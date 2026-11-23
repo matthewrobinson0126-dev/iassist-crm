@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261123220959';
-import { STATUSES, statusLabel } from '../repo.js?v=20261123220959';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123220959';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123220959';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123220959';
-import { startWarrantyJob } from './bookin.js?v=20261123220959';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123220959';
-import { openWhatsApp } from '../messages.js?v=20261123220959';
-import { go } from '../app.js?v=20261123220959';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123220959';
+import * as repo from '../repo.js?v=20261123221236';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123221236';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123221236';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123221236';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123221236';
+import { startWarrantyJob } from './bookin.js?v=20261123221236';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123221236';
+import { openWhatsApp } from '../messages.js?v=20261123221236';
+import { go } from '../app.js?v=20261123221236';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123221236';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -510,6 +510,7 @@ export async function handBack(job, after) {
     <h2>Hand back ${esc(job.jobNo)}</h2>
     <div class="field">What happened?<div class="seg" id="h-out">${repo.HANDBACK_OUTCOMES.map(o => `<button type="button" data-o="${o.id}">${esc(o.label)}</button>`).join('')}</div></div>
     <label class="field">Note <span class="hint">optional</span><input type="text" id="h-note" placeholder="e.g. Board damage, no parts available"></label>
+    <label class="check" id="h-fee-row" hidden><input type="checkbox" id="h-fee"> Charge the assessment fee: <b>${money(s.assessmentFee || 200)}</b></label>
     ${!['ready', 'unfixed'].includes(job.status) ? `<p class="error-msg" style="margin:0">This job is still “${esc(statusLabel(job.status))}”. Only hand it back if the customer is collecting anyway.</p>` : ''}
     <dl class="kv num"><dt>Quote</dt><dd>${job.quote === null ? 'Not set' : money(job.quote)}</dd>
       <dt>Paid so far</dt><dd>${money(m$.paid)}</dd><dt>Still to pay</dt><dd><b>${balance === '' ? '—' : money(balance)}</b></dd></dl>
@@ -527,8 +528,17 @@ export async function handBack(job, after) {
     <p class="error-msg" id="h-err" hidden></p>
     <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary big" id="h-ok">Confirm hand back</button></div>`, { wide: true });
   const pad = signaturePad(m.el.querySelector('#h-sig'));
+  const feeAmt = Number(s.assessmentFee || 200);
+  const feeBox = m.el.querySelector('#h-fee');
+  const paidSoFar = m$.paid;
+  const setAmount = () => { m.el.querySelector('#h-amt').value = outcome !== 'repaired'
+    ? (feeBox.checked ? Math.max(0, feeAmt - paidSoFar) : 0) : balance; };
+  feeBox.onchange = setAmount;
   const paintOut = () => {
     m.el.querySelectorAll('[data-o]').forEach(b => b.classList.toggle('on', b.dataset.o === outcome));
+    m.el.querySelector('#h-fee-row').hidden = outcome === 'repaired';
+    feeBox.checked = outcome === 'declined' || outcome === 'unrepairable';
+    setAmount();
     m.el.querySelector('#h-war').value = outcome === 'repaired' ? (job.status === 'unfixed' ? 0 : s.warrantyMonths) : 0;
   };
   m.el.querySelectorAll('[data-o]').forEach(b => b.onclick = () => { outcome = b.dataset.o; paintOut(); });
@@ -547,7 +557,7 @@ export async function handBack(job, after) {
     if (pad.isEmpty()) { err.textContent = 'The customer needs to sign for the device.'; err.hidden = false; return; }
     await repo.handBack(job, { method, amount: m.el.querySelector('#h-amt').value,
       warrantyMonths: m.el.querySelector('#h-war').value, signature: await pad.toBlob(),
-      outcome, note: m.el.querySelector('#h-note').value.trim() });
+      outcome, note: m.el.querySelector('#h-note').value.trim(), assessmentFee: outcome !== 'repaired' && feeBox.checked ? feeAmt : 0 });
     m.close();
     toast(`${job.jobNo} handed back`);
     after();

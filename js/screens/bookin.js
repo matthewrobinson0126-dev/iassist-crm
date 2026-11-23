@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261123220959';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123220959';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123220959';
-import { printJobCard, printLabel } from '../print.js?v=20261123220959';
-import { openWhatsApp } from '../messages.js?v=20261123220959';
-import { go } from '../app.js?v=20261123220959';
+import * as repo from '../repo.js?v=20261123221236';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123221236';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123221236';
+import { printJobCard, printLabel } from '../print.js?v=20261123221236';
+import { openWhatsApp } from '../messages.js?v=20261123221236';
+import { go } from '../app.js?v=20261123221236';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -185,7 +185,7 @@ function drawCustomerMode(view) {
       <div class="card stack"><h2 style="margin:0">Our terms</h2>
         <div class="terms" id="k-terms">Loading…</div>
         <label class="check"><input type="checkbox" data-bind="accepted"> I have read and accept the terms</label>
-        <label class="check"><input type="checkbox" data-bind="acceptedImportant"> I specifically accept the clauses marked IMPORTANT: lost data, repair risks, liquid damage and uncollected devices</label>
+        <label class="check"><input type="checkbox" data-bind="acceptedImportant"> I specifically accept the clauses marked IMPORTANT: the assessment fee, lost data, repair risks, liquid damage and uncollected devices</label>
         <div class="sig-wrap">
           <canvas class="sig" id="k-sig" aria-label="Your signature"></canvas>
           <div class="row"><span class="sig-line">Sign above with your finger</span><span class="spacer"></span>
@@ -472,7 +472,7 @@ const STEP_VIEWS = [
       <div class="card stack"><h2>Terms</h2>
         <div class="terms" id="terms">Loading…</div>
         <label class="check"><input type="checkbox" id="accept" data-bind="accepted"> ${esc(c.name)} has read and accepts the terms</label>
-        <label class="check"><input type="checkbox" id="accept-imp" data-bind="acceptedImportant"> ${esc(c.name)} specifically accepts the clauses marked IMPORTANT: lost data, repair risks, liquid damage and uncollected devices</label>
+        <label class="check"><input type="checkbox" id="accept-imp" data-bind="acceptedImportant"> ${esc(c.name)} specifically accepts the clauses marked IMPORTANT: the assessment fee, lost data, repair risks, liquid damage and uncollected devices</label>
         ${draft.customerSignature ? `<div class="row" style="align-items:center">
             <img class="sig-img" id="sig-done" alt="Customer signature">
             <div class="stack" style="gap:6px"><b>Signed by the customer on the iPad</b>
