@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261123230544';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123230544';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123230544';
-import { printJobCard, printLabel } from '../print.js?v=20261123230544';
-import { openWhatsApp } from '../messages.js?v=20261123230544';
-import { go } from '../app.js?v=20261123230544';
+import * as repo from '../repo.js?v=20261123231309';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123231309';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123231309';
+import { printJobCard, printLabel } from '../print.js?v=20261123231309';
+import { openWhatsApp } from '../messages.js?v=20261123231309';
+import { go } from '../app.js?v=20261123231309';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -29,6 +29,12 @@ export function startWarrantyJob(job, customer) {
   draft = { ...newDraft(), customer, deviceType: job.deviceType, model: job.model, colour: job.colour || '',
     serial: job.serial || '', jobType: 'warranty', warrantyOf: job.id, warrantyOfNo: job.jobNo,
     referral: 'Returning customer', faultNotes: `Warranty return for ${job.jobNo} (${(job.faults || []).join(', ')})`, step: 2, maxStep: 2 };
+  go('bookin');
+}
+
+// New insurance job from the Insurance tab: book-in with the job type already set.
+export function startInsuranceJob() {
+  draft = { ...newDraft(), jobType: 'insurance', quoteMode: 'assess' };
   go('bookin');
 }
 
