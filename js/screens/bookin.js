@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261123231437';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123231437';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123231437';
-import { printJobCard, printLabel } from '../print.js?v=20261123231437';
-import { openWhatsApp } from '../messages.js?v=20261123231437';
-import { go } from '../app.js?v=20261123231437';
+import * as repo from '../repo.js?v=20261123231556';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123231556';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123231556';
+import { printJobCard, printLabel } from '../print.js?v=20261123231556';
+import { openWhatsApp } from '../messages.js?v=20261123231556';
+import { go } from '../app.js?v=20261123231556';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -51,7 +51,7 @@ function draw(view) {
   if (draft.customerMode) return drawCustomerMode(view);
   view.innerHTML = `
     <div class="wizard">
-      <div class="page-head"><h1>Book in a device</h1>${draft.quoteNo ? `<span class="tag">From quote ${esc(draft.quoteNo)}</span>` : ''}<span class="spacer"></span>
+      <div class="page-head"><h1>${draft.jobType === 'insurance' ? 'Book in a device for an insurance report' : 'Book in a device'}</h1>${draft.quoteNo ? `<span class="tag">From quote ${esc(draft.quoteNo)}</span>` : ''}<span class="spacer"></span>
         ${draft.step === 0 ? '<button class="btn small primary" id="to-customer">Hand to customer</button>' : ''}
         <button class="btn small ghost" id="restart">Start over</button></div>
       <ol class="steps">${STEPS.map((s, i) => {

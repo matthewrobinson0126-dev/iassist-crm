@@ -1,21 +1,21 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261123231437';
-import { db } from './db.js?v=20261123231437';
-import { $, esc, initials, toast } from './ui.js?v=20261123231437';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123231437';
-import { renderBookIn } from './screens/bookin.js?v=20261123231437';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261123231437';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123231437';
-import { renderSettings } from './screens/settings.js?v=20261123231437';
-import { renderMoney } from './screens/money.js?v=20261123231437';
-import { renderTasks } from './screens/tasks.js?v=20261123231437';
-import { renderReports } from './screens/reports.js?v=20261123231437';
-import { renderStock } from './screens/stock.js?v=20261123231437';
-import { renderSell } from './screens/sell.js?v=20261123231437';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123231437';
-import { renderCollect } from './screens/collect.js?v=20261123231437';
-import { renderOverdue } from './screens/overdue.js?v=20261123231437';
-import { renderInsurance } from './screens/insurance.js?v=20261123231437';
+import * as repo from './repo.js?v=20261123231556';
+import { db } from './db.js?v=20261123231556';
+import { $, esc, initials, toast } from './ui.js?v=20261123231556';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123231556';
+import { renderBookIn } from './screens/bookin.js?v=20261123231556';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261123231556';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123231556';
+import { renderSettings } from './screens/settings.js?v=20261123231556';
+import { renderMoney } from './screens/money.js?v=20261123231556';
+import { renderTasks } from './screens/tasks.js?v=20261123231556';
+import { renderReports } from './screens/reports.js?v=20261123231556';
+import { renderStock } from './screens/stock.js?v=20261123231556';
+import { renderSell } from './screens/sell.js?v=20261123231556';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123231556';
+import { renderCollect } from './screens/collect.js?v=20261123231556';
+import { renderOverdue } from './screens/overdue.js?v=20261123231556';
+import { renderInsurance } from './screens/insurance.js?v=20261123231556';
 
 const routes = {
   bookin: renderBookIn,
