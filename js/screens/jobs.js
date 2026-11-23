@@ -1,20 +1,20 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261119233148';
-import { STATUSES, statusLabel } from '../repo.js?v=20261119233148';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261119233148';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261119233148';
-import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261119233148';
-import { startWarrantyJob } from './bookin.js?v=20261119233148';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261119233148';
-import { openWhatsApp } from '../messages.js?v=20261119233148';
-import { go } from '../app.js?v=20261119233148';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261119233148';
+import * as repo from '../repo.js?v=20261123202438';
+import { STATUSES, statusLabel } from '../repo.js?v=20261123202438';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261123202438';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel } from '../devices.js?v=20261123202438';
+import { printJobCard, printCompletion, qrSvg, printLabel } from '../print.js?v=20261123202438';
+import { startWarrantyJob } from './bookin.js?v=20261123202438';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261123202438';
+import { openWhatsApp } from '../messages.js?v=20261123202438';
+import { go } from '../app.js?v=20261123202438';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261123202438';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
 
 const today = () => new Date().toISOString().slice(0, 10);
-const isLate = j => j.dueDate && j.dueDate < today() && !['ready', 'collected'].includes(j.status);
+const isLate = j => j.dueDate && j.dueDate < today() && !['ready', 'unfixed', 'collected'].includes(j.status);
 const FILTERS = [
   { id: 'all', label: 'All', test: () => true },
   { id: 'mine', label: 'Mine', test: j => j.technicianId === repo.auth.user?.id },
@@ -44,6 +44,7 @@ export async function renderJobs(view) {
     const rows = [];
     for (const j of jobs.filter(j => !j.demo || !repo.auth.cloud)) {
       if (j.status === 'ready') rows.push({ j, kind: 'ready', d: days(j.statusAt) });
+      else if (j.status === 'unfixed') rows.push({ j, kind: 'unfixed', d: days(j.statusAt) });
       else if (['booked', 'diagnosing', 'approval'].includes(j.status)) {
         const qs = quotes.filter(q => q.jobId === j.id);
         if (qs.some(q => q.status === 'accepted')) continue;
@@ -60,7 +61,7 @@ export async function renderJobs(view) {
       <p class="muted" style="margin:0">Customers are emailed automatically at 30, 60 and 90 days. After 90 days plus 7 days' grace, repaired devices may be sold and declined-quote devices recycled (data erased first).</p>
       <div class="list">${list.map(r => `<a class="list-row" href="#job-${r.j.id}">
         <span class="grow"><b class="mono">${esc(r.j.jobNo)}</b> · ${esc(r.j.customerName)} · ${esc(r.j.model)}
-          <div class="muted">${r.kind === 'ready' ? 'Repaired, not collected' : 'Quote declined, not collected'} · ${r.d} days</div></span>
+          <div class="muted">${r.kind === 'ready' ? 'Repaired, not collected' : r.kind === 'unfixed' ? 'Not fixed, not collected' : 'Quote declined, not collected'} · ${r.d} days</div></span>
         ${r.d >= 97 ? `<span class="tag hot">${r.kind === 'ready' ? 'Can be sold' : 'Can be recycled'}</span>` : r.d >= 90 ? '<span class="tag">Final notice sent</span>' : `<span class="tag">${r.d >= 60 ? '2nd' : '1st'} reminder</span>`}</a>`).join('')}</div></div>`;
   }).catch(() => {});
   // Quotes the customer answered online (accepted / declined) since this iPad last looked.
@@ -144,7 +145,7 @@ export async function renderJob(view, id) {
       <button class="btn" id="j-print">Print job card</button>
       ${['ready', 'collected'].includes(job.status) ? '<button class="btn" id="j-cert">Certificate of completion</button>' : ''}
       ${collected ? '<button class="btn" id="j-warranty">Warranty return</button>' : ''}
-      ${!collected ? `<button class="btn ${job.status === 'ready' ? 'primary' : ''}" id="j-hand">Hand back</button>` : ''}
+      ${!collected ? `<button class="btn ${['ready', 'unfixed'].includes(job.status) ? 'primary' : ''}" id="j-hand">Hand back</button>` : ''}
     </div>
     ${!collected ? `<div class="card" style="margin-bottom:18px"><div class="row">
       <label class="field" style="min-width:220px;flex:1">Technician<select id="j-tech"><option value="">Not assigned</option></select></label>
@@ -500,13 +501,13 @@ async function handBack(job, after) {
   let method = '';
   const m = modal(`
     <h2>Hand back ${esc(job.jobNo)}</h2>
-    ${job.status !== 'ready' ? `<p class="error-msg" style="margin:0">This job is still “${esc(statusLabel(job.status))}”. Only hand it back if the customer is collecting anyway.</p>` : ''}
+    ${!['ready', 'unfixed'].includes(job.status) ? `<p class="error-msg" style="margin:0">This job is still “${esc(statusLabel(job.status))}”. Only hand it back if the customer is collecting anyway.</p>` : ''}
     <dl class="kv num"><dt>Quote</dt><dd>${job.quote === null ? 'Not set' : money(job.quote)}</dd>
       <dt>Paid so far</dt><dd>${money(m$.paid)}</dd><dt>Still to pay</dt><dd><b>${balance === '' ? '—' : money(balance)}</b></dd></dl>
     <div class="field">Payment<div class="chips" id="pay">${PAY_METHODS.map(p => `<button class="chip" data-p="${p}">${p}</button>`).join('')}</div></div>
     <div class="grid-2">
       <label class="field">Amount paid now (R)<input type="number" id="h-amt" inputmode="decimal" min="0" value="${balance}"></label>
-      <label class="field">Warranty (months)<input type="number" id="h-war" inputmode="numeric" min="0" value="${esc(s.warrantyMonths)}"></label>
+      <label class="field">Warranty (months)<input type="number" id="h-war" inputmode="numeric" min="0" value="${job.status === 'unfixed' ? 0 : esc(s.warrantyMonths)}"></label>
     </div>
     <div class="sig-wrap"><canvas class="sig" id="h-sig" aria-label="Collection signature"></canvas>
       <div class="row"><span class="sig-line">${esc(job.customerName)} signs to confirm they got the device back</span><span class="spacer"></span>

@@ -1,9 +1,9 @@
 // Owner reports: takings, profit, turnaround, technicians (with commission), top repairs, where customers come from.
 // Every figure is worked out from the jobs and the payments ledger; demo data is left out.
-import * as repo from '../repo.js?v=20261119233148';
-import { STATUSES } from '../repo.js?v=20261119233148';
-import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261119233148';
-import { deviceType } from '../devices.js?v=20261119233148';
+import * as repo from '../repo.js?v=20261123202438';
+import { STATUSES } from '../repo.js?v=20261123202438';
+import { $, $$, esc, money, fmtDate } from '../ui.js?v=20261123202438';
+import { deviceType } from '../devices.js?v=20261123202438';
 
 const RANGES = [
   { id: 'week', label: 'Last 7 days', days: 7 },
@@ -74,7 +74,7 @@ export async function renderReports(view) {
   const avgJob = paidJobs.length ? sum(paidJobs, jobRevenue) / paidJobs.length : 0;
   const turnaround = collected.length ? sum(collected, j => (new Date(j.collectedAt) - new Date(j.createdAt)) / 86400000) / collected.length : 0;
   const open = jobs.filter(j => j.status !== 'collected');
-  const late = open.filter(j => j.dueDate && j.dueDate < repo.todayKey() && j.status !== 'ready');
+  const late = open.filter(j => j.dueDate && j.dueDate < repo.todayKey() && !['ready', 'unfixed'].includes(j.status));
   const warrantyRate = collected.length ? collected.filter(j => j.jobType === 'warranty').length / collected.length : 0;
 
   const byDay = new Map();

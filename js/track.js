@@ -1,10 +1,10 @@
 // Public tracking page: reads the job status through the "track" server function (no login).
-import { CONFIG } from './config.js?v=20261119233148';
-import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261119233148';
+import { CONFIG } from './config.js?v=20261123202438';
+import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261123202438';
 
 const app = document.getElementById('app');
 const ORDER = ['Booked in', 'Being checked', 'Being repaired', 'Ready to collect', 'Collected'];
-const STAGE = { booked: 0, diagnosing: 1, approval: 1, parts: 1, repairing: 2, ready: 3, collected: 4 };
+const STAGE = { booked: 0, diagnosing: 1, approval: 1, parts: 1, repairing: 2, ready: 3, unfixed: 3, collected: 4 };
 
 async function load() {
   const token = new URLSearchParams(location.search).get('t');
@@ -28,7 +28,7 @@ function render(d) {
   document.title = `${d.jobNo} · ${d.statusLabel} · ${d.shop.name}`;
   const stage = STAGE[d.status] ?? 0;
   const due = d.warranty || d.quote === null || d.quote === undefined ? null : Math.max(0, (d.quote || 0) - (d.deposit || 0));
-  const done = d.status === 'ready' || d.status === 'collected';
+  const done = ['ready', 'unfixed', 'collected'].includes(d.status);
   app.innerHTML = `
     <div class="brand"><img src="icons/icon.svg" alt=""><span>${esc(d.shop.name)}</span></div>
     <div class="card">

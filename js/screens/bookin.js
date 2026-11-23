@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261119233148';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox } from '../ui.js?v=20261119233148';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261119233148';
-import { printJobCard, printLabel } from '../print.js?v=20261119233148';
-import { openWhatsApp } from '../messages.js?v=20261119233148';
-import { go } from '../app.js?v=20261119233148';
+import * as repo from '../repo.js?v=20261123202438';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123202438';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123202438';
+import { printJobCard, printLabel } from '../print.js?v=20261123202438';
+import { openWhatsApp } from '../messages.js?v=20261123202438';
+import { go } from '../app.js?v=20261123202438';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -55,10 +55,9 @@ function draw(view) {
           : `<span><b>${i + 1}</b>${s}</span>`}</li>`; }).join('')}</ol>
       <section class="step-body" id="step"></section>
       <p class="error-msg" id="step-err" hidden></p>
-      <footer class="wizard-nav">
-        <button class="btn big" id="back" ${draft.step === 0 ? 'disabled' : ''}>Back</button>
-        <span class="spacer"></span>
-        <button class="btn primary big" id="next">${draft.step === STEPS.length - 1 ? 'Book in device' : 'Next'}</button>
+      <footer class="wizard-nav">${draft.step === STEPS.length - 1
+        ? `<button class="btn primary big" id="next">Book in device</button><span class="spacer"></span><button class="btn big" id="back">Back</button>`
+        : `<button class="btn big" id="back" ${draft.step === 0 ? 'disabled' : ''}>Back</button><span class="spacer"></span><button class="btn primary big" id="next">Next</button>`}
       </footer>
     </div>`;
   const body = $('#step', view);
@@ -221,7 +220,7 @@ function drawCustomerMode(view) {
     $('#k-sig-clear', view).onclick = () => kpad.clear();
   });
   const err = msg => { const e = $('#k-err', view); e.textContent = msg; e.hidden = !msg; if (msg) e.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
-  $('#k-cancel', view).onclick = () => { draft.customerMode = false; draw(view); };
+  $('#k-cancel', view).onclick = async () => { if (await staffPin()) { draft.customerMode = false; draw(view); } };
   $('#k-done', view).onclick = async () => {
     err('');
     const nc = draft.newCustomer;
@@ -239,6 +238,7 @@ function drawCustomerMode(view) {
     if (!draft.accepted) return err('Please tick the box to accept the terms.');
     if (!draft.acceptedImportant) return err('Please also tick the box to accept the clauses marked IMPORTANT.');
     if (!kpad || kpad.isEmpty()) return err('Please sign in the box above.');
+    if (!(await staffPin())) return;
     draft.customerSignature = await kpad.toBlob();
     if (!draft.customer) { nc.contactPref = draft.contactPref; if (nc.noEmail) nc.email = ''; }
     let note = 'Customer details saved. Carry on with the device.';
@@ -253,6 +253,32 @@ function drawCustomerMode(view) {
     window.scrollTo(0, 0);
     toast(note);
   };
+}
+
+// A staff PIN is needed to leave the customer screen, so customers can't open the jobs board or other customers.
+function staffPin() {
+  return new Promise(resolve => {
+    const m = modal(`<h2>Staff PIN</h2>
+      <p class="muted" style="margin:0">Hand the iPad back to staff. Any staff member’s PIN unlocks it.</p>
+      <input type="password" id="sp-pin" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" style="font-size:28px;letter-spacing:.5em;text-align:center">
+      <p class="error-msg" id="sp-err" hidden></p>
+      <div class="modal-actions"><button class="btn" id="sp-cancel">Cancel</button><button class="btn primary" id="sp-ok">Unlock</button></div>`);
+    const input = m.el.querySelector('#sp-pin'), errEl = m.el.querySelector('#sp-err');
+    const done = ok => { m.close(); resolve(ok); };
+    const go = async () => {
+      errEl.hidden = true;
+      try {
+        const who = await repo.verifyStaffPin(input.value);
+        if (who) { toast(`Unlocked by ${who}`); return done(true); }
+        errEl.textContent = 'Wrong PIN. Try again.';
+      } catch (ex) { errEl.textContent = ex.message; }
+      errEl.hidden = false; input.value = ''; input.focus();
+    };
+    m.el.querySelector('#sp-ok').onclick = go;
+    m.el.querySelector('#sp-cancel').onclick = () => done(false);
+    input.oninput = () => { if (input.value.length === 4) go(); };
+    setTimeout(() => input.focus(), 50);
+  });
 }
 
 const referralCard = () => `

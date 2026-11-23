@@ -1,6 +1,6 @@
 // Ready-made WhatsApp messages. Staff can edit before sending.
-import * as repo from './repo.js?v=20261119233148';
-import { esc, firstName, money, modal, toast } from './ui.js?v=20261119233148';
+import * as repo from './repo.js?v=20261123202438';
+import { esc, firstName, money, modal, toast } from './ui.js?v=20261123202438';
 
 const trackLine = j => (repo.auth.cloud && j.trackToken ? `\nTrack your repair: ${repo.trackUrl(j)}` : '');
 
@@ -17,10 +17,12 @@ export const TEMPLATES = [
     const due = j.quote === null ? null : Math.max(0, (j.quote || 0) - (j.deposit || 0));
     return `Hi ${firstName(j.customerName)}, good news: your ${j.model} (job ${j.jobNo}) is ready to collect at ${s.address}.${due ? ` Amount due: ${money(due)}.` : ''}${trackLine(j)}`;
   } },
+  { id: 'unfixed', label: 'Not fixed, collect', text: (j, s) =>
+    `Hi ${firstName(j.customerName)}, we've checked your ${j.model} (job ${j.jobNo}) and unfortunately we weren't able to repair it. Please collect it at ${s.address}${s.hours ? ` (${s.hours})` : ''}.${trackLine(j)}` },
   { id: 'blank', label: 'Own message', text: j => `Hi ${firstName(j.customerName)}, ` },
 ];
 
-const defaultFor = status => ({ booked: 'booked', approval: 'approval', parts: 'parts', ready: 'ready', collected: 'review' }[status] || 'blank');
+const defaultFor = status => ({ booked: 'booked', approval: 'approval', parts: 'parts', ready: 'ready', unfixed: 'unfixed', collected: 'review' }[status] || 'blank');
 
 export async function openWhatsApp(job) {
   const s = await repo.getSettings();

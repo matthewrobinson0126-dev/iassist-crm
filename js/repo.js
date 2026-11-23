@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261119233148';
-import { uid, now } from './ui.js?v=20261119233148';
+import { db, remote } from './db.js?v=20261123202438';
+import { uid, now } from './ui.js?v=20261123202438';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -8,7 +8,8 @@ export const STATUSES = [
   { id: 'approval', label: 'Waiting for approval' },
   { id: 'parts', label: 'Waiting for parts' },
   { id: 'repairing', label: 'Repairing' },
-  { id: 'ready', label: 'Ready to collect' },
+  { id: 'ready', label: 'Ready – fixed' },
+  { id: 'unfixed', label: 'Ready – not fixed' },
   { id: 'collected', label: 'Collected' },
 ];
 export const statusLabel = id => STATUSES.find(s => s.id === id)?.label || id;
@@ -45,7 +46,7 @@ Please read these before you sign. Clauses marked IMPORTANT limit our liability 
 
 14. IMPORTANT: REPAIRED DEVICES NOT COLLECTED. If your device has been repaired and you do not collect and pay for it within 90 days of us telling you it is ready, it will be sold to cover the cost of the repair, unless you have made other arrangements with us before then. From the sale we keep the repair cost and reasonable storage, admin and selling costs; any money left over is kept for you to claim. A device that is still locked (Activation Lock or FRP) cannot be resold, so it will be stripped for parts or recycled instead.
 
-15. IMPORTANT: QUOTE DECLINED. If you decline our quote, please collect your device. If it is not collected within 90 days of you declining the quote, it will be recycled as e-waste. We are a repair shop, not a storage facility.
+15. IMPORTANT: QUOTE DECLINED OR NOT REPAIRABLE. If you decline our quote, or we tell you your device cannot be repaired, please collect it. If it is not collected within 90 days of that, it will be recycled as e-waste. We are a repair shop, not a storage facility.
 
 16. REMINDERS AND YOUR DATA. If your device is not collected, we will email you reminders at 30, 60 and 90 days, using the email address on your job card. All data on the device is erased before it is sold or recycled. Please tell us if your email address or number changes.
 
@@ -162,6 +163,15 @@ export const auth = {
 };
 
 function requireUser() { if (!me) throw new Error('Please sign in first.'); }
+
+// Any active staff member's PIN; returns their name, or null if it doesn't match.
+export async function verifyStaffPin(pin) {
+  requireUser();
+  if (!validPin(pin)) return null;
+  if (remote) return remote.rpc('verify_staff_pin', { p_pin: String(pin) });
+  for (const s of (await db.list('staff')).filter(x => x.active)) if (await hashPin(pin, s.salt) === s.pinHash) return s.name;
+  return null;
+}
 function requireOwner() { if (me?.role !== 'owner') throw new Error('Only the owner can do this.'); }
 const validPin = pin => /^\d{4}$/.test(String(pin));
 
@@ -422,7 +432,7 @@ export async function setStatus(job, status) {
   if (status === 'collected') throw new Error('Use Hand back to mark a device collected.');
   const next = await saveJob(job, { status, statusAt: now() });
   await logEvent(job, 'status', `${statusLabel(job.status)} → ${statusLabel(status)}`);
-  if (['approval', 'parts', 'ready'].includes(status) && !job.demo) {
+  if (['approval', 'parts', 'ready', 'unfixed'].includes(status) && !job.demo) {
     if (!(status === 'approval' && job.jobType === 'warranty')) notify(next, status);
   }
   return next;
