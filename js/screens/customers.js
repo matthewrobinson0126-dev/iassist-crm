@@ -1,9 +1,9 @@
 // Customer list + customer page (details and every device they've brought in).
-import * as repo from '../repo.js?v=20261123202723';
-import { statusLabel } from '../repo.js?v=20261123202723';
-import { $, $$, esc, fmtDate, toast } from '../ui.js?v=20261123202723';
-import { go } from '../app.js?v=20261123202723';
-import { CONTACT_PREFS } from '../devices.js?v=20261123202723';
+import * as repo from '../repo.js?v=20261123203615';
+import { statusLabel } from '../repo.js?v=20261123203615';
+import { $, $$, esc, fmtDate, toast } from '../ui.js?v=20261123203615';
+import { go } from '../app.js?v=20261123203615';
+import { CONTACT_PREFS } from '../devices.js?v=20261123203615';
 
 let lastQ = '';
 

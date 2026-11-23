@@ -1,18 +1,18 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261123202723';
-import { db } from './db.js?v=20261123202723';
-import { $, esc, initials, toast } from './ui.js?v=20261123202723';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123202723';
-import { renderBookIn } from './screens/bookin.js?v=20261123202723';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261123202723';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123202723';
-import { renderSettings } from './screens/settings.js?v=20261123202723';
-import { renderMoney } from './screens/money.js?v=20261123202723';
-import { renderTasks } from './screens/tasks.js?v=20261123202723';
-import { renderReports } from './screens/reports.js?v=20261123202723';
-import { renderStock } from './screens/stock.js?v=20261123202723';
-import { renderSell } from './screens/sell.js?v=20261123202723';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123202723';
+import * as repo from './repo.js?v=20261123203615';
+import { db } from './db.js?v=20261123203615';
+import { $, esc, initials, toast } from './ui.js?v=20261123203615';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123203615';
+import { renderBookIn } from './screens/bookin.js?v=20261123203615';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261123203615';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123203615';
+import { renderSettings } from './screens/settings.js?v=20261123203615';
+import { renderMoney } from './screens/money.js?v=20261123203615';
+import { renderTasks } from './screens/tasks.js?v=20261123203615';
+import { renderReports } from './screens/reports.js?v=20261123203615';
+import { renderStock } from './screens/stock.js?v=20261123203615';
+import { renderSell } from './screens/sell.js?v=20261123203615';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123203615';
 
 const routes = {
   bookin: renderBookIn,
