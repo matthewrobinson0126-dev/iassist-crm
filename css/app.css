@@ -350,3 +350,7 @@ td.neg { color: var(--danger); }
 }
 
 .nav a.book.book-ins { background: #a3402f; color: #fff; }
+.nav a.book.here { outline: 3px solid var(--ink); outline-offset: 3px; }
+.mode-banner { margin: 0 0 12px; padding: 10px 16px; border-radius: 10px; font-weight: 800; letter-spacing: .06em;
+  background: var(--accent); color: var(--accent-ink); }
+.mode-banner.ins { background: #a3402f; color: #fff; }

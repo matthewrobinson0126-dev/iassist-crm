@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261123232258';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261123232258';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261123232258';
-import { printJobCard, printLabel } from '../print.js?v=20261123232258';
-import { openWhatsApp } from '../messages.js?v=20261123232258';
-import { go } from '../app.js?v=20261123232258';
+import * as repo from '../repo.js?v=20261124010256';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124010256';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124010256';
+import { printJobCard, printLabel } from '../print.js?v=20261124010256';
+import { openWhatsApp } from '../messages.js?v=20261124010256';
+import { go } from '../app.js?v=20261124010256';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -48,9 +48,14 @@ export function startQuoteJob(q, customer) {
 
 function draw(view) {
   document.body.classList.toggle('kiosk', !!draft.customerMode);
+  // Light up the button for the kind of book-in you're doing: + Book in, or + Insurance.
+  const ins = draft.jobType === 'insurance';
+  document.querySelector('[data-nav="bookin"]')?.classList.toggle('here', !ins);
+  document.querySelector('#nav-ins-new')?.classList.toggle('here', ins);
   if (draft.customerMode) return drawCustomerMode(view);
   view.innerHTML = `
     <div class="wizard">
+      ${draft.jobType === 'insurance' ? '<div class="mode-banner ins">INSURANCE REPORT BOOK-IN</div>' : '<div class="mode-banner">REPAIR BOOK-IN</div>'}
       <div class="page-head"><h1>${draft.jobType === 'insurance' ? 'Book in a device for an insurance report' : 'Book in a device'}</h1>${draft.quoteNo ? `<span class="tag">From quote ${esc(draft.quoteNo)}</span>` : ''}<span class="spacer"></span>
         ${draft.step === 0 ? '<button class="btn small primary" id="to-customer">Hand to customer</button>' : ''}
         <button class="btn small ghost" id="restart">Start over</button></div>
@@ -86,7 +91,9 @@ function draw(view) {
   $('#restart', view).onclick = async () => {
     if (await confirmBox('Clear this booking and start again?', { ok: 'Start over', danger: true })) {
       draft.photos.forEach(p => URL.revokeObjectURL(p.url));
-      draft = newDraft(); draw(view);
+      const wasIns = draft.jobType === 'insurance';
+      draft = newDraft(); if (wasIns) draft.jobType = 'insurance';
+      draw(view);
     }
   };
 }

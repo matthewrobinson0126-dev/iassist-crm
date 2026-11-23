@@ -1,22 +1,22 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261123232258';
-import { db } from './db.js?v=20261123232258';
-import { $, esc, initials, toast } from './ui.js?v=20261123232258';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261123232258';
-import { renderBookIn } from './screens/bookin.js?v=20261123232258';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261123232258';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261123232258';
-import { renderSettings } from './screens/settings.js?v=20261123232258';
-import { renderMoney } from './screens/money.js?v=20261123232258';
-import { renderTasks } from './screens/tasks.js?v=20261123232258';
-import { renderReports } from './screens/reports.js?v=20261123232258';
-import { renderStock } from './screens/stock.js?v=20261123232258';
-import { renderSell } from './screens/sell.js?v=20261123232258';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261123232258';
-import { renderCollect } from './screens/collect.js?v=20261123232258';
-import { renderOverdue } from './screens/overdue.js?v=20261123232258';
-import { renderInsurance } from './screens/insurance.js?v=20261123232258';
-import { reportError } from './errors.js?v=20261123232258';
+import * as repo from './repo.js?v=20261124010256';
+import { db } from './db.js?v=20261124010256';
+import { $, esc, initials, toast } from './ui.js?v=20261124010256';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261124010256';
+import { renderBookIn, startInsuranceJob } from './screens/bookin.js?v=20261124010256';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261124010256';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261124010256';
+import { renderSettings } from './screens/settings.js?v=20261124010256';
+import { renderMoney } from './screens/money.js?v=20261124010256';
+import { renderTasks } from './screens/tasks.js?v=20261124010256';
+import { renderReports } from './screens/reports.js?v=20261124010256';
+import { renderStock } from './screens/stock.js?v=20261124010256';
+import { renderSell } from './screens/sell.js?v=20261124010256';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261124010256';
+import { renderCollect } from './screens/collect.js?v=20261124010256';
+import { renderOverdue } from './screens/overdue.js?v=20261124010256';
+import { renderInsurance } from './screens/insurance.js?v=20261124010256';
+import { reportError } from './errors.js?v=20261124010256';
 
 const routes = {
   bookin: renderBookIn,
@@ -78,7 +78,7 @@ function shell() {
     <main id="view"></main>`;
   $('#lock-btn').onclick = () => { repo.auth.lock(); route(); };
   // "+ Insurance": straight into a book-in with the Insurance report job type selected.
-  $('#nav-ins-new').onclick = async e => { e.preventDefault(); (await import('./screens/bookin.js')).startInsuranceJob(); };
+  $('#nav-ins-new').onclick = e => { e.preventDefault(); startInsuranceJob(); };
   // Reload the whole app (a fresh copy, never a stale saved one). You stay signed in.
   $('#refresh-btn').onclick = () => {
     if (location.hash.startsWith('#bookin') && !confirm('Refresh now? Anything typed in this booking will be lost.')) return;
@@ -100,6 +100,7 @@ async function route() {
   const screen = routes[name] || renderJobs;
   const navName = name === 'job' ? 'jobs' : name === 'customer' ? 'customers' : name === 'quote' ? 'quotes' : name;
   document.querySelectorAll('[data-nav]').forEach(a => a.classList.toggle('on', a.dataset.nav === navName && navName !== 'bookin'));
+  if (name !== 'bookin') document.querySelectorAll('.nav a.here').forEach(a => a.classList.remove('here'));
   const view = $('#view');
   try {
     await screen(view, id);

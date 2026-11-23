@@ -1,6 +1,6 @@
 // Send app errors to the database (client_errors table) so problems seen on the iPad can be found and fixed.
 // Only the error text, the screen and the app version are sent.
-import { CONFIG } from './config.js?v=20261123232258';
+import { CONFIG } from './config.js?v=20261124010256';
 
 export function reportError(err) {
   try {
