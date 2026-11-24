@@ -1,18 +1,18 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261124010256';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124010256';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124010256';
-import { printJobCard, printLabel } from '../print.js?v=20261124010256';
-import { openWhatsApp } from '../messages.js?v=20261124010256';
-import { go } from '../app.js?v=20261124010256';
+import * as repo from '../repo.js?v=20261124182150';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124182150';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124182150';
+import { printJobCard, printLabel } from '../print.js?v=20261124182150';
+import { openWhatsApp } from '../messages.js?v=20261124182150';
+import { go } from '../app.js?v=20261124182150';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
 let pad = null;
 
 const newDraft = () => ({
-  step: 0, maxStep: 0, customer: null, newCustomer: { name: '', phone: '', email: '', area: '' }, search: '',
-  deviceType: '', model: '', colour: '', serial: '', powersOn: 'Yes',
+  step: 0, maxStep: 0, customer: null, newCustomer: { name: '', phone: '', whatsapp: '', email: '', area: '' }, search: '',
+  deviceType: '', model: '', modelOther: false, colour: '', serial: '', powersOn: 'Yes',
   faults: [], faultNotes: '', history: [], contactPref: '', damage: [], conditionNotes: '', photos: [], accessories: [],
   passcode: '', quoteMode: 'assess', quote: '', quoteNote: '', deposit: '', dueDate: '', collection: 'store',
   internalNotes: '', accepted: false, startedBy: repo.auth.user?.name,
@@ -171,6 +171,7 @@ function drawCustomerMode(view) {
           : `<div class="grid-2">
           <label class="field">Full name<input type="text" data-bind="newCustomer.name" autocomplete="name" autocapitalize="words"></label>
           <label class="field">Cell number<input type="tel" data-bind="newCustomer.phone" inputmode="tel" autocomplete="tel" placeholder="082 123 4567"></label>
+          <label class="field">WhatsApp number <span class="hint">only if it’s different from your cell number</span><input type="tel" data-bind="newCustomer.whatsapp" inputmode="tel" autocomplete="off" placeholder="Leave empty if the same"></label>
           <label class="field">Email <span class="hint">for repair updates and collection reminders</span><input type="email" id="k-email" data-bind="newCustomer.email" autocomplete="email" autocapitalize="off"></label>
           <label class="field">Suburb <span class="hint">optional</span><input type="text" data-bind="newCustomer.area" autocomplete="address-level2"></label>
         </div>
@@ -240,6 +241,7 @@ function drawCustomerMode(view) {
     if (!draft.customer) {
       if (!nc.name.trim()) return err('Please enter your name.');
       if (repo.digits(nc.phone).length < 9) return err('Please enter your cell number.');
+      if (String(nc.whatsapp || '').trim() && repo.digits(nc.whatsapp).length < 9) return err('Please check your WhatsApp number, or leave it empty if it’s the same as your cell number.');
       if (!nc.noEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(nc.email || '').trim()))
         return err('Please enter your email address, or tick “I don’t use email”.');
     }
@@ -311,7 +313,7 @@ const STEP_VIEWS = [
       body.innerHTML = `
         <div class="card selected-customer">
           <div class="grow" style="flex:1"><h2 style="margin:0">${esc(c.name)}</h2>
-            <div class="muted">${esc(c.phone)}${c.email ? ' · ' + esc(c.email) : ''}${c.area ? ' · ' + esc(c.area) : ''}</div>
+            <div class="muted">${esc(c.phone)}${c.whatsapp ? ' · WhatsApp ' + esc(c.whatsapp) : ''}${c.email ? ' · ' + esc(c.email) : ''}${c.area ? ' · ' + esc(c.area) : ''}</div>
             <div class="muted" id="past"></div></div>
           <button class="btn" id="change-cust">Change customer</button>
         </div>${referralCard()}`;
@@ -333,6 +335,7 @@ const STEP_VIEWS = [
         <div class="grid-2">
           <label class="field">Full name<input type="text" id="nc-name" data-bind="newCustomer.name" autocomplete="off"></label>
           <label class="field">Cell number<input type="tel" id="nc-phone" data-bind="newCustomer.phone" inputmode="tel" placeholder="082 123 4567" autocomplete="off"></label>
+          <label class="field">WhatsApp number <span class="hint">only if different from the cell</span><input type="tel" id="nc-wa" data-bind="newCustomer.whatsapp" inputmode="tel" placeholder="Leave empty if the same" autocomplete="off"></label>
           <label class="field">Email <span class="hint">optional</span><input type="email" id="nc-email" data-bind="newCustomer.email" autocomplete="off"></label>
           <label class="field">Area / suburb <span class="hint">optional</span><input type="text" id="nc-area" data-bind="newCustomer.area" autocomplete="off"></label>
           <label class="check"><input type="checkbox" id="nc-biz" data-bind="newCustomer.isBusiness"> This is a business customer</label>
@@ -365,6 +368,8 @@ const STEP_VIEWS = [
   // 2. Device
   (body) => {
     const type = deviceType(draft.deviceType);
+    // Pick the model from a list; "Other" opens a box to type one that isn't listed.
+    const other = type && (draft.modelOther || (draft.model && !type.models.includes(draft.model)));
     body.innerHTML = `
       <div class="card stack"><h2>What device is it?</h2>
         <div class="type-grid">${DEVICE_TYPES.map(t =>
@@ -372,18 +377,31 @@ const STEP_VIEWS = [
       </div>
       ${type ? `<div class="card stack"><h2>${esc(type.label)} details</h2>
         <div class="grid-2">
-          <label class="field">Model<input type="text" id="d-model" data-bind="model" list="models" placeholder="Start typing, e.g. ${esc(type.models[0])}" autocomplete="off"></label>
+          <label class="field">Model<select id="d-model-sel">
+            <option value="" ${!draft.model && !other ? 'selected' : ''} disabled>Choose the model…</option>
+            ${type.models.map(m => `<option ${!other && draft.model === m ? 'selected' : ''}>${esc(m)}</option>`).join('')}
+            <option value="__other" ${other ? 'selected' : ''}>Other (type it in)</option></select></label>
+          <label class="field" id="d-model-other" ${other ? '' : 'hidden'}>Model name<span class="hint">not in the list</span><input type="text" id="d-model" placeholder="e.g. ${esc(type.models[0])}" autocomplete="off" value="${esc(other ? draft.model : '')}"></label>
           <label class="field">Colour <span class="hint">optional</span><input type="text" id="d-colour" data-bind="colour" autocomplete="off"></label>
           <label class="field">IMEI / serial number<span class="hint">Settings → General → About, or on the box</span><input type="text" id="d-serial" data-bind="serial" autocomplete="off" autocapitalize="characters"></label>
           <div class="field">Does it power on?
             <div class="seg">${['Yes', 'No', 'Sometimes'].map(v => `<button type="button" data-seg="powersOn" data-value="${v}">${v}</button>`).join('')}</div></div>
         </div>
-        <datalist id="models">${type.models.map(m => `<option value="${esc(m)}"></option>`).join('')}</datalist>
       </div>` : ''}`;
     $$('[data-type]', body).forEach(b => b.onclick = () => {
-      if (draft.deviceType !== b.dataset.type) { draft.deviceType = b.dataset.type; draft.model = ''; draft.faults = []; }
+      if (draft.deviceType !== b.dataset.type) { draft.deviceType = b.dataset.type; draft.model = ''; draft.modelOther = false; draft.faults = []; }
       draw($('#view'));
     });
+    const sel = $('#d-model-sel', body), otherBox = $('#d-model-other', body), otherInput = $('#d-model', body);
+    if (sel) {
+      sel.onchange = () => {
+        draft.modelOther = sel.value === '__other';
+        otherBox.hidden = !draft.modelOther;
+        draft.model = draft.modelOther ? otherInput.value : sel.value;
+        if (draft.modelOther) otherInput.focus();
+      };
+      otherInput.oninput = () => { draft.model = otherInput.value; };
+    }
   },
 
   // 3. Fault
@@ -538,6 +556,7 @@ const STEP_CHECKS = [
     const c = draft.newCustomer;
     if (!c.name.trim()) return 'Enter the customer’s name, or pick a returning customer.';
     if (repo.digits(c.phone).length < 9) return 'Enter a valid cell number (at least 9 digits).';
+    if (String(c.whatsapp || '').trim() && repo.digits(c.whatsapp).length < 9) return 'Check the WhatsApp number, or leave it empty if it’s the same as the cell.';
     const existing = await repo.findByPhone(c.phone);
     if (existing) {
       const use = await confirmBox(`${c.phone} already belongs to ${existing.name}. Use that customer?`, { ok: `Use ${existing.name}` });

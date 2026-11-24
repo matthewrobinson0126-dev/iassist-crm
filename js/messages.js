@@ -1,6 +1,6 @@
 // Ready-made WhatsApp messages. Staff can edit before sending.
-import * as repo from './repo.js?v=20261124010256';
-import { esc, firstName, money, modal, toast } from './ui.js?v=20261124010256';
+import * as repo from './repo.js?v=20261124182150';
+import { esc, firstName, money, modal, toast } from './ui.js?v=20261124182150';
 
 const trackLine = j => (repo.auth.cloud && j.trackToken ? `\nTrack your repair: ${repo.trackUrl(j)}` : '');
 
@@ -22,12 +22,18 @@ export const TEMPLATES = [
   { id: 'blank', label: 'Own message', text: j => `Hi ${firstName(j.customerName)}, ` },
 ];
 
-const defaultFor = status => ({ booked: 'booked', approval: 'approval', parts: 'parts', ready: 'ready', unfixed: 'unfixed', collected: 'review' }[status] || 'blank');
+// The customer's own WhatsApp number when it differs from their cell number.
+async function waFor(customerId, phone) {
+  const c = customerId ? await repo.getCustomer(customerId).catch(() => null) : null;
+  return repo.waNumber(c?.whatsapp?.trim() || phone);
+}
+
+const defaultFor =status => ({ booked: 'booked', approval: 'approval', parts: 'parts', ready: 'ready', unfixed: 'unfixed', collected: 'review' }[status] || 'blank');
 
 export async function openWhatsApp(job) {
   const s = await repo.getSettings();
   if (repo.auth.cloud) job = await repo.ensureTrackToken(job);
-  const number = repo.waNumber(job.customerPhone);
+  const number = await waFor(job.customerId, job.customerPhone);
   let current = defaultFor(job.status);
   const m = modal(`
     <h2>WhatsApp ${esc(job.customerName)}</h2>
@@ -60,7 +66,7 @@ export async function openWhatsApp(job) {
 // WhatsApp a quote: the link lets the customer accept or decline it online.
 export async function whatsAppQuote(q) {
   const s = await repo.getSettings();
-  const number = repo.waNumber(q.customerPhone);
+  const number = await waFor(q.customerId, q.customerPhone);
   const url = repo.auth.cloud ? repo.quoteUrl(q) : '';
   const text = `Hi ${firstName(q.customerName)}, here is your quote ${q.quoteNo}${q.model ? ` for your ${q.model}` : ''} from ${s.shopName}: ${money(q.total)}.`
     + (url ? `\nView and accept it here: ${url}` : `\nPlease reply YES if you'd like us to go ahead.`)

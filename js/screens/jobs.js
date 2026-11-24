@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261124010256';
-import { STATUSES, statusLabel } from '../repo.js?v=20261124010256';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124010256';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport } from '../devices.js?v=20261124010256';
-import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124010256';
-import { startWarrantyJob } from './bookin.js?v=20261124010256';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124010256';
-import { openWhatsApp } from '../messages.js?v=20261124010256';
-import { go } from '../app.js?v=20261124010256';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124010256';
+import * as repo from '../repo.js?v=20261124182150';
+import { STATUSES, statusLabel } from '../repo.js?v=20261124182150';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124182150';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport } from '../devices.js?v=20261124182150';
+import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124182150';
+import { startWarrantyJob } from './bookin.js?v=20261124182150';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124182150';
+import { openWhatsApp } from '../messages.js?v=20261124182150';
+import { go } from '../app.js?v=20261124182150';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124182150';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -164,6 +164,7 @@ export async function renderJob(view, id) {
           <dl class="kv" style="margin-top:12px">
             <dt>Name</dt><dd>${esc(customer?.name || job.customerName)}</dd>
             <dt>Cell</dt><dd class="num">${esc(customer?.phone || job.customerPhone)}</dd>
+            ${customer?.whatsapp ? `<dt>WhatsApp</dt><dd class="num">${esc(customer.whatsapp)}</dd>` : ''}
             ${customer?.email ? `<dt>Email</dt><dd>${esc(customer.email)}</dd>` : customer?.noEmail ? '<dt>Email</dt><dd>Doesn’t use email: <b>send reminders on WhatsApp</b></dd>' : ''}
             ${customer?.contactPref ? `<dt>Contact by</dt><dd><b>${esc(contactPrefLabel(customer.contactPref))}</b></dd>` : ''}
             ${customer?.area ? `<dt>Area</dt><dd>${esc(customer.area)}</dd>` : ''}

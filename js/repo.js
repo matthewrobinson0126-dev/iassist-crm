@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261124010256';
-import { uid, now } from './ui.js?v=20261124010256';
+import { db, remote } from './db.js?v=20261124182150';
+import { uid, now } from './ui.js?v=20261124182150';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -277,6 +277,7 @@ export async function saveCustomer(c) {
   requireUser();
   if (!c.name?.trim()) throw new Error('Enter the customer’s name.');
   if (digits(c.phone).length < 9) throw new Error('Enter a valid phone number.');
+  if (String(c.whatsapp || '').trim() && digits(c.whatsapp).length < 9) throw new Error('Check the WhatsApp number, or leave it empty if it’s the same as the cell.');
   const t = now();
   const rec = { area: '', email: '', notes: '', ...c, name: c.name.trim(), phone: c.phone.trim(),
     id: c.id || uid(), createdAt: c.createdAt || t, createdBy: c.createdBy || me.id, updatedAt: t };
