@@ -1,9 +1,9 @@
 // Customer list + customer page (details and every device they've brought in).
-import * as repo from '../repo.js?v=20261124182150';
-import { statusLabel } from '../repo.js?v=20261124182150';
-import { $, $$, esc, fmtDate, toast } from '../ui.js?v=20261124182150';
-import { go } from '../app.js?v=20261124182150';
-import { CONTACT_PREFS } from '../devices.js?v=20261124182150';
+import * as repo from '../repo.js?v=20261124182648';
+import { statusLabel } from '../repo.js?v=20261124182648';
+import { $, $$, esc, fmtDate, toast } from '../ui.js?v=20261124182648';
+import { go } from '../app.js?v=20261124182648';
+import { CONTACT_PREFS } from '../devices.js?v=20261124182648';
 
 let lastQ = '';
 
@@ -40,6 +40,7 @@ export async function renderCustomer(view, id) {
           <label class="field">Full name<input type="text" id="cf-name" value="${esc(c.name)}" required></label>
           <label class="field">Cell number<input type="tel" id="cf-phone" value="${esc(c.phone)}" required></label>
           <label class="field">WhatsApp number <span class="hint">only if different from the cell</span><input type="tel" id="cf-wa" value="${esc(c.whatsapp || '')}" placeholder="Same as cell"></label>
+          <label class="check" style="align-self:end"><input type="checkbox" id="cf-nowa" ${c.noWhatsapp ? 'checked' : ''}> Doesn’t use WhatsApp</label>
           <label class="field">Email<input type="email" id="cf-email" value="${esc(c.email || '')}"></label>
           <label class="field">Area / suburb<input type="text" id="cf-area" value="${esc(c.area || '')}"></label>
           <label class="field">Contact by<select id="cf-cp"><option value="">Not chosen</option>${CONTACT_PREFS.map(p => `<option value="${p.id}" ${c.contactPref === p.id ? 'selected' : ''}>${esc(p.label)}</option>`).join('')}</select></label>
@@ -69,7 +70,7 @@ export async function renderCustomer(view, id) {
     e.preventDefault();
     const v = s => $(s, view).value;
     try {
-      await repo.saveCustomer({ ...c, name: v('#cf-name'), phone: v('#cf-phone'), whatsapp: v('#cf-wa').trim(), email: v('#cf-email'), area: v('#cf-area'), notes: v('#cf-notes'),
+      await repo.saveCustomer({ ...c, name: v('#cf-name'), phone: v('#cf-phone'), whatsapp: v('#cf-wa').trim(), noWhatsapp: $('#cf-nowa', view).checked, email: v('#cf-email'), area: v('#cf-area'), notes: v('#cf-notes'),
         contactPref: v('#cf-cp') || null, noEmail: $('#cf-noemail', view).checked,
         type: v('#cf-type'), companyName: v('#cf-company'), vatNumber: v('#cf-vat'), contactPerson: v('#cf-contact'), address: v('#cf-address') });
       toast('Customer saved');

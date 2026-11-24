@@ -1,6 +1,6 @@
 // Business rules: logins, roles, customers, jobs, audit trail.
-import { db, remote } from './db.js?v=20261124182150';
-import { uid, now } from './ui.js?v=20261124182150';
+import { db, remote } from './db.js?v=20261124182648';
+import { uid, now } from './ui.js?v=20261124182648';
 
 export const STATUSES = [
   { id: 'booked', label: 'Booked in' },
@@ -326,7 +326,7 @@ const num = v => (v === '' || v === null || v === undefined || isNaN(Number(v)))
 export async function createJob(d, { demo = false } = {}) {
   requireUser();
   const nc = d.newCustomer || {};
-  const { isBusiness, ...ncFields } = nc;
+  const { isBusiness, waChoice, ...ncFields } = nc;
   let customer = d.customer || await saveCustomer({ ...ncFields, type: isBusiness ? 'business' : 'individual', referral: d.referral || '', demo });
   // Returning customer picked a (new) way to be contacted.
   if (d.customer && d.contactPref && d.customer.contactPref !== d.contactPref) customer = await saveCustomer({ ...d.customer, contactPref: d.contactPref });
