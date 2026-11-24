@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261124200421';
-import { STATUSES, statusLabel } from '../repo.js?v=20261124200421';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124200421';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport, modelPickerHtml, wireModelPicker } from '../devices.js?v=20261124200421';
-import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124200421';
-import { startWarrantyJob } from './bookin.js?v=20261124200421';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124200421';
-import { openWhatsApp } from '../messages.js?v=20261124200421';
-import { go } from '../app.js?v=20261124200421';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124200421';
+import * as repo from '../repo.js?v=20261124204956';
+import { STATUSES, statusLabel } from '../repo.js?v=20261124204956';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124204956';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport, modelPickerHtml, wireModelPicker } from '../devices.js?v=20261124204956';
+import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124204956';
+import { startWarrantyJob } from './bookin.js?v=20261124204956';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124204956';
+import { openWhatsApp } from '../messages.js?v=20261124204956';
+import { go } from '../app.js?v=20261124204956';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124204956';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -30,6 +30,7 @@ export async function renderJobs(view) {
     <div class="page-head"><h1>Jobs</h1><span class="spacer"></span>
       <input type="search" id="job-search" placeholder="Search job no, name, phone, model, IMEI" style="max-width:420px" autocomplete="off">
       <label class="check"><input type="checkbox" id="show-collected"> Show finished jobs</label>
+      <a class="btn small" href="#finished">All finished jobs →</a>
     </div>
     <div id="quote-news"></div>
     <div id="uncollected"></div>

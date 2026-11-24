@@ -1,22 +1,23 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261124200421';
-import { db } from './db.js?v=20261124200421';
-import { $, esc, initials, toast } from './ui.js?v=20261124200421';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261124200421';
-import { renderBookIn, startInsuranceJob, startRepairJob, bookingInProgress } from './screens/bookin.js?v=20261124200421';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261124200421';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261124200421';
-import { renderSettings } from './screens/settings.js?v=20261124200421';
-import { renderMoney } from './screens/money.js?v=20261124200421';
-import { renderTasks } from './screens/tasks.js?v=20261124200421';
-import { renderReports } from './screens/reports.js?v=20261124200421';
-import { renderStock } from './screens/stock.js?v=20261124200421';
-import { renderSell } from './screens/sell.js?v=20261124200421';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261124200421';
-import { renderCollect } from './screens/collect.js?v=20261124200421';
-import { renderOverdue } from './screens/overdue.js?v=20261124200421';
-import { renderInsurance } from './screens/insurance.js?v=20261124200421';
-import { reportError } from './errors.js?v=20261124200421';
+import * as repo from './repo.js?v=20261124204956';
+import { db } from './db.js?v=20261124204956';
+import { $, esc, initials, toast } from './ui.js?v=20261124204956';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261124204956';
+import { renderBookIn, startInsuranceJob, startRepairJob, bookingInProgress } from './screens/bookin.js?v=20261124204956';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261124204956';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261124204956';
+import { renderSettings } from './screens/settings.js?v=20261124204956';
+import { renderMoney } from './screens/money.js?v=20261124204956';
+import { renderTasks } from './screens/tasks.js?v=20261124204956';
+import { renderReports } from './screens/reports.js?v=20261124204956';
+import { renderStock } from './screens/stock.js?v=20261124204956';
+import { renderSell } from './screens/sell.js?v=20261124204956';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261124204956';
+import { renderCollect } from './screens/collect.js?v=20261124204956';
+import { renderOverdue } from './screens/overdue.js?v=20261124204956';
+import { renderInsurance } from './screens/insurance.js?v=20261124204956';
+import { renderFinished } from './screens/finished.js?v=20261124204956';
+import { reportError } from './errors.js?v=20261124204956';
 
 const routes = {
   bookin: renderBookIn,
@@ -35,6 +36,7 @@ const routes = {
   collect: renderCollect,
   overdue: renderOverdue,
   insurance: renderInsurance,
+  finished: renderFinished,
 };
 
 export const go = hash => { if (location.hash === '#' + hash) route(); else location.hash = hash; };
@@ -58,6 +60,7 @@ function shell() {
         <a href="#jobs" data-nav="jobs">Jobs</a>
         <a href="#collect" data-nav="collect">Collection</a>
         <a href="#overdue" data-nav="overdue">Overdue</a>
+        <a href="#finished" data-nav="finished">Finished</a>
         <a href="#quotes" data-nav="quotes">Quotes</a>
         <a href="#insurance" data-nav="insurance">Insurance</a>
         <a href="#customers" data-nav="customers">Customers</a>

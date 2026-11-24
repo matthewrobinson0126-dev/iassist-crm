@@ -1,6 +1,6 @@
 // Public quote page: the customer reads their quote and taps Accept or Decline (no login; the link's token is the key).
-import { CONFIG } from './config.js?v=20261124200421';
-import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261124200421';
+import { CONFIG } from './config.js?v=20261124204956';
+import { esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261124204956';
 
 const app = document.getElementById('app');
 const token = new URLSearchParams(location.search).get('q');
