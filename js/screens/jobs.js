@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261124200206';
-import { STATUSES, statusLabel } from '../repo.js?v=20261124200206';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124200206';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport, modelPickerHtml, wireModelPicker } from '../devices.js?v=20261124200206';
-import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124200206';
-import { startWarrantyJob } from './bookin.js?v=20261124200206';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124200206';
-import { openWhatsApp } from '../messages.js?v=20261124200206';
-import { go } from '../app.js?v=20261124200206';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124200206';
+import * as repo from '../repo.js?v=20261124200421';
+import { STATUSES, statusLabel } from '../repo.js?v=20261124200421';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124200421';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport, modelPickerHtml, wireModelPicker } from '../devices.js?v=20261124200421';
+import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124200421';
+import { startWarrantyJob } from './bookin.js?v=20261124200421';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124200421';
+import { openWhatsApp } from '../messages.js?v=20261124200421';
+import { go } from '../app.js?v=20261124200421';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124200421';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };

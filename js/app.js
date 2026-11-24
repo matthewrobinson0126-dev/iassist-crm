@@ -1,22 +1,22 @@
 // App shell: sign-in gate, top bar, hash router, idle auto-lock.
-import * as repo from './repo.js?v=20261124200206';
-import { db } from './db.js?v=20261124200206';
-import { $, esc, initials, toast } from './ui.js?v=20261124200206';
-import { renderLock, renderSetPassword } from './screens/lock.js?v=20261124200206';
-import { renderBookIn, startInsuranceJob, bookingInProgress } from './screens/bookin.js?v=20261124200206';
-import { renderJobs, renderJob } from './screens/jobs.js?v=20261124200206';
-import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261124200206';
-import { renderSettings } from './screens/settings.js?v=20261124200206';
-import { renderMoney } from './screens/money.js?v=20261124200206';
-import { renderTasks } from './screens/tasks.js?v=20261124200206';
-import { renderReports } from './screens/reports.js?v=20261124200206';
-import { renderStock } from './screens/stock.js?v=20261124200206';
-import { renderSell } from './screens/sell.js?v=20261124200206';
-import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261124200206';
-import { renderCollect } from './screens/collect.js?v=20261124200206';
-import { renderOverdue } from './screens/overdue.js?v=20261124200206';
-import { renderInsurance } from './screens/insurance.js?v=20261124200206';
-import { reportError } from './errors.js?v=20261124200206';
+import * as repo from './repo.js?v=20261124200421';
+import { db } from './db.js?v=20261124200421';
+import { $, esc, initials, toast } from './ui.js?v=20261124200421';
+import { renderLock, renderSetPassword } from './screens/lock.js?v=20261124200421';
+import { renderBookIn, startInsuranceJob, startRepairJob, bookingInProgress } from './screens/bookin.js?v=20261124200421';
+import { renderJobs, renderJob } from './screens/jobs.js?v=20261124200421';
+import { renderCustomers, renderCustomer } from './screens/customers.js?v=20261124200421';
+import { renderSettings } from './screens/settings.js?v=20261124200421';
+import { renderMoney } from './screens/money.js?v=20261124200421';
+import { renderTasks } from './screens/tasks.js?v=20261124200421';
+import { renderReports } from './screens/reports.js?v=20261124200421';
+import { renderStock } from './screens/stock.js?v=20261124200421';
+import { renderSell } from './screens/sell.js?v=20261124200421';
+import { renderQuotes, renderQuote } from './screens/quotes.js?v=20261124200421';
+import { renderCollect } from './screens/collect.js?v=20261124200421';
+import { renderOverdue } from './screens/overdue.js?v=20261124200421';
+import { renderInsurance } from './screens/insurance.js?v=20261124200421';
+import { reportError } from './errors.js?v=20261124200421';
 
 const routes = {
   bookin: renderBookIn,
@@ -79,6 +79,8 @@ function shell() {
   $('#lock-btn').onclick = () => { repo.auth.lock(); route(); };
   // "+ Insurance": straight into a book-in with the Insurance report job type selected.
   $('#nav-ins-new').onclick = e => { e.preventDefault(); startInsuranceJob(); };
+  // "+ Book in": always a normal repair book-in (switches back from insurance).
+  $('[data-nav="bookin"]').onclick = e => { e.preventDefault(); startRepairJob(); };
   // Reload the whole app (a fresh copy, never a stale saved one). You stay signed in.
   $('#refresh-btn').onclick = () => {
     if (location.hash.startsWith('#bookin') && bookingInProgress() && !confirm('Refresh now? Anything typed in this booking will be lost.')) return;
