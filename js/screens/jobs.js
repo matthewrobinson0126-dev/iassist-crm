@@ -1,14 +1,14 @@
 // Jobs board (by status), job detail, hand back.
-import * as repo from '../repo.js?v=20261124183539';
-import { STATUSES, statusLabel } from '../repo.js?v=20261124183539';
-import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124183539';
-import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport } from '../devices.js?v=20261124183539';
-import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124183539';
-import { startWarrantyJob } from './bookin.js?v=20261124183539';
-import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124183539';
-import { openWhatsApp } from '../messages.js?v=20261124183539';
-import { go } from '../app.js?v=20261124183539';
-import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124183539';
+import * as repo from '../repo.js?v=20261124195833';
+import { STATUSES, statusLabel } from '../repo.js?v=20261124195833';
+import { $, $$, esc, money, fmtDate, fmtDateTime, ageText, toast, modal, confirmBox, signaturePad, compressImage } from '../ui.js?v=20261124195833';
+import { deviceType, collectionLabel, PAY_METHODS, jobTypeLabel, contactPrefLabel, REPORT_CAUSES, REPORT_FINDINGS, REPORT_TESTED, draftReport, modelPickerHtml, wireModelPicker } from '../devices.js?v=20261124195833';
+import { printJobCard, printCompletion, qrSvg, printLabel, printReport } from '../print.js?v=20261124195833';
+import { startWarrantyJob } from './bookin.js?v=20261124195833';
+import { taskRow, bindTaskRows, taskModal } from './tasks.js?v=20261124195833';
+import { openWhatsApp } from '../messages.js?v=20261124195833';
+import { go } from '../app.js?v=20261124195833';
+import { quotePill, recentOnlineAnswers, markAnswersSeen } from './quotes.js?v=20261124195833';
 
 const sc = id => `var(--s-${id})`;
 let boardState = { q: '', showCollected: false, filter: 'all' };
@@ -386,15 +386,16 @@ export async function renderJob(view, id) {
   });
   $('#j-edit-dev', view)?.addEventListener('click', () => {
     const m = modal(`<h2>Edit device</h2>
-      <label class="field">Model<input type="text" id="m-model" value="${esc(job.model)}"></label>
+      ${modelPickerHtml('m-model', job.deviceType, job.model)}
       <label class="field">Colour<input type="text" id="m-colour" value="${esc(job.colour || '')}"></label>
       <label class="field">IMEI / serial<input type="text" id="m-serial" value="${esc(job.serial || '')}"></label>
       <label class="field">Ready by<input type="date" id="m-due" value="${esc(job.dueDate || '')}"></label>
       <label class="field">Tech notes<textarea id="m-int" rows="2">${esc(job.internalNotes || '')}</textarea></label>
       <div class="modal-actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="m-save">Save</button></div>`);
+    wireModelPicker(m.el, 'm-model');
     m.el.querySelector('#m-save').onclick = async () => {
       const v = s => m.el.querySelector(s).value;
-      await repo.updateJobFields(job, { model: v('#m-model') || job.model, colour: v('#m-colour'), serial: v('#m-serial'),
+      await repo.updateJobFields(job, { model: v('#m-model').trim() || job.model, colour: v('#m-colour'), serial: v('#m-serial'),
         dueDate: v('#m-due'), internalNotes: v('#m-int') }, 'device details');
       m.close(); toast('Saved'); reload();
     };

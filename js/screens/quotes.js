@@ -1,13 +1,13 @@
 // Quotes: list + quote page. A quote is linked to a booked-in job, or stands alone (phone / walk-in / business)
 // and becomes a job when the customer says yes. Customers accept or decline online through the emailed link.
-import * as repo from '../repo.js?v=20261124183539';
-import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal, confirmBox } from '../ui.js?v=20261124183539';
-import { DEVICE_TYPES, deviceType } from '../devices.js?v=20261124183539';
-import { printQuote, qrSvg } from '../print.js?v=20261124183539';
-import { whatsAppQuote } from '../messages.js?v=20261124183539';
-import { pickFromPriceList, editLineModal } from './jobs.js?v=20261124183539';
-import { startQuoteJob } from './bookin.js?v=20261124183539';
-import { go } from '../app.js?v=20261124183539';
+import * as repo from '../repo.js?v=20261124195833';
+import { $, $$, esc, money, fmtDate, fmtDateTime, toast, modal, confirmBox } from '../ui.js?v=20261124195833';
+import { DEVICE_TYPES, deviceType, modelPickerHtml, wireModelPicker } from '../devices.js?v=20261124195833';
+import { printQuote, qrSvg } from '../print.js?v=20261124195833';
+import { whatsAppQuote } from '../messages.js?v=20261124195833';
+import { pickFromPriceList, editLineModal } from './jobs.js?v=20261124195833';
+import { startQuoteJob } from './bookin.js?v=20261124195833';
+import { go } from '../app.js?v=20261124195833';
 
 const STATE_COLOUR = { draft: 'var(--s-booked)', sent: 'var(--s-approval)', accepted: 'var(--s-ready)', declined: 'var(--danger)', expired: 'var(--s-collected)' };
 export const quotePill = q => { const s = repo.quoteState(q); return `<span class="pill" style="--sc:${STATE_COLOUR[s]}">${esc(repo.QUOTE_STATES[s])}</span>`; };
@@ -89,9 +89,8 @@ export async function renderQuote(view, id) {
           <div class="grid-2">
             <label class="field">Device type<select id="qd-type" ${fromJob || !editable ? 'disabled' : ''}><option value="">Choose…</option>
               ${DEVICE_TYPES.map(t => `<option value="${t.id}" ${t.id === q.deviceType ? 'selected' : ''}>${esc(t.label)}</option>`).join('')}</select></label>
-            <label class="field">Model<input type="text" id="qd-model" value="${esc(q.model || '')}" list="qd-models" ${fromJob || !editable ? 'readonly' : ''} autocomplete="off" placeholder="e.g. iPhone 13"></label>
+            ${modelPickerHtml('qd-model', q.deviceType, q.model || '', { disabled: fromJob || !editable })}
           </div>
-          <datalist id="qd-models"></datalist>
           <label class="field">Problem <span class="hint">shown on the quote</span><input type="text" id="qd-fault" value="${esc(q.fault || '')}" ${editable ? '' : 'readonly'} placeholder="e.g. Cracked screen, battery drains fast"></label>
         </div>
         <div class="card stack"><div class="row"><h2 style="margin:0">Parts &amp; labour</h2><span class="spacer"></span>
@@ -137,8 +136,8 @@ export async function renderQuote(view, id) {
 
   // Model suggestions follow the device type
   const typeSel = $('#qd-type', view);
-  const fillModels = () => { $('#qd-models', view).innerHTML = (deviceType(typeSel.value)?.models || []).map(m => `<option value="${esc(m)}"></option>`).join(''); };
-  typeSel.onchange = fillModels; fillModels();
+  const picker = wireModelPicker(view, 'qd-model');
+  typeSel.onchange = () => picker.setType(typeSel.value);
 
   // Returning customer search
   const search = $('#qc-search', view);

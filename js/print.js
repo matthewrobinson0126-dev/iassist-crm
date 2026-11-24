@@ -1,7 +1,7 @@
 // Printable job card (AirPrint from the iPad's share/print dialog).
-import * as repo from './repo.js?v=20261124183539';
-import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261124183539';
-import { deviceType, collectionLabel } from './devices.js?v=20261124183539';
+import * as repo from './repo.js?v=20261124195833';
+import { $, esc, money, fmtDate, fmtDateTime } from './ui.js?v=20261124195833';
+import { deviceType, collectionLabel } from './devices.js?v=20261124195833';
 
 // QR code as inline SVG (qrcode-generator library). Empty string if the library didn't load.
 export function qrSvg(text, cell = 3) {

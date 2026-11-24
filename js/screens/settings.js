@@ -1,8 +1,8 @@
 // Owner-only settings: staff logins, shop details, terms, demo data, backup.
-import * as repo from '../repo.js?v=20261124183539';
-import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261124183539';
-import { go } from '../app.js?v=20261124183539';
-import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261124183539';
+import * as repo from '../repo.js?v=20261124195833';
+import { $, $$, esc, initials, toast, modal, confirmBox } from '../ui.js?v=20261124195833';
+import { go } from '../app.js?v=20261124195833';
+import { LABEL_SIZES, labelSize, printTestLabel } from '../print.js?v=20261124195833';
 
 export async function renderSettings(view) {
   if (!repo.auth.isOwner()) { view.innerHTML = '<div class="card empty"><h2>Only the owner can open Settings</h2></div>'; return; }

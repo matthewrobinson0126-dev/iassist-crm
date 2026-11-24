@@ -1,9 +1,9 @@
 // Insurance tab: every damage report (DR-0001…) and every insurance job still waiting for one.
-import * as repo from '../repo.js?v=20261124183539';
-import { statusLabel } from '../repo.js?v=20261124183539';
-import { $, $$, esc, money, fmtDate, toast } from '../ui.js?v=20261124183539';
-import { startInsuranceJob } from './bookin.js?v=20261124183539';
-import { go } from '../app.js?v=20261124183539';
+import * as repo from '../repo.js?v=20261124195833';
+import { statusLabel } from '../repo.js?v=20261124195833';
+import { $, $$, esc, money, fmtDate, toast } from '../ui.js?v=20261124195833';
+import { startInsuranceJob } from './bookin.js?v=20261124195833';
+import { go } from '../app.js?v=20261124195833';
 
 let q = '', show = 'all';
 

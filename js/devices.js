@@ -54,6 +54,35 @@ export const DEVICE_TYPES = [
 
 export const deviceType = id => DEVICE_TYPES.find(t => t.id === id);
 
+// Model drop-down with an "Other (type it in)" choice. `id` names the text box that holds the final value
+// (#id), the list is #id-sel and the typing box's label is #id-other.
+const escA = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function modelOptions(typeId, model) {
+  const models = deviceType(typeId)?.models || [];
+  const other = !!model && !models.includes(model);
+  return `<option value="" ${!model ? 'selected' : ''} disabled>${models.length ? 'Choose the model…' : 'Choose the device type first'}</option>
+    ${models.map(m => `<option ${m === model ? 'selected' : ''}>${escA(m)}</option>`).join('')}
+    <option value="__other" ${other ? 'selected' : ''}>Other (type it in)</option>`;
+}
+export function modelPickerHtml(id, typeId, model, { disabled = false } = {}) {
+  const models = deviceType(typeId)?.models || [];
+  const other = !!model && !models.includes(model);
+  return `<label class="field">Model<select id="${id}-sel" ${disabled ? 'disabled' : ''}>${modelOptions(typeId, model)}</select></label>
+    <label class="field" id="${id}-other" ${other ? '' : 'hidden'}>Model name<span class="hint">not in the list</span>
+      <input type="text" id="${id}" value="${escA(model)}" autocomplete="off" ${disabled ? 'readonly' : ''}></label>`;
+}
+// Wire it up. Call setType(newTypeId) when the device type changes.
+export function wireModelPicker(root, id) {
+  const sel = root.querySelector(`#${id}-sel`), box = root.querySelector(`#${id}-other`), input = root.querySelector(`#${id}`);
+  sel.onchange = () => {
+    const other = sel.value === '__other';
+    box.hidden = !other;
+    input.value = other ? '' : sel.value;
+    if (other) input.focus();
+  };
+  return { setType: typeId => { sel.innerHTML = modelOptions(typeId, ''); box.hidden = true; input.value = ''; } };
+}
+
 export const DAMAGE = ['No visible damage', 'Cracked screen', 'Cracked back', 'Scratches', 'Dents / bent frame',
   'Water damage signs', 'Missing screws', 'Signs of previous repair', 'Swollen battery', 'Screen marks / lines'];
 
