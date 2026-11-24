@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261124195833';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124195833';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124195833';
-import { printJobCard, printLabel } from '../print.js?v=20261124195833';
-import { openWhatsApp } from '../messages.js?v=20261124195833';
-import { go } from '../app.js?v=20261124195833';
+import * as repo from '../repo.js?v=20261124200206';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124200206';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124200206';
+import { printJobCard, printLabel } from '../print.js?v=20261124200206';
+import { openWhatsApp } from '../messages.js?v=20261124200206';
+import { go } from '../app.js?v=20261124200206';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -18,6 +18,13 @@ const newDraft = () => ({
   internalNotes: '', accepted: false, startedBy: repo.auth.user?.name,
   depositMethod: 'Cash', referral: '', urgent: false, technicianId: '', technicianName: '', jobType: 'paid', warrantyOf: null, warrantyOfNo: '',
 });
+
+// True once anything has been entered, so an app update never wipes a booking that's under way.
+export function bookingInProgress() {
+  if (!draft) return false;
+  const nc = draft.newCustomer || {};
+  return !!(draft.customerMode || draft.step > 0 || draft.customer || nc.name || nc.phone || draft.deviceType || draft.faultNotes);
+}
 
 export async function renderBookIn(view) {
   if (!draft) draft = newDraft();
