@@ -354,6 +354,7 @@ td.neg { color: var(--danger); }
 .mode-banner { margin: 0 0 12px; padding: 10px 16px; border-radius: 10px; font-weight: 800; letter-spacing: .06em;
   background: var(--accent); color: var(--accent-ink); }
 .mode-banner.ins { background: #a3402f; color: #fff; }
+.nav a.book.book-search { background: #f5c518; color: #1b1b1b; }
 .mode-banner { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .mode-banner span { flex: 1; }
 .mode-banner .btn { letter-spacing: normal; font-weight: 600; background: rgba(255,255,255,.92); color: #1b1b1b; border-color: transparent; }

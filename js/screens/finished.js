@@ -1,7 +1,7 @@
 // Finished: every job that has been collected or closed, newest first, with search and filters.
-import * as repo from '../repo.js?v=20261124204956';
-import { $, $$, esc, fmtDate, money } from '../ui.js?v=20261124204956';
-import { go } from '../app.js?v=20261124204956';
+import * as repo from '../repo.js?v=20261124205401';
+import { $, $$, esc, fmtDate, money } from '../ui.js?v=20261124205401';
+import { go } from '../app.js?v=20261124205401';
 
 const KINDS = [
   { id: 'all', label: 'All', test: () => true },

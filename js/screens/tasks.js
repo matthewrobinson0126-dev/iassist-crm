@@ -1,6 +1,6 @@
 // Tasks: shop to-do list (call-backs, parts to order). Shared rows + add form used on the job page too.
-import * as repo from '../repo.js?v=20261124204956';
-import { $, $$, esc, fmtDate, toast, modal, confirmBox } from '../ui.js?v=20261124204956';
+import * as repo from '../repo.js?v=20261124205401';
+import { $, $$, esc, fmtDate, toast, modal, confirmBox } from '../ui.js?v=20261124205401';
 
 const late = t => !t.done && t.dueDate && t.dueDate < repo.todayKey();
 const isToday = t => t.dueDate === repo.todayKey();
