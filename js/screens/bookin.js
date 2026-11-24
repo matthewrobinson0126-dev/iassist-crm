@@ -1,10 +1,10 @@
 // Book a device in, step by step. The draft survives switching screens until it is booked or cleared.
-import * as repo from '../repo.js?v=20261124182648';
-import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124182648';
-import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124182648';
-import { printJobCard, printLabel } from '../print.js?v=20261124182648';
-import { openWhatsApp } from '../messages.js?v=20261124182648';
-import { go } from '../app.js?v=20261124182648';
+import * as repo from '../repo.js?v=20261124183539';
+import { $, $$, esc, money, toast, signaturePad, compressImage, getPath, setPath, uid, confirmBox, modal } from '../ui.js?v=20261124183539';
+import { DEVICE_TYPES, deviceType, DAMAGE, ACCESSORIES, COLLECTION, collectionLabel, REFERRALS, JOB_TYPES, jobTypeLabel, HISTORY, CONTACT_PREFS } from '../devices.js?v=20261124183539';
+import { printJobCard, printLabel } from '../print.js?v=20261124183539';
+import { openWhatsApp } from '../messages.js?v=20261124183539';
+import { go } from '../app.js?v=20261124183539';
 
 const STEPS = ['Customer', 'Device', 'Fault', 'Condition', 'Quote', 'Sign'];
 let draft = null;
@@ -12,7 +12,7 @@ let pad = null;
 
 const newDraft = () => ({
   step: 0, maxStep: 0, customer: null, newCustomer: { name: '', phone: '', whatsapp: '', email: '', area: '' }, search: '',
-  deviceType: '', model: '', modelOther: false, colour: '', serial: '', powersOn: 'Yes',
+  waChoice: '', waNumber: '', deviceType: '', model: '', modelOther: false, colour: '', serial: '', powersOn: 'Yes',
   faults: [], faultNotes: '', history: [], contactPref: '', damage: [], conditionNotes: '', photos: [], accessories: [],
   passcode: '', quoteMode: 'assess', quote: '', quoteNote: '', deposit: '', dueDate: '', collection: 'store',
   internalNotes: '', accepted: false, startedBy: repo.auth.user?.name,
@@ -174,10 +174,12 @@ function drawCustomerMode(view) {
           <label class="field">Email <span class="hint">for repair updates and collection reminders</span><input type="email" id="k-email" data-bind="newCustomer.email" autocomplete="email" autocapitalize="off"></label>
           <label class="field">Suburb <span class="hint">optional</span><input type="text" data-bind="newCustomer.area" autocomplete="address-level2"></label>
         </div>
-        <div class="field">Your WhatsApp number
-          <div class="seg" id="k-wa">${[['same', 'Same as my cell number'], ['other', 'A different number'], ['none', 'I don’t use WhatsApp']].map(([id, l]) => `<button type="button" data-wa="${id}">${l}</button>`).join('')}</div>
-          <input type="tel" id="k-wa-num" data-bind="newCustomer.whatsapp" inputmode="tel" autocomplete="off" placeholder="Your WhatsApp number" style="max-width:320px" ${draft.newCustomer.waChoice === 'other' ? '' : 'hidden'}></div>
         <label class="check"><input type="checkbox" id="k-noemail" data-bind="newCustomer.noEmail"> I don’t use email: please contact me on WhatsApp</label>`}
+      </div>
+      <div class="card stack"><h2 style="margin:0">Your WhatsApp number</h2>
+        <p class="muted" style="margin:0">Is your WhatsApp on the same number as your cell number?</p>
+        <div class="seg" id="k-wa">${[['same', 'Same as my cell number'], ['other', 'A different number'], ['none', 'I don’t use WhatsApp']].map(([id, l]) => `<button type="button" data-wa="${id}">${l}</button>`).join('')}</div>
+        <label class="field" id="k-wa-box" ${draft.waChoice === 'other' ? '' : 'hidden'}>WhatsApp number<input type="tel" id="k-wa-num" data-bind="waNumber" inputmode="tel" autocomplete="off" placeholder="e.g. 072 123 4567" style="max-width:320px"></label>
       </div>
       <div class="card stack"><h2 style="margin:0">How should we contact you?</h2>
         <p class="muted" style="margin:0">For your quote, updates and when your device is ready.</p>
@@ -227,12 +229,19 @@ function drawCustomerMode(view) {
   $('#k-noemail', view)?.addEventListener('change', e => {
     if (e.target.checked) { draft.contactPref = 'whatsapp'; paintCp(); }
   });
-  const paintWa = () => $$('[data-wa]', view).forEach(b => b.classList.toggle('on', draft.newCustomer.waChoice === b.dataset.wa));
+  // Returning customer: start from what we already know about their WhatsApp.
+  if (c && draft.waFor !== c.id) {
+    draft.waFor = c.id; draft.waChoice = ''; draft.waNumber = '';
+    if (c.noWhatsapp) draft.waChoice = 'none';
+    else if (c.whatsapp && repo.digits(c.whatsapp) !== repo.digits(c.phone)) { draft.waChoice = 'other'; draft.waNumber = c.whatsapp; }
+    else if (c.whatsapp) draft.waChoice = 'same';
+    if (draft.waChoice) { $('#k-wa-box', view).hidden = draft.waChoice !== 'other'; $('#k-wa-num', view).value = draft.waNumber || ''; }
+  }
+  const paintWa = () => $$('[data-wa]', view).forEach(b => b.classList.toggle('on', draft.waChoice === b.dataset.wa));
   $$('[data-wa]', view).forEach(b => b.onclick = () => {
-    draft.newCustomer.waChoice = b.dataset.wa;
-    const num = $('#k-wa-num', view);
-    num.hidden = b.dataset.wa !== 'other';
-    if (b.dataset.wa === 'other') num.focus();
+    draft.waChoice = b.dataset.wa;
+    $('#k-wa-box', view).hidden = b.dataset.wa !== 'other';
+    if (b.dataset.wa === 'other') $('#k-wa-num', view).focus();
     if (b.dataset.wa === 'none' && draft.contactPref === 'whatsapp') { draft.contactPref = ''; paintCp(); }
     paintWa();
   });
@@ -253,13 +262,13 @@ function drawCustomerMode(view) {
     if (!draft.customer) {
       if (!nc.name.trim()) return err('Please enter your name.');
       if (repo.digits(nc.phone).length < 9) return err('Please enter your cell number.');
-      if (!nc.waChoice) return err('Please tell us your WhatsApp number: same as your cell, a different number, or you don’t use WhatsApp.');
-      if (nc.waChoice === 'other' && repo.digits(nc.whatsapp).length < 9) return err('Please enter your WhatsApp number.');
       if (!nc.noEmail && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(nc.email || '').trim()))
         return err('Please enter your email address, or tick “I don’t use email”.');
     }
+    if (!draft.waChoice) return err('Please tell us your WhatsApp number: same as your cell, a different number, or you don’t use WhatsApp.');
+    if (draft.waChoice === 'other' && repo.digits(draft.waNumber).length < 9) return err('Please enter your WhatsApp number.');
     if (!draft.contactPref) return err('Please choose how we should contact you.');
-    if (draft.contactPref === 'whatsapp' && (draft.customer ? draft.customer.noWhatsapp : nc.waChoice === 'none'))
+    if (draft.contactPref === 'whatsapp' && draft.waChoice === 'none')
       return err('You said you don’t use WhatsApp. Please choose a phone call or email.');
     if (draft.contactPref === 'email' && (draft.customer ? !draft.customer.email : nc.noEmail))
       return err('You chose email, but we don’t have an email address for you. Please choose WhatsApp or a phone call.');
@@ -270,16 +279,20 @@ function drawCustomerMode(view) {
     if (!kpad || kpad.isEmpty()) return err('Please sign in the box above.');
     if (!(await staffPin())) return;
     draft.customerSignature = await kpad.toBlob();
-    if (!draft.customer) {
-      nc.contactPref = draft.contactPref; if (nc.noEmail) nc.email = '';
-      // Same number: store the cell as the WhatsApp number, so staff can see it was confirmed.
-      nc.whatsapp = nc.waChoice === 'same' ? nc.phone.trim() : nc.waChoice === 'other' ? nc.whatsapp.trim() : '';
-      nc.noWhatsapp = nc.waChoice === 'none';
-    }
+    // Same number: store the cell as the WhatsApp number, so staff can see it was confirmed.
+    const waFor = phone => ({ whatsapp: draft.waChoice === 'same' ? String(phone).trim() : draft.waChoice === 'other' ? String(draft.waNumber).trim() : '',
+      noWhatsapp: draft.waChoice === 'none' });
+    if (!draft.customer) { nc.contactPref = draft.contactPref; if (nc.noEmail) nc.email = ''; Object.assign(nc, waFor(nc.phone)); }
     let note = 'Customer details saved. Carry on with the device.';
     if (!draft.customer) {
       const existing = await repo.findByPhone(nc.phone);
       if (existing) { draft.customer = existing; note = `Returning customer: ${existing.name}. Carry on with the device.`; }
+    }
+    // Returning customer: keep their WhatsApp answer on their record.
+    if (draft.customer) {
+      const wa = waFor(draft.customer.phone);
+      if (wa.whatsapp !== (draft.customer.whatsapp || '') || wa.noWhatsapp !== !!draft.customer.noWhatsapp)
+        draft.customer = await repo.saveCustomer({ ...draft.customer, ...wa });
     }
     draft.customerMode = false;
     draft.step = Math.max(draft.step, 1);
